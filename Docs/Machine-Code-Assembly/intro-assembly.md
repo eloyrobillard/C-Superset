@@ -35,6 +35,19 @@ mov $8, %rax   // AT&T
    1. スタックからアドレスを1つポップ
    2. そのアドレスにジャンプ
 
+## 記法選別
+
+```x64
+mov rbp, rsp   // Intel
+mov %rsp, %rbp // AT&T
+
+mov rax, 8     // Intel
+mov $8, %rax   // AT&T
+
+mov [rbp + rcx * 4 - 8], rax // Intel
+mov %rax, -8(rbp, rcx, 4)    // AT&T
+```
+
 ## レジスタ入門
 
 1. RAX：とりあえず、関数の返り値が入っている約束になっている
