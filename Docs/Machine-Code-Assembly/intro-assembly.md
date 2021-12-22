@@ -13,10 +13,20 @@
 
 ## コマンド入門
 
-* add rsi, rdi
-   > rsiの値を rsi+rdi で上書きする
-* mov rax, rsi
-   > rsi の値を rax に*コピー*（移動したわけじゃない）
+rsiの値を rsi+rdi で上書きする
+
+```x64
+add rsi, rdi   // Intel
+add %rdi, %rsi // AT&T
+```
+
+rsi の値を rax に*コピー*（移動したわけじゃない）
+
+```x64
+mov rax, 8     // Intel
+mov $8, %rax   // AT&T
+```
+
 * call <引数>
    1. callの次の命令（例えばret）のアドレスをスタックにプッシュ
    2. callの引数として与えられたアドレスにジャンプ
