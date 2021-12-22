@@ -1,5 +1,3 @@
-# アセンブリ入門
+# Home
 
-[機械語とアセンブラ](intro-machine-code.md)
-
-[アセンブリ入門](intro-assembly.md)
+[機械語とアセンブリ](./Machine-Code-Assembly/home.md)
