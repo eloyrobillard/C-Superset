@@ -65,12 +65,20 @@ void tokenKeisan(Tokens tokens)
   }
 }
 
+Token *createToken(char *txt, int len, TK_TYPE type) {
+  Token *token = malloc(sizeof(Token));
+  token->txt = txt;
+  token->len = len;
+  token->type = type;
+
+  return token;
+}
+
 int makeToken(Tokens *tokens, char *input, TK_TYPE type)
 {
   int len = 0;
 
-  Token *token = malloc(sizeof(Token));
-  token->type = type;
+  Token *token;
 
   switch (type)
   {
@@ -80,20 +88,19 @@ int makeToken(Tokens *tokens, char *input, TK_TYPE type)
       input++;
       len++;
     }
-    token->txt = malloc(len);
+
+    char *txt = malloc(len);
     input -= len;
     for (int i = 0; i < len; i++)
     {
-      token->txt[i] = input[i];
+      txt[i] = input[i];
     }
 
-    token->len = len;
+    token = createToken(txt, len, type);
     break;
 
   case PUNCT:
-    token->txt = malloc(sizeof(char));
-    token->txt[0] = *input;
-    token->len = 1;
+    token = createToken(input, 1, type);
     break;
 
   default:
