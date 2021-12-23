@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 void operation(char operator, long num)
 {
@@ -20,7 +21,8 @@ int generateKeisan(char *input)
   while (*input)
   {
     char operator= * input;
-    if (operator != '+' && operator != '-') {
+    if (operator!= '+' && operator!= '-')
+    {
       fprintf(stderr, "予期しない文字です: '%c'\n", operator);
       return 1;
     }
@@ -29,6 +31,78 @@ int generateKeisan(char *input)
   }
 
   return 0;
+}
+
+typedef enum charType
+{
+  DIGIT,
+  ALPHA,
+  PUNCT,
+} CHAR_TYPE;
+
+typedef struct Tokens
+{
+  char **tks;
+  int len;
+  int cap;
+} Tokens;
+
+void makeToken(Tokens tokens, char *input, CHAR_TYPE type)
+{
+  int len = 0;
+  char *res;
+
+  switch (type)
+  {
+  case DIGIT:
+    while (isdigit(*input))
+    {
+      input++;
+      len++;
+    }
+    res = malloc(len);
+    input -= len;
+    for (int i = 0; i <= len; i++)
+    {
+      res[i] = input[i];
+    }
+    break;
+
+  case PUNCT:
+    res = malloc(1);
+    res[0] = *input;
+    break;
+
+  default:
+    return;
+  }
+
+  if (tokens.len >= tokens.cap - 1)
+  {
+    tokens.tks = realloc(tokens.tks, tokens.cap * 2);
+    tokens.cap *= 2;
+  }
+
+  tokens.tks[tokens.len] = res;
+  tokens.len++;
+}
+
+char **tokenize(char *input)
+{
+  Tokens tokens;
+  tokens.tks = malloc(sizeof(char *)),
+  tokens.len = 0;
+  tokens.cap = 1;
+
+  while (*input)
+  {
+    if (isdigit(*input))
+      makeToken(tokens, input, DIGIT);
+    else if (*input == '-' || *input == '+')
+      makeToken(tokens, input, PUNCT);
+
+    input++;
+  }
 }
 
 int main(int argc, char **argv)
