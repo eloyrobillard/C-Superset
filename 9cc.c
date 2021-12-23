@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-typedef enum charType
+typedef enum TK_Type
 {
   DIGIT,
   ALPHA,
@@ -16,12 +16,12 @@ typedef struct Token
   TK_TYPE type;
 } Token;
 
-typedef struct Tokens
+typedef struct TokenList
 {
   Token **tks;
   int len;
   int cap;
-} Tokens;
+} TokenList;
 
 void operation(char operator, long num)
 {
@@ -36,36 +36,18 @@ void operation(char operator, long num)
   }
 }
 
-int generateKeisan(char *input)
+void token_keisan(TokenList tkls)
 {
-  printf("\tmov rax, %ld\n", strtol(input, &input, 10));
-  while (*input)
+  printf("\tmov rax, %d\n", atoi(tkls.tks[0]->txt));
+  for (int i = 1; i < tkls.len; i++)
   {
-    char operator= * input;
-    if (operator!= '+' && operator!= '-')
-    {
-      fprintf(stderr, "予期しない文字です: '%c'\n", operator);
-      return 1;
-    }
-    input++;
-    operation(operator, strtol(input, &input, 10));
-  }
-
-  return 0;
-}
-
-void tokenKeisan(Tokens tokens)
-{
-  printf("\tmov rax, %d\n", atoi(tokens.tks[0]->txt));
-  for (int i = 1; i < tokens.len; i++)
-  {
-    char operator= tokens.tks[i]->txt[0];
+    char operator= tkls.tks[i]->txt[0];
     i++;
-    operation(operator, atoi(tokens.tks[i]->txt));
+    operation(operator, atoi(tkls.tks[i]->txt));
   }
 }
 
-Token *createToken(char *txt, int len, TK_TYPE type)
+Token *new_token(char *txt, int len, TK_TYPE type)
 {
   Token *token = malloc(sizeof(Token));
   token->txt = txt;
@@ -75,7 +57,7 @@ Token *createToken(char *txt, int len, TK_TYPE type)
   return token;
 }
 
-int makeToken(Tokens *tokens, char *input, TK_TYPE type)
+int fill_token(TokenList *tkls, char *input, TK_TYPE type)
 {
   int len = 0;
 
@@ -97,47 +79,47 @@ int makeToken(Tokens *tokens, char *input, TK_TYPE type)
       txt[i] = input[i];
     }
 
-    token = createToken(txt, len, type);
+    token = new_token(txt, len, type);
     break;
 
   case PUNCT:
-    token = createToken(input, 1, type);
+    token = new_token(input, 1, type);
     break;
 
   default:
     return 0;
   }
 
-  if (tokens->len >= tokens->cap - 1)
+  if (tkls->len >= tkls->cap - 1)
   {
-    tokens->tks = realloc(tokens->tks, sizeof(Token *) * tokens->cap * 2);
-    tokens->cap *= 2;
+    tkls->tks = realloc(tkls->tks, sizeof(Token *) * tkls->cap * 2);
+    tkls->cap *= 2;
   }
 
-  tokens->tks[tokens->len] = token;
-  tokens->len++;
+  tkls->tks[tkls->len] = token;
+  tkls->len++;
 
   return token->len;
 }
 
-Tokens tokenize(char *input)
+TokenList tokenize(char *input)
 {
-  Tokens tokens;
-  tokens.tks = malloc(sizeof(Token *)),
-  tokens.len = 0;
-  tokens.cap = 1;
+  TokenList tkls;
+  tkls.tks = malloc(sizeof(Token *)),
+  tkls.len = 0;
+  tkls.cap = 1;
 
   while (*input)
   {
     if (isdigit(*input))
-      input += makeToken(&tokens, input, DIGIT);
+      input += fill_token(&tkls, input, DIGIT);
     else if (*input == '-' || *input == '+')
-      input += makeToken(&tokens, input, PUNCT);
+      input += fill_token(&tkls, input, PUNCT);
     else
       input++;
   }
 
-  return tokens;
+  return tkls;
 }
 
 int main(int argc, char **argv)
@@ -153,8 +135,8 @@ int main(int argc, char **argv)
   printf("\n");
   printf("main:\n");
 
-  Tokens tokens = tokenize(argv[1]);
-  tokenKeisan(tokens);
+  TokenList tkls = tokenize(argv[1]);
+  token_keisan(tkls);
 
   printf("\tret\n");
   return 0;
