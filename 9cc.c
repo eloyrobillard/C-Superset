@@ -13,12 +13,13 @@ typedef enum charType
 typedef struct Token
 {
   char *txt;
+  int len;
   TK_TYPE type;
 } Token;
 
 typedef struct Tokens
 {
-  Token *tks;
+  Token **tks;
   int len;
   int cap;
 } Tokens;
@@ -56,18 +57,20 @@ int generateKeisan(char *input)
 
 void tokenKeisan(Tokens tokens)
 {
-  printf("%d", atoi(tokens.tks->txt));
+  printf("%d", atoi(tokens.tks[0]->txt));
   for (int i = 1; i < tokens.len; i++)
   {
-    operation(tokens.tks[i].txt[0], atoi(tokens.tks[++i].txt));
+    operation(tokens.tks[i]->txt[0], atoi(tokens.tks[++i]->txt));
   }
 }
 
 
-void makeToken(Tokens tokens, char *input, TK_TYPE type)
+int makeToken(Tokens *tokens, char *input, TK_TYPE type)
 {
   int len = 0;
-  char *res;
+
+  Token *token = malloc(sizeof(Token));
+  token->type = type;
 
   switch (type)
   {
@@ -77,51 +80,52 @@ void makeToken(Tokens tokens, char *input, TK_TYPE type)
       input++;
       len++;
     }
-    res = malloc(len);
+    token->txt = malloc(len);
     input -= len;
-    for (int i = 0; i <= len; i++)
+    for (int i = 0; i < len; i++)
     {
-      res[i] = input[i];
+      token->txt[i] = input[i];
     }
+
+    token->len = len;
     break;
 
   case PUNCT:
-    res = malloc(1);
-    res[0] = *input;
+    token->txt = malloc(sizeof(char));
+    token->txt[0] = *input;
+    token->len = 1;
     break;
 
   default:
-    return;
+    return 0;
   }
 
-  if (tokens.len >= tokens.cap - 1)
+  if (tokens->len >= tokens->cap - 1)
   {
-    tokens.tks = realloc(tokens.tks, tokens.cap * 2);
-    tokens.cap *= 2;
+    tokens->tks = realloc(tokens->tks, sizeof(Token *) * tokens->cap * 2);
+    tokens->cap *= 2;
   }
-  Token token;
-  token.txt = res;
-  token.type = type;
 
-  tokens.tks[tokens.len] = token;
-  tokens.len++;
+  tokens->tks[tokens->len] = token;
+  tokens->len++;
+
+  return token->len;
 }
 
 Tokens tokenize(char *input)
 {
   Tokens tokens;
-  tokens.tks = malloc(sizeof(char *)),
+  tokens.tks = malloc(sizeof(Token *)),
   tokens.len = 0;
   tokens.cap = 1;
 
   while (*input)
   {
     if (isdigit(*input))
-      makeToken(tokens, input, DIGIT);
+      input += makeToken(&tokens, input, DIGIT);
     else if (*input == '-' || *input == '+')
-      makeToken(tokens, input, PUNCT);
-
-    input++;
+      input += makeToken(&tokens, input, PUNCT);
+    else input++;
   }
 
   return tokens;
@@ -140,7 +144,8 @@ int main(int argc, char **argv)
   printf("\n");
   printf("main:\n");
 
-  tokenKeisan(tokenize(argv[1]));
+  Tokens tokens = tokenize(argv[1]);
+  tokenKeisan(tokens);
 
   printf("\tret\n");
   return 0;
