@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+
+typedef enum charType
+{
+  DIGIT,
+  ALPHA,
+  PUNCT,
+} TK_TYPE;
+
+typedef struct Token
+{
+  char *txt;
+  TK_TYPE type;
+} Token;
+
+typedef struct Tokens
+{
+  Token *tks;
+  int len;
+  int cap;
+} Tokens;
+
 void operation(char operator, long num)
 {
   switch (operator)
@@ -33,24 +54,15 @@ int generateKeisan(char *input)
   return 0;
 }
 
-typedef enum charType
+void tokenKeisan(Tokens tokens)
 {
-  DIGIT,
-  ALPHA,
-  PUNCT,
-} TK_TYPE;
+  printf("%d", atoi(tokens.tks->txt));
+  for (int i = 1; i < tokens.len; i++)
+  {
+    operation(tokens.tks[i].txt[0], atoi(tokens.tks[++i].txt));
+  }
+}
 
-typedef struct Token {
-  char *txt;
-  TK_TYPE type;
-} Token;
-
-typedef struct Tokens
-{
-  Token *tks;
-  int len;
-  int cap;
-} Tokens;
 
 void makeToken(Tokens tokens, char *input, TK_TYPE type)
 {
@@ -95,7 +107,7 @@ void makeToken(Tokens tokens, char *input, TK_TYPE type)
   tokens.len++;
 }
 
-char **tokenize(char *input)
+Tokens tokenize(char *input)
 {
   Tokens tokens;
   tokens.tks = malloc(sizeof(char *)),
@@ -111,6 +123,8 @@ char **tokenize(char *input)
 
     input++;
   }
+
+  return tokens;
 }
 
 int main(int argc, char **argv)
@@ -125,8 +139,9 @@ int main(int argc, char **argv)
   printf(".globl main\n");
   printf("\n");
   printf("main:\n");
-  if (generateKeisan(argv[1]))
-    return 1;
+
+  tokenKeisan(tokenize(argv[1]));
+
   printf("\tret\n");
   return 0;
 }
