@@ -38,16 +38,21 @@ typedef enum charType
   DIGIT,
   ALPHA,
   PUNCT,
-} CHAR_TYPE;
+} TK_TYPE;
+
+typedef struct Token {
+  char *txt;
+  TK_TYPE type;
+} Token;
 
 typedef struct Tokens
 {
-  char **tks;
+  Token *tks;
   int len;
   int cap;
 } Tokens;
 
-void makeToken(Tokens tokens, char *input, CHAR_TYPE type)
+void makeToken(Tokens tokens, char *input, TK_TYPE type)
 {
   int len = 0;
   char *res;
@@ -82,8 +87,11 @@ void makeToken(Tokens tokens, char *input, CHAR_TYPE type)
     tokens.tks = realloc(tokens.tks, tokens.cap * 2);
     tokens.cap *= 2;
   }
+  Token token;
+  token.txt = res;
+  token.type = type;
 
-  tokens.tks[tokens.len] = res;
+  tokens.tks[tokens.len] = token;
   tokens.len++;
 }
 
