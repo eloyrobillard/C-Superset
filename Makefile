@@ -1,6 +1,7 @@
 CFLAGS=-std=c11 -g -static
 
-9cc: 9cc.c
+# gcc -o 9cc 9cc.c が自動的に行われる
+9cc:
 
 test: 9cc
 				./test.sh
