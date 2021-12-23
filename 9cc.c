@@ -57,10 +57,12 @@ int generateKeisan(char *input)
 
 void tokenKeisan(Tokens tokens)
 {
-  printf("%d", atoi(tokens.tks[0]->txt));
+  printf("\tmov rax, %d\n", atoi(tokens.tks[0]->txt));
   for (int i = 1; i < tokens.len; i++)
   {
-    operation(tokens.tks[i]->txt[0], atoi(tokens.tks[++i]->txt));
+    char operator= tokens.tks[i]->txt[0];
+    i++;
+    operation(operator, atoi(tokens.tks[i]->txt));
   }
 }
 
