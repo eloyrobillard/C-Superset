@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
 typedef enum charType
 {
   DIGIT,
@@ -66,7 +65,6 @@ void tokenKeisan(Tokens tokens)
   }
 }
 
-
 int makeToken(Tokens *tokens, char *input, TK_TYPE type)
 {
   int len = 0;
@@ -127,7 +125,8 @@ Tokens tokenize(char *input)
       input += makeToken(&tokens, input, DIGIT);
     else if (*input == '-' || *input == '+')
       input += makeToken(&tokens, input, PUNCT);
-    else input++;
+    else
+      input++;
   }
 
   return tokens;
