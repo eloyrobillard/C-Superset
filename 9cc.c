@@ -65,7 +65,8 @@ void tokenKeisan(Tokens tokens)
   }
 }
 
-Token *createToken(char *txt, int len, TK_TYPE type) {
+Token *createToken(char *txt, int len, TK_TYPE type)
+{
   Token *token = malloc(sizeof(Token));
   token->txt = txt;
   token->len = len;
