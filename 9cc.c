@@ -1,125 +1,100 @@
+#include <stdarg.h>
+#include <string.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 
 typedef enum TK_Type
 {
-  DIGIT,
-  ALPHA,
-  PUNCT,
+  TK_RESERVED,
+  TK_NUM,
+  TK_EOF
 } TK_TYPE;
 
-typedef struct Token
+typedef struct Token Token;
+struct Token
 {
-  char *txt;
-  int len;
   TK_TYPE type;
-} Token;
+  struct Token *next;
+  long val;  // for int tokens
+  char *str; // for all tokens
+};
 
-typedef struct TokenList
-{
-  Token **tks;
-  int len;
-  int cap;
-} TokenList;
+Token *token;
 
-void operation(char operator, long num)
+void error(const char *fmt, ...)
 {
-  switch (operator)
-  {
-  case '+':
-    printf("\tadd rax, %ld\n", num);
-    break;
-  case '-':
-    printf("\tsub rax, %ld\n", num);
-    break;
-  }
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
 }
 
-void token_keisan(TokenList tkls)
+bool consume(char op)
 {
-  printf("\tmov rax, %d\n", atoi(tkls.tks[0]->txt));
-  for (int i = 1; i < tkls.len; i++)
-  {
-    char operator= tkls.tks[i]->txt[0];
-    i++;
-    operation(operator, atoi(tkls.tks[i]->txt));
-  }
+  if (token->type != TK_RESERVED || token->str[0] != op)
+    return false;
+  token = token->next;
+  return true;
 }
 
-Token *new_token(char *txt, int len, TK_TYPE type)
+void expect(char op)
 {
-  Token *token = malloc(sizeof(Token));
-  token->txt = txt;
-  token->len = len;
+  if (token->type != TK_RESERVED || token->str[0] != op)
+    error("'%c'ではありません\n", op);
+  token = token->next;
+}
+
+long expect_num()
+{
+  if (token->type != TK_NUM)
+    error("数ではありません\n");
+  int val = token->val;
+  token = token->next;
+  return val;
+}
+
+bool at_eof()
+{
+  return token->type == TK_EOF;
+}
+
+Token *new_token(TK_TYPE type, Token *cur, char *str)
+{
+  Token *token = calloc(1, sizeof(Token));
   token->type = type;
+  token->str = str;
+  cur->next = token;
 
   return token;
 }
 
-int fill_token(TokenList *tkls, char *input, TK_TYPE type)
+Token *tokenize(char *p)
 {
-  int len = 0;
+  Token head;
+  head.next = NULL;
+  Token *cur = &head;
 
-  Token *token;
-
-  switch (type)
+  while (*p)
   {
-  case DIGIT:
-    while (isdigit(*input))
+    while (isspace(*p))
+      p++;
+
+    if (*p == '-' || *p == '+')
+      cur = new_token(TK_RESERVED, cur, p++);
+    else if (isdigit(*p))
     {
-      input++;
-      len++;
+      cur = new_token(TK_NUM, cur, p);
+      cur->val = strtol(p, &p, 10);
     }
-
-    char *txt = malloc(len);
-    input -= len;
-    for (int i = 0; i < len; i++)
-    {
-      txt[i] = input[i];
-    }
-
-    token = new_token(txt, len, type);
-    break;
-
-  case PUNCT:
-    token = new_token(input, 1, type);
-    break;
-
-  default:
-    return 0;
-  }
-
-  if (tkls->len >= tkls->cap - 1)
-  {
-    tkls->tks = realloc(tkls->tks, sizeof(Token *) * tkls->cap * 2);
-    tkls->cap *= 2;
-  }
-
-  tkls->tks[tkls->len] = token;
-  tkls->len++;
-
-  return token->len;
-}
-
-TokenList tokenize(char *input)
-{
-  TokenList tkls;
-  tkls.tks = malloc(sizeof(Token *)),
-  tkls.len = 0;
-  tkls.cap = 1;
-
-  while (*input)
-  {
-    if (isdigit(*input))
-      input += fill_token(&tkls, input, DIGIT);
-    else if (*input == '-' || *input == '+')
-      input += fill_token(&tkls, input, PUNCT);
     else
-      input++;
+      error("トークナイズできません");
   }
 
-  return tkls;
+  new_token(TK_EOF, cur, p);
+  return head.next;
 }
 
 int main(int argc, char **argv)
@@ -130,13 +105,24 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  token = tokenize(argv[1]);
+
   printf(".intel_syntax noprefix\n");
   printf(".globl main\n");
   printf("\n");
   printf("main:\n");
 
-  TokenList tkls = tokenize(argv[1]);
-  token_keisan(tkls);
+  printf("\tmov rax, %ld\n", expect_num());
+  while (!at_eof())
+  {
+    if (consume('+'))
+    {
+      printf("\tadd rax, %ld\n", expect_num());
+    }
+
+    expect('-');
+    printf("\tsub rax, %ld\n", expect_num());
+  }
 
   printf("\tret\n");
   return 0;
