@@ -79,8 +79,11 @@ Token *tokenize(char *p)
 
   while (*p)
   {
-    while (isspace(*p))
+    // 空白文字をスキップ
+    if (isspace(*p)) {
       p++;
+      continue;
+    }
 
     if (*p == '-' || *p == '+')
       cur = new_token(TK_RESERVED, cur, p++);
