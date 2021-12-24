@@ -22,11 +22,17 @@ struct Token
 };
 
 Token *token;
+char *usr_in;
 
-void error(const char *fmt, ...)
+void error_at(char *loc, const char *fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
+
+  int off = loc - usr_in;
+  fprintf(stderr, "%s\n", usr_in);
+  fprintf(stderr, "%*s", off, " "); // pos個の空白を出力
+  fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
   exit(1);
@@ -43,14 +49,14 @@ bool consume(char op)
 void expect(char op)
 {
   if (token->type != TK_RESERVED || token->str[0] != op)
-    error("'%c'ではありません\n", op);
+    error_at(token->str, "'%c'ではありません\n", op);
   token = token->next;
 }
 
 long expect_num()
 {
   if (token->type != TK_NUM)
-    error("数ではありません\n");
+    error_at(token->str, "数ではありません\n");
   int val = token->val;
   token = token->next;
   return val;
@@ -93,7 +99,7 @@ Token *tokenize(char *p)
       cur->val = strtol(p, &p, 10);
     }
     else
-      error("トークナイズできません");
+      error_at(token->str, "トークナイズできません");
   }
 
   new_token(TK_EOF, cur, p);
@@ -108,6 +114,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  usr_in = argv[1];
   token = tokenize(argv[1]);
 
   printf(".intel_syntax noprefix\n");
