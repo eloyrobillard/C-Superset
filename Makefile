@@ -17,7 +17,6 @@ clean:
 #            data about, and you must also use it when linking.
 profout:
 				gcc -pg 9cc.c
-				./a.out " 5 +6 -4 +20 + 5 "
 
 profile: profout
 				./a.out " 5 +6 -4 +20 + 5 "
