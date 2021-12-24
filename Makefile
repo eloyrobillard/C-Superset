@@ -12,9 +12,8 @@ test: 9cc
 clean:
 				rm -f 9cc *.o *~ tmp*
 
-# NOTE -pg Generate extra code to write profile information suitable for the analysis program prof (for
-#            -p) or gprof (for -pg).  You must use this option when compiling the source files you want
-#            data about, and you must also use it when linking.
+# NOTE -pg Generate extra code to write profile information suitable for gprof. You must use this option when compiling
+# 				 the source files you want data about, and you must also use it when linking.
 profout:
 				gcc -pg 9cc.c
 
