@@ -2,7 +2,7 @@
 #            or DWARF).  GDB can work with this debugging information.
 CFLAGS=-std=c11 -g -static
 
-# gcc -o 9cc 9cc.c が自動的に行われる
+# NOTE gcc $(CFLAGS) -o 9cc 9cc.c が自動的に行われる
 9cc:
 
 test: 9cc
