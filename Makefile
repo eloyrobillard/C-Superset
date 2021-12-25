@@ -8,7 +8,6 @@ CFLAGS=-std=c11 -g -static
 test: 9cc
 				./test.sh
 
-
 clean:
 				rm -f 9cc *.o *~ tmp*
 
@@ -27,6 +26,13 @@ memcheck: profout
 cleanp:
 				rm -f *.out
 
-.MEM: memcheck cleanp
 .PHONY: test clean
+.MEM: memcheck cleanp
 .PERF: profile cleanp
+
+math-rd:
+test-math: math-rd
+						./test.sh
+clean-math:
+				rm -f math-rd *.o *~ tmp*
+.MATH: test-math clean-math

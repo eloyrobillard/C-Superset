@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 /*
  * expr    = mul ("+" mul | "-" mul)*
@@ -104,20 +105,38 @@ Node *make_tree(char **p)
   return node;
 }
 
-long solve_tree(Node *tree)
+void solve_tree(Node *tree, bool left)
 {
+  if (tree->type == ND_NUM)
+  {
+    left ? printf("\tmov rax, %ld\n", tree->val) : printf("\tmov rbx, %ld\n", tree->val);
+    return;
+  }
+
+  if (tree->left->type == ND_NUM && tree->right->type != ND_NUM)
+  {
+    solve_tree(tree->right, false);
+    solve_tree(tree->left, true);
+  }
+  else
+  {
+    solve_tree(tree->left, true);
+    solve_tree(tree->right, false);
+  }
   switch (tree->type)
   {
-  case ND_NUM:
-    return tree->val;
   case ND_ADD:
-    return solve_tree(tree->left) + solve_tree(tree->left);
+    left ? printf("\tadd rax, rbx\n") : printf("\tadd rbx, rax\n");
+    break;
   case ND_SUB:
-    return solve_tree(tree->left) - solve_tree(tree->left);
+    left ? printf("\tsub rax, rbx\n") : printf("\tsub rbx, rax\n");
+    break;
   case ND_MUL:
-    return solve_tree(tree->left) * solve_tree(tree->left);
+    left ? printf("\timul rax, rbx\n") : printf("\timul rbx, rax\n");
+    break;
   case ND_DIV:
-    return solve_tree(tree->left) / solve_tree(tree->left);
+    left ? printf("\tdiv rax, rbx\n") : printf("\tdiv rbx, rax\n");
+    break;
   }
 }
 
@@ -129,7 +148,14 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  Node *root = make_tree(++argv);
+  printf(".intel_syntax noprefix\n");
+  printf(".globl main\n");
+  printf("\n");
+  printf("main:\n");
 
-  return solve_tree(root);
+  Node *root = make_tree(++argv);
+  solve_tree(root, true);
+
+  printf("\tret\n");
+  return 0;
 }
