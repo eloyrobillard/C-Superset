@@ -104,6 +104,23 @@ Node *make_tree(char **p)
   return node;
 }
 
+long solve_tree(Node *tree)
+{
+  switch (tree->type)
+  {
+  case ND_NUM:
+    return tree->val;
+  case ND_ADD:
+    return solve_tree(tree->left) + solve_tree(tree->left);
+  case ND_SUB:
+    return solve_tree(tree->left) - solve_tree(tree->left);
+  case ND_MUL:
+    return solve_tree(tree->left) * solve_tree(tree->left);
+  case ND_DIV:
+    return solve_tree(tree->left) / solve_tree(tree->left);
+  }
+}
+
 int main(int argc, char **argv)
 {
   if (argc != 2)
@@ -113,4 +130,6 @@ int main(int argc, char **argv)
   }
 
   Node *root = make_tree(++argv);
+
+  return solve_tree(root);
 }
