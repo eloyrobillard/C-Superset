@@ -27,6 +27,8 @@ struct Node
   long val;
 };
 
+Node *make_tree(char **);
+
 Node *get_prim(char **p)
 {
   Node *node = calloc(1, sizeof(Node));
@@ -40,7 +42,7 @@ Node *get_prim(char **p)
   (*p)++;
   while (isspace(**p))
     (*p)++;
-  node = get_expr(p);
+  node = make_tree(p);
   return node;
 }
 
@@ -49,57 +51,57 @@ Node *get_mul(char **p)
   Node *node = calloc(1, sizeof(Node));
   node->str = *p;
   node->left = get_prim(p);
-  while (**p)
-  {
-    if (**p == '*')
-      node->type = ND_MUL;
-    else if (**p == '/')
-      node->type = ND_DIV;
-  }
-  if (**p)
-    node->right = get_prim(p);
+
+  while (isspace(**p))
+    (*p)++;
+  if (**p == '*')
+    node->type = ND_MUL;
+  else if (**p == '/')
+    node->type = ND_DIV;
   else
-    node = node->left;
+    return node->left;
+
+  (*p)++;
+  while (isspace(**p))
+    (*p)++;
+  node->right = get_prim(p);
   return node;
 }
 
-Node *get_expr(char **p)
+Node *get_expr(Node *left, char **p)
 {
   Node *node = calloc(1, sizeof(Node));
   node->str = *p;
-  node->left = get_mul(p);
-  while (**p)
-  {
-    if (**p == '+')
-      node->type = ND_ADD;
-    else if (**p == '-')
-      node->type = ND_SUB;
-  }
-  if (**p)
-    node->right = get_mul(p);
+  node->left = left;
+
+  while (isspace(**p))
+    (*p)++;
+  if (**p == '+')
+    node->type = ND_ADD;
+  else if (**p == '-')
+    node->type = ND_SUB;
   else
-    node = node->left;
+    return node->left;
+
+  (*p)++;
+  while (isspace(**p))
+    (*p)++;
+  node->right = get_mul(p);
   return node;
 }
 
-Node *make_tree(char *p)
+Node *make_tree(char **p)
 {
-  Node root;
-  Node *cur = &root;
+  while (isspace(**p))
+    (*p)++;
 
-  while (*p && *p != ')')
+  Node *node = get_mul(p);
+  while (**p)
   {
-    if (isspace(*p))
-    {
-      p++;
-      continue;
-    }
-
-    root.left = get_expr(&p);
-    // else error("無効な入力");
+    node = get_expr(node, p);
   }
 
-  return cur->left;
+  return node;
 }
 
 int main(int argc, char **argv)
@@ -110,5 +112,5 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  Node *root = make_tree(argv[1]);
+  Node *root = make_tree(++argv);
 }
