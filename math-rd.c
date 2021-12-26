@@ -97,10 +97,12 @@ Node *make_tree(char **p)
     (*p)++;
 
   Node *node = get_mul(p);
-  while (**p)
+  while (**p && **p != ')')
   {
     node = get_expr(node, p);
   }
+  if (**p == ')')
+    (*p)++;
 
   return node;
 }
@@ -135,7 +137,7 @@ void solve_tree(Node *tree, bool left)
     left ? printf("\timul rax, rbx\n") : printf("\timul rbx, rax\n");
     break;
   case ND_DIV:
-    left ? printf("\tdiv rax, rbx\n") : printf("\tdiv rbx, rax\n");
+    left ? printf("\tdiv rax\n") : printf("\tdiv rbx\n");
     break;
   }
 }
