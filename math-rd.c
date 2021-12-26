@@ -111,38 +111,47 @@ Node *make_tree(char **p)
   return node;
 }
 
-void solve_tree(Node *tree, bool left)
+void print_op(Node *node, char ***top)
 {
-  if (tree->type == ND_NUM)
+  switch (node->type)
   {
-    left ? printf("\tmov rax, %ld\n", tree->val) : printf("\tmov rbx, %ld\n", tree->val);
-    return;
+  case ND_ADD:
+    if (node->right->type != ND_NUM)
+      printf("\tadd %s, %s\n", *(*top)--, *(*top)--);
+    else
+      printf("\tadd %s, %ld\n", *(*top)--, node->right->val);
+    break;
+  case ND_SUB:
+    if (node->right->type != ND_NUM)
+      printf("\tsub %s, %s\n", *(*top)--, *(*top)--);
+    else
+      printf("\tsub %s, %ld\n", *(*top)--, node->right->val);
+    break;
+  case ND_MUL:
+    if (node->right->type != ND_NUM)
+      printf("\timul %s, %s\n", *(*top)--, *(*top)--);
+    else
+      printf("\timul %s, %ld\n", *(*top)--, node->right->val);
+    break;
+  case ND_DIV:
+    printf("\tdiv %s\n", *(*top)--);
+    break;
   }
+}
 
-  if (tree->left->type == ND_NUM && tree->right->type != ND_NUM)
+void solve_tree(Node *tree, char ***top)
+{
+  if (tree->right->altitude > tree->left->altitude)
   {
-    solve_tree(tree->right, false);
-    solve_tree(tree->left, true);
+    solve_tree(tree->right, top);
+    solve_tree(tree->left, top);
+    print_op(tree, top);
   }
   else
   {
-    solve_tree(tree->left, true);
-    solve_tree(tree->right, false);
-  }
-  switch (tree->type)
-  {
-  case ND_ADD:
-    left ? printf("\tadd rax, rbx\n") : printf("\tadd rbx, rax\n");
-    break;
-  case ND_SUB:
-    left ? printf("\tsub rax, rbx\n") : printf("\tsub rbx, rax\n");
-    break;
-  case ND_MUL:
-    left ? printf("\timul rax, rbx\n") : printf("\timul rbx, rax\n");
-    break;
-  case ND_DIV:
-    left ? printf("\tdiv rax\n") : printf("\tdiv rbx\n");
-    break;
+    solve_tree(tree->left, top);
+    solve_tree(tree->right, top);
+    print_op(tree, top);
   }
 }
 
@@ -160,7 +169,15 @@ int main(int argc, char **argv)
   printf("main:\n");
 
   Node *root = make_tree(++argv);
-  solve_tree(root, true);
+  char **regs = calloc(root->altitude, sizeof(char*));
+  regs[0] = "rax";
+  for (int i = 1; i < root->altitude; i++) 
+  {
+    regs[i][0] = 'r';
+    regs[i][1] = i - 1 + '0';
+  }
+  char **top = &regs[root->altitude - 1];
+  solve_tree(root, &top);
 
   printf("\tret\n");
   return 0;
