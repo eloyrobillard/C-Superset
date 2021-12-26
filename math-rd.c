@@ -23,6 +23,7 @@ struct Node
 {
   Node *left;
   Node *right;
+  int altitude;
   NodeType type;
   char *str;
   long val;
@@ -38,6 +39,7 @@ Node *get_prim(char **p)
   {
     node->type = ND_NUM;
     node->val = strtol(*p, p, 10);
+    node->altitude = 0;
     return node;
   }
   (*p)++;
@@ -66,6 +68,7 @@ Node *get_mul(char **p)
   while (isspace(**p))
     (*p)++;
   node->right = get_prim(p);
+  node->altitude = 1 + (node->right->altitude > node->left->altitude ? node->right->altitude : node->left->altitude);
   return node;
 }
 
@@ -88,6 +91,7 @@ Node *get_expr(Node *left, char **p)
   while (isspace(**p))
     (*p)++;
   node->right = get_mul(p);
+  node->altitude = 1 + (node->right->altitude > node->left->altitude ? node->right->altitude : node->left->altitude);
   return node;
 }
 
