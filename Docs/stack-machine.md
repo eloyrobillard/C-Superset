@@ -29,7 +29,6 @@ MUL
 
 push 3
 push 4
-ADD
 
 // 左辺と右辺をRAXとRDIにポップして足す
 pop rdi

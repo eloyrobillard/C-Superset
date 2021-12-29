@@ -223,13 +223,14 @@ void gen(Node *tree)
     printf("\timul rax, rdi\n");
     break;
   case ND_DIV:
+    printf("\tcqo\n");
     printf("\tidiv rdi\n");
     break;
   default:
     break;
   }
 
-  printf("\tpush rax");
+  printf("\tpush rax\n");
 }
 
 int main(int argc, char **argv)
@@ -250,8 +251,10 @@ int main(int argc, char **argv)
   printf("main:\n");
 
   gen(tree);
-  free(tree);
 
+  // スタックトップに式全体の値が残っているはずなので
+  // それをRAXにロードして関数からの返り値とする
+  printf("\tpop rax\n");
   printf("\tret\n");
   return 0;
 }
