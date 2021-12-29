@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
 /*
  * expr    = mul ("+" mul | "-" mul)*
  * mul     = primary ("*" primary | "/" primary)*
@@ -13,25 +12,28 @@
  */
 
 // 抽象構文木のノードの種類
-typedef enum {
-  ND_ADD, // +
-  ND_SUB, // -
-  ND_MUL, // *
-  ND_DIV, // /
-  ND_NUM, // 整数
+typedef enum
+{
+  ND_ADD, //* +
+  ND_SUB, //* -
+  ND_MUL, //* *
+  ND_DIV, //* /
+  ND_NUM, //* 整数
 } NodeKind;
 
 typedef struct Node Node;
 
 // 抽象構文木のノードの型
-struct Node {
-  NodeKind kind; // ノードの型
-  Node *lhs;     // 左辺
-  Node *rhs;     // 右辺
-  int val;       // kindがND_NUMの場合のみ使う
+struct Node
+{
+  NodeKind kind; //! ノードの型
+  Node *lhs;     //! 左辺
+  Node *rhs;     //! 右辺
+  int val;       //! kindがND_NUMの場合のみ使う
 };
 
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
+Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
+{
   Node *node = calloc(1, sizeof(Node));
   node->kind = kind;
   node->lhs = lhs;
@@ -39,7 +41,8 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   return node;
 }
 
-Node *new_node_num(int val) {
+Node *new_node_num(int val)
+{
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val = val;
@@ -103,7 +106,6 @@ long expect_num()
   return val;
 }
 
-
 bool at_eof()
 {
   return token->type == TK_EOF;
@@ -128,7 +130,8 @@ Token *tokenize(char *p)
   while (*p)
   {
     // 空白文字をスキップ
-    if (isspace(*p)) {
+    if (isspace(*p))
+    {
       p++;
       continue;
     }
@@ -150,9 +153,11 @@ Token *tokenize(char *p)
 
 Node *expr();
 
-Node *primary() {
+Node *primary()
+{
   // 次のトークンが"("なら、"(" expr ")"のはず
-  if (consume('(')) {
+  if (consume('('))
+  {
     Node *node = expr();
     expect(')');
     return node;
@@ -162,10 +167,12 @@ Node *primary() {
   return new_node_num(expect_num());
 }
 
-Node *mul() {
+Node *mul()
+{
   Node *node = primary();
 
-  for (;;) {
+  for (;;)
+  {
     if (consume('*'))
       node = new_node(ND_MUL, node, primary());
     else if (consume('/'))
@@ -175,10 +182,12 @@ Node *mul() {
   }
 }
 
-Node *expr() {
+Node *expr()
+{
   Node *node = mul();
 
-  for (;;) {
+  for (;;)
+  {
     if (consume('+'))
       node = new_node(ND_ADD, node, mul());
     else if (consume('-'))
@@ -186,6 +195,41 @@ Node *expr() {
     else
       return node;
   }
+}
+
+void gen(Node *tree)
+{
+  if (tree->kind == ND_NUM)
+  {
+    printf("\tpush %d\n", tree->val);
+    return;
+  }
+
+  gen(tree->lhs);
+  gen(tree->rhs);
+
+  printf("\tpop rdi\n");
+  printf("\tpop rax\n");
+
+  switch (tree->kind)
+  {
+  case ND_ADD:
+    printf("\tadd rax, rdi\n");
+    break;
+  case ND_SUB:
+    printf("\tsub rax, rdi\n");
+    break;
+  case ND_MUL:
+    printf("\timul rax, rdi\n");
+    break;
+  case ND_DIV:
+    printf("\tidiv rdi\n");
+    break;
+  default:
+    break;
+  }
+
+  printf("\tpush rax");
 }
 
 int main(int argc, char **argv)
@@ -205,17 +249,8 @@ int main(int argc, char **argv)
   printf("\n");
   printf("main:\n");
 
-  printf("\tmov rax, %ld\n", expect_num());
-  while (!at_eof())
-  {
-    if (consume('+'))
-    {
-      printf("\tadd rax, %ld\n", expect_num());
-    }
-
-    expect('-');
-    printf("\tsub rax, %ld\n", expect_num());
-  }
+  gen(tree);
+  free(tree);
 
   printf("\tret\n");
   return 0;

@@ -29,10 +29,3 @@ cleanp:
 .PHONY: test clean
 .MEM: memcheck cleanp
 .PERF: profile cleanp
-
-math-rd:
-test-math: math-rd
-						./test.sh
-clean-math:
-				rm -f math-rd *.o *~ tmp*
-.MATH: test-math clean-math
