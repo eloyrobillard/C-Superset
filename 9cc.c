@@ -103,6 +103,51 @@ long expect_num()
   return val;
 }
 
+
+bool at_eof()
+{
+  return token->type == TK_EOF;
+}
+
+Token *new_token(TK_TYPE type, Token *cur, char *str)
+{
+  Token *token = calloc(1, sizeof(Token));
+  token->type = type;
+  token->str = str;
+  cur->next = token;
+
+  return token;
+}
+
+Token *tokenize(char *p)
+{
+  Token head;
+  head.next = NULL;
+  Token *cur = &head;
+
+  while (*p)
+  {
+    // 空白文字をスキップ
+    if (isspace(*p)) {
+      p++;
+      continue;
+    }
+
+    if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+      cur = new_token(TK_RESERVED, cur, p++);
+    else if (isdigit(*p))
+    {
+      cur = new_token(TK_NUM, cur, p);
+      cur->val = strtol(p, &p, 10);
+    }
+    else
+      error_at(token->str, "トークナイズできません");
+  }
+
+  new_token(TK_EOF, cur, p);
+  return head.next;
+}
+
 Node *expr();
 
 Node *primary() {
@@ -143,50 +188,6 @@ Node *expr() {
   }
 }
 
-bool at_eof()
-{
-  return token->type == TK_EOF;
-}
-
-Token *new_token(TK_TYPE type, Token *cur, char *str)
-{
-  Token *token = calloc(1, sizeof(Token));
-  token->type = type;
-  token->str = str;
-  cur->next = token;
-
-  return token;
-}
-
-Token *tokenize(char *p)
-{
-  Token head;
-  head.next = NULL;
-  Token *cur = &head;
-
-  while (*p)
-  {
-    // 空白文字をスキップ
-    if (isspace(*p)) {
-      p++;
-      continue;
-    }
-
-    if (*p == '-' || *p == '+')
-      cur = new_token(TK_RESERVED, cur, p++);
-    else if (isdigit(*p))
-    {
-      cur = new_token(TK_NUM, cur, p);
-      cur->val = strtol(p, &p, 10);
-    }
-    else
-      error_at(token->str, "トークナイズできません");
-  }
-
-  new_token(TK_EOF, cur, p);
-  return head.next;
-}
-
 int main(int argc, char **argv)
 {
   if (argc != 2)
@@ -197,6 +198,7 @@ int main(int argc, char **argv)
 
   usr_in = argv[1];
   token = tokenize(argv[1]);
+  Node *tree = expr();
 
   printf(".intel_syntax noprefix\n");
   printf(".globl main\n");
