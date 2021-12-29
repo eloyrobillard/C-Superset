@@ -21,3 +21,30 @@ SUB
 
 MUL
 ```
+
+## x86-64 レジスタマシン翻訳
+
+``` rust
+3 4 + 1 2 - /：
+
+push 3
+push 4
+ADD
+
+// 左辺と右辺をRAXとRDIにポップして足す
+pop rdi
+pop rax
+add rax, rdi
+// 足した結果をスタックにプッシュ
+push rax
+
+push 1
+push 2
+
+// 左辺と右辺をRAXとRDIにポップして割る
+pop rdi
+pop rax
+imul rdi
+// 足した結果をスタックにプッシュ
+push rax
+```
