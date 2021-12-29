@@ -178,7 +178,7 @@ Node *unary()
 
 Node *mul()
 {
-  Node *node = primary();
+  Node *node = unary();
 
   for (;;)
   {
