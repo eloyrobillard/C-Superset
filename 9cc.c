@@ -5,6 +5,26 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+typedef enum TK_Type
+{
+  TK_RESERVED,
+  TK_NUM,
+  TK_EOF
+} TK_TYPE;
+
+typedef struct Token Token;
+struct Token
+{
+  TK_TYPE type;
+  struct Token *next;
+  long val;  // for int tokens
+  char *str; // for all tokens
+  int len;
+};
+
+Token *token;
+char *usr_in;
+
 /*
  * expr    = mul ("+" mul | "-" mul)*
  * mul     = primary ("*" primary | "/" primary)*
@@ -49,25 +69,6 @@ Node *new_node_num(int val)
   return node;
 }
 
-typedef enum TK_Type
-{
-  TK_RESERVED,
-  TK_NUM,
-  TK_EOF
-} TK_TYPE;
-
-typedef struct Token Token;
-struct Token
-{
-  TK_TYPE type;
-  struct Token *next;
-  long val;  // for int tokens
-  char *str; // for all tokens
-};
-
-Token *token;
-char *usr_in;
-
 void error_at(char *loc, const char *fmt, ...)
 {
   va_list ap;
@@ -82,17 +83,18 @@ void error_at(char *loc, const char *fmt, ...)
   exit(1);
 }
 
-bool consume(char op)
+bool consume(char *op)
 {
-  if (token->type != TK_RESERVED || token->str[0] != op)
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
     return false;
+
   token = token->next;
   return true;
 }
 
-void expect(char op)
+void expect(char *op)
 {
-  if (token->type != TK_RESERVED || token->str[0] != op)
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
     error_at(token->str, "'%c'ではありません\n", op);
   token = token->next;
 }
@@ -156,10 +158,10 @@ Node *expr();
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
-  if (consume('('))
+  if (consume("("))
   {
     Node *node = expr();
-    expect(')');
+    expect(")");
     return node;
   }
 
@@ -169,10 +171,10 @@ Node *primary()
 
 Node *unary()
 {
-  if (consume('-'))
+  if (consume("-"))
     return new_node(ND_SUB, new_node_num(0), primary());
 
-  consume('+');
+  consume("+");
   return primary();
 }
 
@@ -182,9 +184,9 @@ Node *mul()
 
   for (;;)
   {
-    if (consume('*'))
+    if (consume("*"))
       node = new_node(ND_MUL, node, unary());
-    else if (consume('/'))
+    else if (consume("/"))
       node = new_node(ND_DIV, node, unary());
     else
       return node;
@@ -197,9 +199,9 @@ Node *expr()
 
   for (;;)
   {
-    if (consume('+'))
+    if (consume("+"))
       node = new_node(ND_ADD, node, mul());
-    else if (consume('-'))
+    else if (consume("-"))
       node = new_node(ND_SUB, node, mul());
     else
       return node;
