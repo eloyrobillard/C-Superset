@@ -95,7 +95,7 @@ void error_at(char *loc, const char *fmt, ...)
 
 bool consume(char *op)
 {
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (token->type != TK_RESERVED || token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
     return false;
 
   token = token->next;
@@ -104,7 +104,7 @@ bool consume(char *op)
 
 void expect(char *op)
 {
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (token->type != TK_RESERVED || token->type != TK_RESERVED ||  strlen(op) != token->len || memcmp(token->str, op, token->len))
     error_at(token->str, "'%c'ではありません\n", op);
   token = token->next;
 }
@@ -123,11 +123,12 @@ bool at_eof()
   return token->type == TK_EOF;
 }
 
-Token *new_token(TK_TYPE type, Token *cur, char *str)
+Token *new_token(TK_TYPE type, Token *cur, char *str, int len)
 {
   Token *token = calloc(1, sizeof(Token));
   token->type = type;
   token->str = str;
+  token->len = len;
   cur->next = token;
 
   return token;
@@ -149,17 +150,35 @@ Token *tokenize(char *p)
     }
 
     if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
-      cur = new_token(TK_RESERVED, cur, p++);
+      cur = new_token(TK_RESERVED, cur, p++, 1);
+    else if (*p == '=' || *p == '!')
+    {
+      cur = new_token(TK_RESERVED, cur, p, 2);
+      p += 2;
+    }
+    else if (*p == '<' || *p == '>')
+    {
+      if (*(p+1) == '=') 
+      {
+        cur = new_token(TK_RESERVED, cur, p, 2);
+        p += 2;
+      }
+      else
+      {
+        cur = new_token(TK_RESERVED, cur, p, 1);
+        p++;
+      }
+    }
     else if (isdigit(*p))
     {
-      cur = new_token(TK_NUM, cur, p);
+      cur = new_token(TK_NUM, cur, p, 1);
       cur->val = strtol(p, &p, 10);
     }
     else
       error_at(token->str, "トークナイズできません");
   }
 
-  new_token(TK_EOF, cur, p);
+  new_token(TK_EOF, cur, p, 1);
   return head.next;
 }
 
