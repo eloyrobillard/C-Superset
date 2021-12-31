@@ -5,6 +5,16 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+/*
+ * expr       = equality
+ * equality   = relational ("==" relational | "!=" relational)*
+ * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
+ * add        = mul ("+" mul | "-" mul)*
+ * mul        = unary ("*" unary | "/" unary)*
+ * unary      = ("+" | "-")? primary
+ * primary    = num | "(" expr ")"
+ */
+
 typedef enum TK_Type
 {
   TK_RESERVED,
@@ -25,15 +35,15 @@ struct Token
 Token *token;
 char *usr_in;
 
-/*
- * expr    = mul ("+" mul | "-" mul)*
- * mul     = primary ("*" primary | "/" primary)*
- * primary = num | "(" expr ")"
- */
-
 // 抽象構文木のノードの種類
 typedef enum
 {
+  ND_EQ,
+  ND_NEQ,
+  ND_LESS,
+  ND_LESSEQ,
+  ND_MORE,
+  ND_MOREEQ,
   ND_ADD, //* +
   ND_SUB, //* -
   ND_MUL, //* *
@@ -193,7 +203,7 @@ Node *mul()
   }
 }
 
-Node *expr()
+Node *add()
 {
   Node *node = mul();
 
@@ -206,6 +216,45 @@ Node *expr()
     else
       return node;
   }
+}
+
+Node *relational()
+{
+  Node *node = add();
+
+  for (;;)
+  {
+    if (consume("<"))
+      node = new_node(ND_LESS, node, add());
+    else if (consume("<="))
+      node = new_node(ND_LESSEQ, node, add());
+    else if (consume(">"))
+      node = new_node(ND_MORE, node, add());
+    else if (consume(">="))
+      node = new_node(ND_MOREEQ, node, add());
+    else
+      return node;
+  }
+}
+
+Node *equality()
+{
+  Node *node = relational();
+
+  for (;;)
+  {
+    if (consume("=="))
+      node = new_node(ND_EQ, node, relational());
+    else if (consume("!="))
+      node = new_node(ND_NEQ, node, relational());
+    else
+      return node;
+  }
+}
+
+Node *expr()
+{
+  return equality();
 }
 
 void gen(Node *tree)
