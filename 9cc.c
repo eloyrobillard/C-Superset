@@ -41,9 +41,7 @@ typedef enum
   ND_EQ,
   ND_NEQ,
   ND_LESS,
-  ND_LESSEQ,
-  ND_MORE,
-  ND_MOREEQ,
+  ND_LEQ,
   ND_ADD, //* +
   ND_SUB, //* -
   ND_MUL, //* *
@@ -104,7 +102,7 @@ bool consume(char *op)
 
 void expect(char *op)
 {
-  if (token->type != TK_RESERVED || token->type != TK_RESERVED ||  strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (token->type != TK_RESERVED || token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
     error_at(token->str, "'%c'ではありません\n", op);
   token = token->next;
 }
@@ -158,7 +156,7 @@ Token *tokenize(char *p)
     }
     else if (*p == '<' || *p == '>')
     {
-      if (*(p+1) == '=') 
+      if (*(p + 1) == '=')
       {
         cur = new_token(TK_RESERVED, cur, p, 2);
         p += 2;
@@ -246,11 +244,11 @@ Node *relational()
     if (consume("<"))
       node = new_node(ND_LESS, node, add());
     else if (consume("<="))
-      node = new_node(ND_LESSEQ, node, add());
+      node = new_node(ND_LEQ, node, add());
     else if (consume(">"))
-      node = new_node(ND_MORE, node, add());
+      node = new_node(ND_LESS, add(), node);
     else if (consume(">="))
-      node = new_node(ND_MOREEQ, node, add());
+      node = new_node(ND_LEQ, add(), node);
     else
       return node;
   }
@@ -292,6 +290,26 @@ void gen(Node *tree)
 
   switch (tree->kind)
   {
+  case ND_EQ:
+    printf("\tcmp rax, rdi\n");
+    printf("\tsete al\n");
+    printf("\tmovzb rax, al\n");
+    break;
+  case ND_NEQ:
+    printf("\tcmp rax, rdi\n");
+    printf("\tsetne al\n");
+    printf("\tmovzb rax, al\n");
+    break;
+  case ND_LESS:
+    printf("\tcmp rax, rdi\n");
+    printf("\tsetl al\n");
+    printf("\tmovzb rax, al\n");
+    break;
+  case ND_LEQ:
+    printf("\tcmp rax, rdi\n");
+    printf("\tsetle al\n");
+    printf("\tmovzb rax, al\n");
+    break;
   case ND_ADD:
     printf("\tadd rax, rdi\n");
     break;

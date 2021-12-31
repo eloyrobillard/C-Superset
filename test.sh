@@ -28,5 +28,6 @@ assert 47 '5+6*7'
 assert 15 '5*(9-6)'
 assert 4 '(3+5)/2'
 assert 252 '-(3+5)/2' # 256 - 4 wrap
+assert 4 ' ((1 < 2) + (3 > 2)) * 2 '
 
 echo OK
