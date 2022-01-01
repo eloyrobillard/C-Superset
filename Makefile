@@ -1,9 +1,14 @@
 # NOTE -g Produce debugging information in the operating system's native format (stabs, COFF, XCOFF,
 #            or DWARF).  GDB can work with this debugging information.
 CFLAGS=-std=c11 -g -static
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
 
 # NOTE gcc $(CFLAGS) -o 9cc 9cc.c が自動的に行われる
-9cc:
+9cc: $(OBJS)
+			$(CC) -o 9cc $(OBJS) $(LDFLAGS)
+
+$(OBJS): 9cc.h
 
 test: 9cc
 				./test.sh
