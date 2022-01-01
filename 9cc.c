@@ -5,6 +5,10 @@
 
 #include "9cc.h"
 
+extern Token *tokenize(char *);
+extern Node *expr();
+extern void gen(Node *);
+
 int main(int argc, char **argv)
 {
   if (argc != 2)
