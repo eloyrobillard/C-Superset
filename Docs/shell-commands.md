@@ -6,6 +6,9 @@
 
 * -d /bin/ls
    > lsアプリの逆アセンブリ
+* -D
+   > Like -d, but disassemble the contents of all sections, not just those expected to contain instructions.  \
+   > `char main[] = "\x48\xc7\xc0\x2a\x00\x00\x00\xc3";`みたいなデータを関数として逆アセンブルに用いる
 * -S
    > C言語のソースコード付きで逆アセンブル
 * -M intel
