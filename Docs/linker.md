@@ -48,7 +48,29 @@
 char main[] = "\x48\xc7\xc0\x2a\x00\x00\x00\xc3";
 ```
 
+以上のオブジェクトファイルを生成し、`objdump -D -M intel objFile` を実行すると：
 
+``` nasm
+Disassembly of section .data:
+
+0000000000000000 <main>:
+   0:   48 c7 c0 2a 00 00 00    mov    rax,0x2a
+   7:   c3     
+```
+
+さらに次を実行すると実行禁止領域というデフォルト動作を中止し、コードを実行できる：
+
+``` bash
+cc -static -Wl,--omagic -o foo foo.o
+```
+
+関変数の名前はただのラベルなので、そもそもデータとコードを区別しないリンカからみると main は変数だとしても構わない。
+
+``` bash
+$ ./foo
+$ echo $?
+42
+```
 
 ## ヘッダーファイルの必要性
 
