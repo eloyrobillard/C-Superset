@@ -48,7 +48,7 @@
 char main[] = "\x48\xc7\xc0\x2a\x00\x00\x00\xc3";
 ```
 
-以上のオブジェクトファイルを生成し、`objdump -D -M intel objFile` を実行すると：
+以上のオブジェクトファイルを生成（`cc -c foo.c`）し、`objdump -D -M intel foo` を実行すると：
 
 ``` nasm
 Disassembly of section .data:
