@@ -1,10 +1,3 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "9cc.h"
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
@@ -22,6 +15,15 @@ Node *new_node_num(int val)
   node->kind = ND_NUM;
   node->val = val;
   return node;
+}
+
+// Reports an error and exit.
+void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
 }
 
 void error_at(char *loc, const char *fmt, ...)
@@ -105,9 +107,7 @@ Token *tokenize(char *p)
     }
 
     if ('a' <= *p && *p <= 'z')
-    {
       cur = new_token(TK_IDENT, cur, p++, 1);
-    }
     else if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '=' || *p == '!')

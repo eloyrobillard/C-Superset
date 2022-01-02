@@ -2,6 +2,11 @@
 #define NCC_H
 
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
 * program    = stmt*
@@ -69,7 +74,7 @@ Token *tokenize(char *);
 Node *expr();
 Node *stmt();
 void gen(Node *);
-void error(char *);
+void error(char *, ...);
 void program();
 bool at_eof();
 Node *code[100];
