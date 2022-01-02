@@ -2,9 +2,9 @@
 
 #include "9cc.h"
 
-extern Token *tokenize(char *);
-extern Node *expr();
-extern void gen(Node *);
+extern Token *tokenize(char *); //! extern は入力不要
+extern Node *expr(); //! extern は入力不要
+extern void gen(Node *); //! extern は入力不要
 
 int main(int argc, char **argv)
 {
