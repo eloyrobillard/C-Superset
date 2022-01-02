@@ -7,6 +7,7 @@ extern Token *tokenize(char *); //! extern は入力不要
 extern Node *stmt();            //! extern は入力不要
 extern void gen(Node *);        //! extern は入力不要
 extern bool at_eof();           //! extern は入力不要
+extern Node *code[100];
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,8 @@ int main(int argc, char **argv)
   printf("\n");
   printf("main:\n");
 
-  gen(stmt());
+  for (int i = 0; code[i]; i++)
+    gen(code[i]);
 
   // スタックトップに式全体の値が残っているはずなので
   // それをRAXにロードして関数からの返り値とする
