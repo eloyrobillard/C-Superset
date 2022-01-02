@@ -52,7 +52,7 @@ Token *consume_ident()
   if (token->type != TK_IDENT)
     return NULL;
 
-  Token *tok = &token;
+  Token *tok = token;
   token = token->next;
   return tok;
 }
