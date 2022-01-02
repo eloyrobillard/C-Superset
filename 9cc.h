@@ -39,6 +39,7 @@ char *usr_in;
 typedef enum
 {
   ND_ASSIGN,
+  ND_LVAR,
   ND_EQ,
   ND_NEQ,
   ND_LESS,
@@ -55,10 +56,11 @@ typedef struct Node Node;
 // 抽象構文木のノードの型
 struct Node
 {
-  NodeKind kind; //! ノードの型
+  NodeKind kind; //* ノードの型
   Node *lhs;     //! 左辺
-  Node *rhs;     //! 右辺
+  Node *rhs;     //? 右辺
   int val;       //! kindがND_NUMの場合のみ使う
+  int offset;    //* 変数の場合
 };
 
 #endif // NCC_H

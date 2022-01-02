@@ -47,6 +47,16 @@ bool consume(char *op)
   return true;
 }
 
+Token *consume_ident()
+{
+  if (token->type != TK_IDENT)
+    return NULL;
+
+  Token *tok = &token;
+  token = token->next;
+  return tok;
+}
+
 void expect(char *op)
 {
   if (token->type != TK_RESERVED || token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
@@ -141,6 +151,14 @@ Node *primary()
   {
     Node *node = expr();
     expect(")");
+    return node;
+  }
+  Token *tok = consume_ident();
+  if (tok)
+  {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    node->offset = (tok->str[0] - 'a' + 1) * 8;
     return node;
   }
 
@@ -241,7 +259,8 @@ Node *stmt()
   return node;
 }
 
-void program() {
+void program()
+{
   int i = 0;
   while (!at_eof())
     code[i++] = stmt();
