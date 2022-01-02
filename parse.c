@@ -104,7 +104,11 @@ Token *tokenize(char *p)
       continue;
     }
 
-    if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+    if ('a' <= *p && *p <= 'z')
+    {
+      cur = new_token(TK_IDENT, cur, p++, 1);
+    }
+    else if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '=' || *p == '!')
     {
@@ -119,14 +123,7 @@ Token *tokenize(char *p)
         p += 2;
       }
       else
-      {
-        cur = new_token(TK_RESERVED, cur, p, 1);
-        p++;
-      }
-    }
-    else if ('a' <= *p && *p <= 'z')
-    {
-      cur = new_token(TK_IDENT, cur, p++, 1);
+        cur = new_token(TK_RESERVED, cur, p++, 1);
     }
     else if (isdigit(*p))
     {
@@ -141,9 +138,6 @@ Token *tokenize(char *p)
   return head.next;
 }
 
-Node *code[100];
-Node *expr();
-
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -153,6 +147,7 @@ Node *primary()
     expect(")");
     return node;
   }
+
   Token *tok = consume_ident();
   if (tok)
   {

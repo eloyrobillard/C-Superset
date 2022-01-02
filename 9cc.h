@@ -66,10 +66,13 @@ struct Node
 };
 
 Token *tokenize(char *);
+Node *expr();
 Node *stmt();
 void gen(Node *);
 void error(char *);
+void program();
 bool at_eof();
 Node *code[100];
+Token *token;
 
 #endif // NCC_H
