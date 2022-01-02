@@ -220,7 +220,27 @@ Node *equality()
   }
 }
 
+Node *assign()
+{
+  Node *node = equality();
+  if (consume("="))
+    node = new_node(ND_ASSIGN, node, assign());
+  return node;
+}
+
 Node *expr()
 {
-  return equality();
+  return assign();
+}
+
+Node *stmt()
+{
+  Node *node = expr();
+  expect(";");
+  return node;
+}
+
+Node *program()
+{
+  return stmt();
 }

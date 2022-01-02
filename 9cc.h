@@ -38,6 +38,7 @@ char *usr_in;
 // 抽象構文木のノードの種類
 typedef enum
 {
+  ND_ASSIGN,
   ND_EQ,
   ND_NEQ,
   ND_LESS,
