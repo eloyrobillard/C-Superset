@@ -24,8 +24,7 @@ int main(int argc, char **argv)
   printf("\n");
   printf("main:\n");
 
-  while (!at_eof())
-    gen(stmt());
+  gen(stmt());
 
   // スタックトップに式全体の値が残っているはずなので
   // それをRAXにロードして関数からの返り値とする

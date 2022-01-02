@@ -131,6 +131,7 @@ Token *tokenize(char *p)
   return head.next;
 }
 
+Node *code[100];
 Node *expr();
 
 Node *primary()
@@ -240,7 +241,9 @@ Node *stmt()
   return node;
 }
 
-Node *program()
-{
-  return stmt();
+void program() {
+  int i = 0;
+  while (!at_eof())
+    code[i++] = stmt();
+  code[i] = NULL;
 }
