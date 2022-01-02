@@ -1,13 +1,6 @@
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "9cc.h"
-
-extern Token *tokenize(char *); //! extern は入力不要
-extern Node *stmt();            //! extern は入力不要
-extern void gen(Node *);        //! extern は入力不要
-extern bool at_eof();           //! extern は入力不要
-extern Node *code[100];
 
 int main(int argc, char **argv)
 {

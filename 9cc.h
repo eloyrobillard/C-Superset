@@ -1,6 +1,8 @@
 #ifndef NCC_H
 #define NCC_H
 
+#include <stdbool.h>
+
 /*
 * program    = stmt*
 * stmt       = expr ";"
@@ -62,5 +64,12 @@ struct Node
   int val;       //! kindがND_NUMの場合のみ使う
   int offset;    //* 変数の場合
 };
+
+Token *tokenize(char *);
+Node *stmt();
+void gen(Node *);
+void error(char *);
+bool at_eof();
+Node *code[100];
 
 #endif // NCC_H

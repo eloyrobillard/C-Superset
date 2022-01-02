@@ -37,6 +37,8 @@ void gen(Node *tree)
     printf("\tmov [rax], rdi\n"); // アドレスに代入する
     printf("\tpush rdi\n"); // なんで？
     return;
+  default:
+    break;
   }
 
   gen(tree->lhs);
