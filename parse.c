@@ -114,6 +114,10 @@ Token *tokenize(char *p)
         p++;
       }
     }
+    else if ('a' <= *p && *p <= 'z')
+    {
+      cur = new_token(TK_IDENT, cur, p++, 1);
+    }
     else if (isdigit(*p))
     {
       cur = new_token(TK_NUM, cur, p, 1);
