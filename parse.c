@@ -45,7 +45,7 @@ LVar *new_lvar(char *name, int len)
   LVar *lvar = calloc(1, sizeof(LVar));
   lvar->name = name;
   lvar->len = len;
-  // オフセットの計算
+  lvar->offset = sizeof(char *) + locals->offset;
 
   return lvar;
 }
@@ -68,11 +68,15 @@ Token *tokenize(char *p)
     if ('a' <= *p && *p <= 'z')
     {
       int i = 1;
-      while('a' <= *(p+i) && *(p+i) <= 'z')
+      while ('a' <= *(p + i) && *(p + i) <= 'z')
         i++;
       char *name = calloc(i, sizeof(char));
       memcpy(name, p, i);
-      locals->next = new_lvar(name, 1);
+
+      LVar *new_var = new_lvar(name, i);
+      new_var->next = locals;
+      locals = new_var;
+
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
     }
