@@ -46,17 +46,16 @@ LVar *new_lvar(char *name, int len)
   lvar->next = locals;
   lvar->name = name;
   lvar->len = len;
-  lvar->offset = locals->offset + 8;
-
+  lvar->offset = 8 + (locals ? locals->offset : 0);
   return lvar;
 }
 
 LVar *find_lvar(Token *tok)
 {
-  LVar *list = locals;
-  while (list && !strcmp(tok->str, list->name))
-    list = list->next;
-  return list;
+  for (LVar *var = locals; var; var = var->next)
+    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
+      return var;
+  return NULL;
 }
 
 Token *tokenize(char *p)

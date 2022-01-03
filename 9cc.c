@@ -28,13 +28,13 @@ int main(int argc, char **argv)
 
     // 式の評価結果としてスタックに一つの値が残っている
     // はずなので、スタックが溢れないようにポップしておく
-    printf("  pop rax\n");
+    printf("\tpop rax\n");
   }
 
   // エピローグ
   // 最後の式の結果がRAXに残っているのでそれが返り値になる
-  printf("  mov rsp, rbp\n");
-  printf("  pop rbp\n");
-  printf("  ret\n");
+  printf("\tmov rsp, rbp\n");
+  printf("\tpop rbp\n");
+  printf("\tret\n");
   return 0;
 }

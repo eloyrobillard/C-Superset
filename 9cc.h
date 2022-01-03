@@ -49,9 +49,6 @@ struct LVar {
   int offset; // RBPからのオフセット
 };
 
-// ローカル変数
-LVar *locals;
-
 // 抽象構文木のノードの種類
 typedef enum
 {
@@ -93,5 +90,6 @@ bool at_eof();
 Node *code[100];
 Token *token;
 char *usr_in;
+LVar *locals;
 
 #endif // NCC_H

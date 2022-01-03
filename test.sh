@@ -25,5 +25,6 @@ assert 1 ' 1 < 2 > 0; '
 assert 1 'a=1; a;'
 assert 1 ' a =1; b= 6; c=7 ; a== (c-b); '
 assert 1 ' a =1; b= 6*(a+1); c=7 ; a !=(c-b); '
+assert 1 ' adb =1; varb= 6*(adb+1); cull=7 ; adb !=(cull-varb); '
 
 echo OK
