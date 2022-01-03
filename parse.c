@@ -17,6 +17,15 @@ Node *new_node_num(int val)
   return node;
 }
 
+// Reports an error and exit.
+void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+
 void error_at(char *loc, const char *fmt, ...)
 {
   va_list ap;
@@ -38,6 +47,16 @@ bool consume(char *op)
 
   token = token->next;
   return true;
+}
+
+Token *consume_ident()
+{
+  if (token->type != TK_IDENT)
+    return NULL;
+
+  Token *tok = token;
+  token = token->next;
+  return tok;
 }
 
 void expect(char *op)
@@ -87,7 +106,9 @@ Token *tokenize(char *p)
       continue;
     }
 
-    if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+    if ('a' <= *p && *p <= 'z')
+      cur = new_token(TK_IDENT, cur, p++, 1);
+    else if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '=' || *p == '!')
     {
@@ -102,10 +123,7 @@ Token *tokenize(char *p)
         p += 2;
       }
       else
-      {
-        cur = new_token(TK_RESERVED, cur, p, 1);
-        p++;
-      }
+        cur = new_token(TK_RESERVED, cur, p++, 1);
     }
     else if (isdigit(*p))
     {
@@ -120,8 +138,6 @@ Token *tokenize(char *p)
   return head.next;
 }
 
-Node *expr();
-
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -129,6 +145,15 @@ Node *primary()
   {
     Node *node = expr();
     expect(")");
+    return node;
+  }
+
+  Token *tok = consume_ident();
+  if (tok)
+  {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    node->offset = (tok->str[0] - 'a' + 1) * 8;
     return node;
   }
 
@@ -209,7 +234,30 @@ Node *equality()
   }
 }
 
+Node *assign()
+{
+  Node *node = equality();
+  if (consume("="))
+    node = new_node(ND_ASSIGN, node, assign());
+  return node;
+}
+
 Node *expr()
 {
-  return equality();
+  return assign();
+}
+
+Node *stmt()
+{
+  Node *node = expr();
+  expect(";");
+  return node;
+}
+
+void program()
+{
+  int i = 0;
+  while (!at_eof())
+    code[i++] = stmt();
+  code[i] = NULL;
 }

@@ -1,11 +1,42 @@
 #include "9cc.h"
 
+void gen_lval(Node *node)
+{
+  // 変数の確認
+  if (node->kind != ND_LVAR)
+    error("代入の左辺値が変数ではありません");
+  // アドレスの計算
+  printf("\tmov rax, rbp\n");
+  printf("\tsub rax, %d\n", node->offset);
+  // アドレスをプッシュ
+  printf("\tpush rax\n");
+}
+
 void gen(Node *tree)
 {
-  if (tree->kind == ND_NUM)
+  switch (tree->kind)
   {
+  case ND_NUM:
     printf("\tpush %d\n", tree->val);
     return;
+  case ND_LVAR:
+    gen_lval(tree);
+
+    printf("\tpop rax\n");
+    printf("\tmov rax, [rax]\n");
+    printf("\tpush rax\n");
+    return;
+  case ND_ASSIGN:
+    gen_lval(tree->lhs);
+    gen(tree->rhs); // 代入値の処理
+
+    printf("\tpop rdi\n");  // 代入値をゲット
+    printf("\tpop rax\n");  // 変数のアドレスをゲット
+    printf("\tmov [rax], rdi\n"); // アドレスに代入する
+    printf("\tpush rdi\n"); // なんで？
+    return;
+  default:
+    break;
   }
 
   gen(tree->lhs);
