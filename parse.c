@@ -1,24 +1,8 @@
 #include "9cc.h"
 
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = kind;
-  node->lhs = lhs;
-  node->rhs = rhs;
-  return node;
-}
-
-Node *new_node_num(int val)
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_NUM;
-  node->val = val;
-  return node;
-}
-
 // Reports an error and exit.
-void error(char *fmt, ...) {
+void error(char *fmt, ...)
+{
   va_list ap;
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
@@ -40,41 +24,6 @@ void error_at(char *loc, const char *fmt, ...)
   exit(1);
 }
 
-bool consume(char *op)
-{
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
-    return false;
-
-  token = token->next;
-  return true;
-}
-
-Token *consume_ident()
-{
-  if (token->type != TK_IDENT)
-    return NULL;
-
-  Token *tok = token;
-  token = token->next;
-  return tok;
-}
-
-void expect(char *op)
-{
-  if (token->type != TK_RESERVED || token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
-    error_at(token->str, "'%c'ではありません\n", op);
-  token = token->next;
-}
-
-long expect_num()
-{
-  if (token->type != TK_NUM)
-    error_at(token->str, "数ではありません\n");
-  int val = token->val;
-  token = token->next;
-  return val;
-}
-
 bool at_eof()
 {
   return token->type == TK_EOF;
@@ -89,6 +38,16 @@ Token *new_token(TK_TYPE type, Token *cur, char *str, int len)
   cur->next = token;
 
   return token;
+}
+
+LVar *new_lvar(char *name, int len)
+{
+  LVar *lvar = calloc(1, sizeof(LVar));
+  lvar->name = name;
+  lvar->len = len;
+  // オフセットの計算
+
+  return lvar;
 }
 
 Token *tokenize(char *p)
@@ -107,7 +66,16 @@ Token *tokenize(char *p)
     }
 
     if ('a' <= *p && *p <= 'z')
-      cur = new_token(TK_IDENT, cur, p++, 1);
+    {
+      int i = 1;
+      while('a' <= *(p+i) && *(p+i) <= 'z')
+        i++;
+      char *name = calloc(i, sizeof(char));
+      memcpy(name, p, i);
+      locals->next = new_lvar(name, 1);
+      cur = new_token(TK_IDENT, cur, p, i);
+      p += i;
+    }
     else if (strchr("-+*/();", *p))
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '!')
@@ -136,6 +104,58 @@ Token *tokenize(char *p)
 
   new_token(TK_EOF, cur, p, 1);
   return head.next;
+}
+
+Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = kind;
+  node->lhs = lhs;
+  node->rhs = rhs;
+  return node;
+}
+
+Node *new_node_num(int val)
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_NUM;
+  node->val = val;
+  return node;
+}
+
+bool consume(char *op)
+{
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+    return false;
+
+  token = token->next;
+  return true;
+}
+
+Token *consume_ident()
+{
+  if (token->type != TK_IDENT)
+    return NULL;
+
+  Token *tok = token;
+  token = token->next;
+  return tok;
+}
+
+void expect(char *op)
+{
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+    error_at(token->str, "'%c'ではありません\n", op);
+  token = token->next;
+}
+
+long expect_num()
+{
+  if (token->type != TK_NUM)
+    error_at(token->str, "数ではありません\n");
+  int val = token->val;
+  token = token->next;
+  return val;
 }
 
 Node *primary()
