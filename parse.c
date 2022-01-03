@@ -78,10 +78,10 @@ Token *tokenize(char *p)
       continue;
     }
 
-    if (is_alnum(*p))
+    if ('a' <= *p && *p <= 'z' || *p == '_')
     {
       int i = 1;
-      while (is_alnum(*p))
+      while (is_alnum(*(p+i)))
         i++;
 
       if (i == 6 && strcmp(p, "return"))
@@ -140,6 +140,15 @@ Node *new_node_num(int val)
 bool consume(char *op)
 {
   if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+    return false;
+
+  token = token->next;
+  return true;
+}
+
+bool consume_keyword()
+{
+  if (token->type != TK_RETURN)
     return false;
 
   token = token->next;
@@ -293,8 +302,11 @@ Node *expr()
 
 Node *stmt()
 {
+  bool is_return = consume_keyword();
   Node *node = expr();
   expect(";");
+  if (is_return)
+    token->type = TK_EOF;
   return node;
 }
 
