@@ -1,7 +1,3 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdarg.h>
-
 #include "9cc.h"
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs)

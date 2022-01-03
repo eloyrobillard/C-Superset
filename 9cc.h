@@ -1,6 +1,13 @@
 #ifndef NCC_H
 #define NCC_H
 
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdarg.h>
+
 /*
  * expr       = equality
  * equality   = relational ("==" relational | "!=" relational)*
@@ -28,9 +35,6 @@ struct Token
   int len;
 };
 
-Token *token;
-char *usr_in;
-
 // 抽象構文木のノードの種類
 typedef enum
 {
@@ -55,5 +59,14 @@ struct Node
   Node *rhs;     //! 右辺
   int val;       //! kindがND_NUMの場合のみ使う
 };
+
+// グローバル関数
+Token *tokenize(char *);
+Node *expr();
+void gen(Node *);
+
+// グローバル変数
+Token *token;
+char *usr_in;
 
 #endif // NCC_H

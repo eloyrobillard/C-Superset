@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "9cc.h"
 
 void gen(Node *tree)
