@@ -42,7 +42,7 @@ void error_at(char *loc, const char *fmt, ...)
 
 bool consume(char *op)
 {
-  if (token->type != TK_RESERVED || token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
     return false;
 
   token = token->next;
@@ -110,12 +110,12 @@ Token *tokenize(char *p)
       cur = new_token(TK_IDENT, cur, p++, 1);
     else if (strchr("-+*/();", *p))
       cur = new_token(TK_RESERVED, cur, p++, 1);
-    else if (*p == '=' || *p == '!')
+    else if (*p == '!')
     {
       cur = new_token(TK_RESERVED, cur, p, 2);
       p += 2;
     }
-    else if (*p == '<' || *p == '>')
+    else if (strchr("=<>", *p))
     {
       if (*(p + 1) == '=')
       {
