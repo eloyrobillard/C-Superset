@@ -50,6 +50,14 @@ LVar *new_lvar(char *name, int len)
   return lvar;
 }
 
+LVar *find_lvar(char *name)
+{
+  LVar *list = locals;
+  while (list && !strcmp(name, list->name))
+    list = list->next;
+  return list;
+}
+
 Token *tokenize(char *p)
 {
   Token head;
@@ -73,9 +81,12 @@ Token *tokenize(char *p)
       char *name = calloc(i, sizeof(char));
       memcpy(name, p, i);
 
-      LVar *new_var = new_lvar(name, i);
-      new_var->next = locals;
-      locals = new_var;
+      if (!find_lvar(name))
+      {
+        LVar *new_var = new_lvar(name, i);
+        new_var->next = locals;
+        locals = new_var;
+      }
 
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
