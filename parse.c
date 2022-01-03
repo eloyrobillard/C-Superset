@@ -108,7 +108,7 @@ Token *tokenize(char *p)
 
     if ('a' <= *p && *p <= 'z')
       cur = new_token(TK_IDENT, cur, p++, 1);
-    else if (*p == '-' || *p == '+' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+    else if (strchr("-+*/();", *p))
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '=' || *p == '!')
     {
