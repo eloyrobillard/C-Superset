@@ -53,6 +53,7 @@ struct LVar {
 // 抽象構文木のノードの種類
 typedef enum
 {
+  ND_RETURN,
   ND_ASSIGN,
   ND_LVAR,
   ND_EQ,

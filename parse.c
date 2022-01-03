@@ -81,7 +81,7 @@ Token *tokenize(char *p)
     if ('a' <= *p && *p <= 'z' || *p == '_')
     {
       int i = 1;
-      while (is_alnum(*(p+i)))
+      while (is_alnum(*(p + i)))
         i++;
 
       if (i == 6 && strcmp(p, "return"))
@@ -302,11 +302,21 @@ Node *expr()
 
 Node *stmt()
 {
-  bool is_return = consume_keyword();
-  Node *node = expr();
-  expect(";");
-  if (is_return)
-    token->type = TK_EOF;
+  Node *node;
+
+  if (consume_keyword())
+  {
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_RETURN;
+    node->lhs = expr();
+  }
+  else
+  {
+    node = expr();
+  }
+
+  if (!consume(";"))
+    error_at(token->str, "';'ではないトークンです");
   return node;
 }
 
@@ -314,6 +324,10 @@ void program()
 {
   int i = 0;
   while (!at_eof())
-    code[i++] = stmt();
+  {
+    code[i] = stmt();
+    if (code[i++]->kind == ND_RETURN)
+      break;
+  }
   code[i] = NULL;
 }
