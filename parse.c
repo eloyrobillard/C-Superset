@@ -29,6 +29,11 @@ bool at_eof()
   return token->type == TK_EOF;
 }
 
+bool is_alnum(char c)
+{
+  return isalnum(c) || c == '_';
+}
+
 Token *new_token(TK_TYPE type, Token *cur, char *str, int len)
 {
   Token *token = calloc(1, sizeof(Token));
@@ -73,13 +78,16 @@ Token *tokenize(char *p)
       continue;
     }
 
-    if ('a' <= *p && *p <= 'z')
+    if (is_alnum(*p))
     {
       int i = 1;
-      while ('a' <= *(p + i) && *(p + i) <= 'z')
+      while (is_alnum(*p))
         i++;
 
-      cur = new_token(TK_IDENT, cur, p, i);
+      if (i == 6 && strcmp(p, "return"))
+        cur = new_token(TK_RETURN, cur, p, i);
+      else
+        cur = new_token(TK_IDENT, cur, p, i);
       p += i;
     }
     else if (strchr("-+*/();", *p))

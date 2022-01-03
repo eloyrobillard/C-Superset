@@ -9,21 +9,22 @@
 #include <string.h>
 
 /*
-* program    = stmt*
-* stmt       = expr ";"
-* expr       = assign
-* assign     = equality ("=" assign)?
-* equality   = relational ("==" relational | "!=" relational)*
-* relational = add ("<" add | "<=" add | ">" add | ">=" add)*
-* add        = mul ("+" mul | "-" mul)*
-* mul        = unary ("*" unary | "/" unary)*
-* unary      = ("+" | "-")? primary
-* primary    = num | ident | "(" expr ")"
+ * program    = stmt*
+ * stmt       = "return"? expr ";"
+ * expr       = assign
+ * assign     = equality ("=" assign)?
+ * equality   = relational ("==" relational | "!=" relational)*
+ * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
+ * add        = mul ("+" mul | "-" mul)*
+ * mul        = unary ("*" unary | "/" unary)*
+ * unary      = ("+" | "-")? primary
+ * primary    = num | ident | "(" expr ")"
  */
 
 typedef enum TK_Type
 {
   TK_RESERVED,
+  TK_RETURN,
   TK_IDENT, // 識別子
   TK_NUM,
   TK_EOF
