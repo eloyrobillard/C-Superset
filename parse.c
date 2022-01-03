@@ -43,17 +43,18 @@ Token *new_token(TK_TYPE type, Token *cur, char *str, int len)
 LVar *new_lvar(char *name, int len)
 {
   LVar *lvar = calloc(1, sizeof(LVar));
+  lvar->next = locals;
   lvar->name = name;
   lvar->len = len;
-  lvar->offset = sizeof(char *) + locals->offset;
+  lvar->offset = locals->offset + 8;
 
   return lvar;
 }
 
-LVar *find_lvar(char *name)
+LVar *find_lvar(Token *tok)
 {
   LVar *list = locals;
-  while (list && !strcmp(name, list->name))
+  while (list && !strcmp(tok->str, list->name))
     list = list->next;
   return list;
 }
@@ -78,15 +79,6 @@ Token *tokenize(char *p)
       int i = 1;
       while ('a' <= *(p + i) && *(p + i) <= 'z')
         i++;
-      char *name = calloc(i, sizeof(char));
-      memcpy(name, p, i);
-
-      if (!find_lvar(name))
-      {
-        LVar *new_var = new_lvar(name, i);
-        new_var->next = locals;
-        locals = new_var;
-      }
 
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
@@ -188,7 +180,17 @@ Node *primary()
   {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
-    node->offset = (tok->str[0] - 'a' + 1) * 8;
+
+    LVar *lvar = find_lvar(tok);
+    if (lvar)
+      node->offset = lvar->offset;
+    else
+    {
+      LVar *lvar = new_lvar(tok->str, tok->len);
+      node->offset = lvar->offset;
+      locals = lvar;
+    }
+
     return node;
   }
 
