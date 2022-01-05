@@ -208,8 +208,8 @@ Node *handle_for()
   expect("(");
   Node *n0 = calloc(1, sizeof(Node));
   node->lhs = n0;
-  Node *n1 = calloc(1, sizeof(Node));
-  node->rhs = n1;
+  Node *cond_node = new_node(ND_IF, new_node_num(1), NULL);
+  node->rhs = cond_node;
   if (!consume(";"))
   {
     n0->lhs = expr();
@@ -217,15 +217,15 @@ Node *handle_for()
   }
   if (!consume(";"))
   {
-    n0->rhs = expr();
+    cond_node->lhs = expr();
     expect(";");
   }
   if (!consume(")"))
   {
-    n1->lhs = expr();
+    n0->rhs = expr();
     expect(")");
   }
-  n1->rhs = stmt();
+  cond_node->rhs = stmt();
   return node;
 }
 
