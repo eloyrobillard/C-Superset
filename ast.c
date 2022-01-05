@@ -185,6 +185,22 @@ Node *expr()
   return assign();
 }
 
+Node *handle_if()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_IF;
+  expect("(");
+  Node *if_node = calloc(1, sizeof(Node));
+  if_node->lhs = expr();
+  expect(")");
+  if_node->rhs = stmt();
+  node->lhs = if_node;
+
+  if (consume("else"))
+  node->rhs = stmt();
+  return node;
+}
+
 Node *stmt()
 {
   Node *node;
@@ -195,6 +211,10 @@ Node *stmt()
     node->kind = ND_RETURN;
     node->lhs = expr();
   }
+  else if (consume_keyword(TK_IF))
+    node = handle_if();
+  // else if (consume_keyword(TK_FOR))
+  // else if (consume_keyword(TK_WHILE))
   else
     node = expr();
 
