@@ -26,5 +26,9 @@ assert 0 " if(0) return 1; else 0; "
 assert 1 " if(0) return 1; else 0; 1; "
 assert 254 " adb = 1; if(adb < 2) if (adb == 2) return adb*4; else 256-2; else 0; "
 assert 2 " adb = 1; if(adb = varb = 6 < 2) if (adb == 2) return adb*4; else 256-2; else adb = 1 + (adb = adb + 1); "
+assert 255 " a = 0; while (a < 255) a = a + 1;"
+assert 10 " a = 0; while (a < 255) if (a == 120) return 10; else a = a + 1;"
+assert 160 " if ((a = 0) < 120) while (a < 160) a = a + 1;"
+assert 6 " if ((a = 0) < 120) while (a < 160) a = a + 1; 6;"
 
 echo OK
