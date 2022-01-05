@@ -16,50 +16,55 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
-    case ND_RETURN:
-      gen(node->lhs);
-      printf("\tpop rax\n");
-      // エピローグ
-      // 最後の式の結果がRAXに残っているのでそれが返り値になる
-      printf("\tmov rsp, rbp\n");
-      printf("\tpop rbp\n");
-      printf("\tret\n");
-      return;
-    case ND_IF:
-      gen(node->lhs->lhs);
-      printf("\tpop rax\n");
-      printf("\tcmp rax, 0\n");
-      printf("\tje Lelse%d\n", (int)node);
-      if (node->rhs)
-      {
-        printf("\tjmp Lelse%d\n", (int)node);
-        printf("\tLelse%d\n", (int)node);
-        gen(node->rhs);  
-      }
-      printf("\tLend%d\n", (int)node);
+  case ND_RETURN:
+    gen(node->lhs);
+    printf("\tpop rax\n");
+    // エピローグ
+    // 最後の式の結果がRAXに残っているのでそれが返り値になる
+    printf("\tmov rsp, rbp\n");
+    printf("\tpop rbp\n");
+    printf("\tret\n");
+    return;
+  case ND_IF:
+    gen(node->lhs->lhs);
+    printf("\tpop rax\n");
+    printf("\tcmp rax, 0\n");
+    if (node->rhs)
+    {
+      printf("\tje .Lelse%ld\n", (long)node);
       gen(node->lhs->rhs);
-      return;
-    case ND_NUM:
-      printf("\tpush %d\n", node->val);
-      return;
-    case ND_LVAR:
-      gen_lval(node);
+      printf("\tjmp .Lend%ld\n", (long)node);
+      printf(".Lelse%ld:\n", (long)node);
+      gen(node->rhs);
+    }
+    else
+    {
+      printf("\tje .Lend%ld\n", (long)node);
+      gen(node->lhs->rhs);
+    }
+    printf(".Lend%ld:\n", (long)node);
+    return;
+  case ND_NUM:
+    printf("\tpush %d\n", node->val);
+    return;
+  case ND_LVAR:
+    gen_lval(node);
 
-      printf("\tpop rax\n");
-      printf("\tmov rax, [rax]\n");
-      printf("\tpush rax\n");
-      return;
-    case ND_ASSIGN:
-      gen_lval(node->lhs);
-      gen(node->rhs); // 代入値の処理
+    printf("\tpop rax\n");
+    printf("\tmov rax, [rax]\n");
+    printf("\tpush rax\n");
+    return;
+  case ND_ASSIGN:
+    gen_lval(node->lhs);
+    gen(node->rhs); // 代入値の処理
 
-      printf("\tpop rdi\n");        // 代入値をゲット
-      printf("\tpop rax\n");        // 変数のアドレスをゲット
-      printf("\tmov [rax], rdi\n"); // アドレスに代入する
-      printf("\tpush rdi\n");       // なんで？
-      return;
-    default:
-      break;
+    printf("\tpop rdi\n");        // 代入値をゲット
+    printf("\tpop rax\n");        // 変数のアドレスをゲット
+    printf("\tmov [rax], rdi\n"); // アドレスに代入する
+    printf("\tpush rdi\n");       // なんで？
+    return;
+  default:
+    break;
   }
 
   gen(node->lhs);

@@ -212,7 +212,10 @@ Node *stmt()
     node->lhs = expr();
   }
   else if (consume_keyword(TK_IF))
+  {
     node = handle_if();
+    return node; // ';'はもう使ったから
+  }
   // else if (consume_keyword(TK_FOR))
   // else if (consume_keyword(TK_WHILE))
   else
