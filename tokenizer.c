@@ -40,19 +40,19 @@ Token *tokenize(char *p)
       switch (i)
       {
       case 2:
-        if (strcmp(p, "if"))
+        if (strcmp(p, "if") == 0)
           cur = new_token(TK_IF, cur, p, i);
         break;
       case 3:
-      if (strcmp(p, "for"))
+      if (strcmp(p, "for") == 0)
             cur = new_token(TK_FOR, cur, p, i);
         break;
       case 5:
-        if(strcmp(p, "while"))
+        if(strcmp(p, "while") == 0)
         cur = new_token(TK_WHILE, cur, p, i);
         break;
       case 6:
-        if(strcmp(p, "return"))
+        if(strcmp(p, "return") == 0)
         cur = new_token(TK_RETURN, cur, p, i);
         break;
       default:
