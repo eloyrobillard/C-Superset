@@ -36,5 +36,6 @@ assert 0 " a = 0; for (;; a = a + 1) return a;"
 assert 130 " a = 0; for (;; a = a + 1) if (a == 130) return a;"
 assert 0 " a = 0; b = 0; for (;; b = b + 1) if (b > 130) return a;"
 assert 122 " a = 0; b = 0; for (;; b = b + 1) if (b > 60) return a; else a = a + 2;"
+assert 62 " a = 0; for (;;) if (a > 60) return a; else a = a + 2;"
 
 echo OK
