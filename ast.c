@@ -196,9 +196,7 @@ Node *stmt()
     node->lhs = expr();
   }
   else
-  {
     node = expr();
-  }
 
   if (!consume(";"))
     error_at(token->str, "';'ではないトークンです");
