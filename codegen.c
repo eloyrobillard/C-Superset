@@ -44,6 +44,26 @@ void gen(Node *node)
     }
     printf(".Lend%ld:\n", (long)node);
     return;
+  case ND_WHILE:
+    printf(".loop%ld:\n", (long)node);
+    gen(node->lhs);
+    printf("\tpop rax\n");
+    printf("\tcmp rax, 0\n");
+    printf("\tje .Lend%ld\n", (long)node);
+    gen(node->rhs);
+    printf("\tjmp .loop%ld\n", (long)node);
+    printf(".Lend%ld:\n", (long)node);
+    return;
+  case ND_FOR:
+    if (node->lhs->lhs)
+      gen(node->lhs->lhs);
+    printf("\tpop rax\n"); // TODO: check if in or out loop
+    printf(".loop%ld:\n", (long)node);
+    gen(node->lhs->rhs);
+    if (node->rhs->lhs)
+      gen(node->rhs->rhs);
+    printf("\tjmp .loop%ld\n", (long)node);
+    return;
   case ND_NUM:
     printf("\tpush %d\n", node->val);
     return;
