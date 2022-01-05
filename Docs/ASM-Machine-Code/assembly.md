@@ -82,3 +82,13 @@ mov %rax, -8(rbp, rcx, 4)    // AT&T
    1. dest の値を src で更新する
    2. src のほうが dest より短い場合、dest の最下位にセットされ、他のビットは0になる
    3. seteなどと使用し、RAX に比較の結果をセットできる ![set al in rax](../assets/al-in-rax.png)
+
+## 関数
+
+普段の名付け方：`.hoge`（つまり、小文字の名前）。
+
+*関数をファイル（内部）スコープにするため：*
+
+``` nasm
+.hoge -> .Lhoge
+```
