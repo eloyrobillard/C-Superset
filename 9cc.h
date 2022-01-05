@@ -11,6 +11,9 @@
 /*
  * program    = stmt*
  * stmt       = "return"? expr ";"
+ *            | "if" "(" expr ")" stmt ("else" stmt)?
+ *            | "while" "(" expr ")" stmt
+ *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  * expr       = assign
  * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
@@ -80,13 +83,19 @@ struct Node
 };
 
 // グローバル関数
+// tokenizer.c
 Token *tokenize(char *);
+LVar *new_lvar(char *name, int len);
+LVar *find_lvar(Token *tok);
+// ast.c
+bool at_eof();
 Node *expr();
 Node *stmt();
 void gen(Node *);
-void error(char *, ...);
 void program();
-bool at_eof();
+// error.c
+void error(char *, ...);
+void error_at(char *loc, const char *fmt, ...);
 
 // グローバル変数
 Node *code[100];
