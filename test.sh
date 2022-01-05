@@ -16,18 +16,14 @@ assert() {
   fi
 }
 
-assert 252 '-(3+5)/2;' # 256 - 4 wrap
-assert 4 ' ((1 < 2) + (3 > 2)) * 2 ;'
-assert 1 ' ((1 < 2) + (3 > 2)) * 20 < 100; '
-assert 1 ' 1 < 2 < 3 ;'
-assert 0 ' 1 < 2 > 3; '
-assert 1 ' 1 < 2 > 0; '
-assert 1 'a=1; a;'
 assert 1 ' a =1; b= 6; c=7 ; a== (c-b); '
 assert 1 ' a =1; b= 6*(a+1); c=7 ; a !=(c-b); '
 assert 1 ' adb =1; varb= 6*(adb+1); cull=7 ; adb !=(cull-varb); '
 assert 12 ' adb =1; return varb= 6*(adb+1); cull=7 ; adb !=(cull-varb); '
 assert 7 ' adb =1; varb= 6*(adb+1); return cull=7 ; adb !=(cull-varb); '
-assert 1 " if(1) return 1; else return 0; "
+assert 1 " if(1) return 1; else 0; "
+assert 0 " if(0) return 1; else 0; "
+assert 254 " adb = 1; if(adb < 2) if (adb == 2) return adb*4; else 256-2; else 0; "
+assert 0 " adb = 1; if(adb = varb = 6 < 2) if (adb == 2) return adb*4; else 256-2; else adb-varb; "
 
 echo OK
