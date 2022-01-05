@@ -201,6 +201,34 @@ Node *handle_if()
   return node;
 }
 
+Node *handle_for()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FOR;
+  expect("(");
+  Node *n0 = calloc(1, sizeof(Node));
+  node->lhs = n0;
+  Node *n1 = calloc(1, sizeof(Node));
+  node->rhs = n1;
+  if (!consume(";"))
+  {
+    n0->lhs = expr();
+    expect(";");
+  }
+  if (!consume(";"))
+  {
+    n0->rhs = expr();
+    expect(";");
+  }
+  if (!consume(")"))
+  {
+    n1->lhs = expr();
+    expect(")");
+  }
+  n1->rhs = stmt();
+  return node;
+}
+
 Node *stmt()
 {
   Node *node;
@@ -212,11 +240,9 @@ Node *stmt()
     node->lhs = expr();
   }
   else if (consume_keyword(TK_IF))
-  {
-    node = handle_if();
-    return node; // ';'はもう使ったから
-  }
-  // else if (consume_keyword(TK_FOR))
+    return handle_if();
+  else if (consume_keyword(TK_FOR))
+    return handle_for();
   // else if (consume_keyword(TK_WHILE))
   else
     node = expr();
