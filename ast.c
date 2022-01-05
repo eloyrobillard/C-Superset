@@ -31,9 +31,9 @@ bool consume(char *op)
   return true;
 }
 
-bool consume_keyword()
+bool consume_keyword(TK_TYPE type)
 {
-  if (token->type != TK_RETURN)
+  if (token->type != type)
     return false;
 
   token = token->next;
@@ -189,7 +189,7 @@ Node *stmt()
 {
   Node *node;
 
-  if (consume_keyword())
+  if (consume_keyword(TK_RETURN))
   {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;
