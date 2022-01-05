@@ -22,6 +22,15 @@ Node *new_node_num(int val)
   return node;
 }
 
+Node *new_if_node(Node *cond, Node *ifstmt, Node *els)
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_IF;
+  node->lhs = new_node((NodeKind)NULL, cond, ifstmt);
+  node->rhs = els;
+  return node;
+}
+
 bool consume(char *op)
 {
   if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
@@ -205,11 +214,11 @@ Node *handle_for()
 {
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FOR;
-  expect("(");
   Node *n0 = calloc(1, sizeof(Node));
   node->lhs = n0;
-  Node *cond_node = new_node(ND_IF, new_node_num(1), NULL);
-  node->rhs = cond_node;
+  Node *n1 = calloc(1, sizeof(Node));
+  node->rhs = n1;
+  expect("(");
   if (!consume(";"))
   {
     n0->lhs = expr();
@@ -217,15 +226,15 @@ Node *handle_for()
   }
   if (!consume(";"))
   {
-    cond_node->lhs = expr();
+    n0->rhs = expr();
     expect(";");
   }
   if (!consume(")"))
   {
-    n0->rhs = expr();
+    n1->lhs = expr();
     expect(")");
   }
-  cond_node->rhs = stmt();
+  n1->rhs = stmt();
   return node;
 }
 
