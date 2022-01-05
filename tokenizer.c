@@ -37,36 +37,16 @@ Token *tokenize(char *p)
       while (is_alnum(*(p + i)))
         i++;
 
-      switch (i)
-      {
-      case 2:
-        if (strncmp(p, "if", i) == 0)
-        {
-          cur = new_token(TK_IF, cur, p, i);
-          break;
-        }
-      case 3:
-        if (strncmp(p, "for", i) == 0)
-        {
-          cur = new_token(TK_FOR, cur, p, i);
-          break;
-        }
-      case 5:
-        if (strncmp(p, "while", i) == 0)
-        {
-          cur = new_token(TK_WHILE, cur, p, i);
-          break;
-        }
-      case 6:
-        if (strncmp(p, "return", i) == 0)
-        {
-          cur = new_token(TK_RETURN, cur, p, i);
-          break;
-        }
-      default:
+      if (i == 2 && strncmp(p, "if", i) == 0)
+        cur = new_token(TK_IF, cur, p, i);
+      else if (i == 3 && strncmp(p, "for", i) == 0)
+        cur = new_token(TK_FOR, cur, p, i);
+      else if (i == 5 && strncmp(p, "while", i) == 0)
+        cur = new_token(TK_WHILE, cur, p, i);
+      else if (i == 6 && strncmp(p, "return", i) == 0)
+        cur = new_token(TK_RETURN, cur, p, i);
+      else
         cur = new_token(TK_IDENT, cur, p, i);
-        break;
-      }
       p += i;
     }
     else if (strchr("-+*/();", *p))
