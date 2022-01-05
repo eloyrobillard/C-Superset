@@ -29,6 +29,7 @@ typedef enum TK_Type
   // 指定されたキーワード
   TK_RETURN,
   TK_IF,
+  TK_ELSE,
   TK_FOR,
   TK_WHILE,
 

@@ -196,8 +196,8 @@ Node *handle_if()
   if_node->rhs = stmt();
   node->lhs = if_node;
 
-  if (consume("else"))
-  node->rhs = stmt();
+  if (consume_keyword(TK_ELSE))
+    node->rhs = stmt();
   return node;
 }
 
