@@ -12,12 +12,12 @@ void gen_lval(Node *node)
   printf("\tpush rax\n");
 }
 
-void gen(Node *tree)
+void gen(Node *node)
 {
-  switch (tree->kind)
+  switch (node->kind)
   {
     case ND_RETURN:
-      gen(tree->lhs);
+      gen(node->lhs);
       printf("\tpop rax\n");
       // エピローグ
       // 最後の式の結果がRAXに残っているのでそれが返り値になる
@@ -25,19 +25,33 @@ void gen(Node *tree)
       printf("\tpop rbp\n");
       printf("\tret\n");
       return;
+    case ND_IF:
+      gen(node->lhs->lhs);
+      printf("\tpop rax\n");
+      printf("\tcmp rax, 0\n");
+      printf("\tje Lelse%d\n", (int)node);
+      if (node->rhs)
+      {
+        printf("\tjmp Lelse%d\n", (int)node);
+        printf("\tLelse%d\n", (int)node);
+        gen(node->rhs);  
+      }
+      printf("\tLend%d\n", (int)node);
+      gen(node->lhs->rhs);
+      return;
     case ND_NUM:
-      printf("\tpush %d\n", tree->val);
+      printf("\tpush %d\n", node->val);
       return;
     case ND_LVAR:
-      gen_lval(tree);
+      gen_lval(node);
 
       printf("\tpop rax\n");
       printf("\tmov rax, [rax]\n");
       printf("\tpush rax\n");
       return;
     case ND_ASSIGN:
-      gen_lval(tree->lhs);
-      gen(tree->rhs); // 代入値の処理
+      gen_lval(node->lhs);
+      gen(node->rhs); // 代入値の処理
 
       printf("\tpop rdi\n");        // 代入値をゲット
       printf("\tpop rax\n");        // 変数のアドレスをゲット
@@ -48,13 +62,13 @@ void gen(Node *tree)
       break;
   }
 
-  gen(tree->lhs);
-  gen(tree->rhs);
+  gen(node->lhs);
+  gen(node->rhs);
 
   printf("\tpop rdi\n");
   printf("\tpop rax\n");
 
-  switch (tree->kind)
+  switch (node->kind)
   {
   case ND_EQ:
     printf("\tcmp rax, rdi\n");
