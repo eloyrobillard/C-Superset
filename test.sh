@@ -30,5 +30,11 @@ assert 255 " a = 0; while (a < 255) a = a + 1;"
 assert 10 " a = 0; while (a < 255) if (a == 120) return 10; else a = a + 1;"
 assert 160 " if ((a = 0) < 120) while (a < 160) a = a + 1;"
 assert 6 " if ((a = 0) < 120) while (a < 160) a = a + 1; 6;"
+assert 235 " for (a = 0; a < 235; a = a + 1) a;"
+assert 235 " a = 0; for (; a < 235; a = a + 1) a;"
+assert 0 " a = 0; for (;; a = a + 1) return a;"
+assert 130 " a = 0; for (;; a = a + 1) if (a == 130) return a;"
+assert 0 " a = 0; b = 0; for (;; b = b + 1) if (b > 130) return a;"
+assert 122 " a = 0; b = 0; for (;; b = b + 1) if (b > 60) return a; else a = a + 2;"
 
 echo OK

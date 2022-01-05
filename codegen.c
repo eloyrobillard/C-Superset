@@ -58,9 +58,8 @@ void gen(Node *node)
     if (node->lhs->lhs)
       gen(node->lhs->lhs);
     printf(".loop%ld:\n", (long)node);
-    if (node->lhs->rhs)
-      gen(node->lhs->rhs);
-    printf("\tpop rax\n"); // TODO: check if in or out loop
+    gen(node->lhs->rhs);
+    printf("\tpop rax\n");
     printf("\tcmp rax, 0\n");
     printf("\tje .Lend%ld\n", (long)node);
     gen(node->rhs->rhs);

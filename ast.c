@@ -216,6 +216,7 @@ Node *handle_for()
   node->kind = ND_FOR;
   Node *n0 = calloc(1, sizeof(Node));
   node->lhs = n0;
+  n0->rhs = new_node_num(1);
   Node *n1 = calloc(1, sizeof(Node));
   node->rhs = n1;
   expect("(");
