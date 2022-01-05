@@ -28,7 +28,7 @@ Token *tokenize(char *p)
     if (isspace(*p))
     {
       p++;
-      continue;
+      continue; // 不正な文字を検出するため
     }
 
     if ('a' <= *p && *p <= 'z' || *p == '_')
@@ -37,16 +37,28 @@ Token *tokenize(char *p)
       while (is_alnum(*(p + i)))
         i++;
 
-      if (i == 6 && strcmp(p, "return"))
-        cur = new_token(TK_RETURN, cur, p, i);
-      else if (i == 2 && strcmp(p, "if"))
-        cur = new_token(TK_IF, cur, p, i);
-      else if (i == 3 && strcmp(p, "for"))
-        cur = new_token(TK_FOR, cur, p, i);
-      else if (i == 5 && strcmp(p, "while"))
+      switch (i)
+      {
+      case 2:
+        if (strcmp(p, "if"))
+          cur = new_token(TK_IF, cur, p, i);
+        break;
+      case 3:
+      if (strcmp(p, "for"))
+            cur = new_token(TK_FOR, cur, p, i);
+        break;
+      case 5:
+        if(strcmp(p, "while"))
         cur = new_token(TK_WHILE, cur, p, i);
-      else
+        break;
+      case 6:
+        if(strcmp(p, "return"))
+        cur = new_token(TK_RETURN, cur, p, i);
+        break;
+      default:
         cur = new_token(TK_IDENT, cur, p, i);
+        break;
+      }
       p += i;
     }
     else if (strchr("-+*/();", *p))
