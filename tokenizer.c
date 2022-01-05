@@ -57,6 +57,12 @@ Token *tokenize(char *p)
 
       if (i == 6 && strcmp(p, "return"))
         cur = new_token(TK_RETURN, cur, p, i);
+      else if (i == 2 && strcmp(p, "if"))
+        cur = new_token(TK_IF, cur, p, i);
+      else if (i == 3 && strcmp(p, "for"))
+        cur = new_token(TK_FOR, cur, p, i);
+      else if (i == 5 && strcmp(p, "while"))
+        cur = new_token(TK_WHILE, cur, p, i);
       else
         cur = new_token(TK_IDENT, cur, p, i);
       p += i;

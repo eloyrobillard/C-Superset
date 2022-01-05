@@ -26,12 +26,38 @@
 
 typedef enum TK_Type
 {
-  TK_RESERVED,
+  // 指定されたキーワード
   TK_RETURN,
+  TK_IF,
+  TK_FOR,
+  TK_WHILE,
+
+  TK_RESERVED,
   TK_IDENT, // 識別子
   TK_NUM,
   TK_EOF
 } TK_TYPE;
+
+typedef enum
+{
+  // 指定されたキーワード
+  ND_RETURN,
+  ND_IF,
+  ND_FOR,
+  ND_WHILE,
+
+  ND_ASSIGN,
+  ND_LVAR,
+  ND_EQ,
+  ND_NEQ,
+  ND_LESS,
+  ND_LEQ,
+  ND_ADD, //* +
+  ND_SUB, //* -
+  ND_MUL, //* *
+  ND_DIV, //* /
+  ND_NUM, //* 整数
+} NodeKind;
 
 typedef struct Token Token;
 struct Token
@@ -54,22 +80,6 @@ struct LVar {
 };
 
 // 抽象構文木のノードの種類
-typedef enum
-{
-  ND_RETURN,
-  ND_ASSIGN,
-  ND_LVAR,
-  ND_EQ,
-  ND_NEQ,
-  ND_LESS,
-  ND_LEQ,
-  ND_ADD, //* +
-  ND_SUB, //* -
-  ND_MUL, //* *
-  ND_DIV, //* /
-  ND_NUM, //* 整数
-} NodeKind;
-
 typedef struct Node Node;
 
 // 抽象構文木のノードの型
