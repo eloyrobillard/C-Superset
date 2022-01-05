@@ -238,6 +238,17 @@ Node *handle_for()
   return node;
 }
 
+Node *handle_while()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_WHILE;
+  expect("(");
+  node->lhs = expr();
+  expect(")");
+  node->rhs = stmt();
+  return node;
+}
+
 Node *stmt()
 {
   Node *node;
@@ -252,7 +263,8 @@ Node *stmt()
     return handle_if();
   else if (consume_keyword(TK_FOR))
     return handle_for();
-  // else if (consume_keyword(TK_WHILE))
+  else if (consume_keyword(TK_WHILE))
+    return handle_while();
   else
     node = expr();
 
