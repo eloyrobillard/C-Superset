@@ -258,6 +258,7 @@ Node *stmt()
   { 
     node = calloc(1, sizeof(Node));
     node->kind = ND_BLOCK;
+
     int i = 0;
     size_t max = 2;
     node->stmts = calloc(max, sizeof(Node*));
@@ -266,7 +267,7 @@ Node *stmt()
       node->stmts[i++] = stmt();
       if (i + 1 == max)
       {
-        node->stmts = realloc(node->stmts, max * 2);
+        node->stmts = realloc(node->stmts, max * 2 * sizeof(Node*));
         max <<= 1;
       }
     }

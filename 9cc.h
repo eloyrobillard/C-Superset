@@ -44,7 +44,7 @@ typedef enum TK_Type
 typedef enum
 {
   // 指定されたキーワード
-  ND_RETURN,
+  ND_RETURN = 1,
   ND_IF,
   ND_FOR,
   ND_WHILE,

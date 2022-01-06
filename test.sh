@@ -41,5 +41,9 @@ assert 62 "a = 0; if (1) a = 62; else if (0) a = 3; else a = 5; a;"
 assert 62 "a = 0; if (0) a = 62; else if (0) a = 3; else while (a< 62) a = a + 1; a;"
 assert 122 "b = 0; for (a = 0; a < 62; a = a + 1) if (a < 20) b = b + 2; else if (a < 40) b = b + 3; else b = b + 1; b;"
 assert 139 "for (a = 0;; a = a + 1) a;a;" #! SEGFAULT
+assert 4 "a = 1; {a = a + 1; a = a + 1; a = a + 1;} a;"
+assert 4 "a = 1; {a = a + 1; a = a + 1; return a = a + 1;}"
+assert 16 "b = 0; for (a = 0; a < 62; a = a + 1) {a = a + 1; a = a + 1; a = a + 1; b = b + 1;} b;"
+assert 5 " b = 0; for (a = 0; a < 62; a = a + 1) {a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; a = a + 1; b = b + 1;} b;"
 
 echo OK
