@@ -254,7 +254,23 @@ Node *stmt()
 {
   Node *node;
 
-  if (consume_keyword(TK_RETURN))
+  if (consume("{"))
+  { 
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_BLOCK;
+    int i = 0, max = 2;
+    node->stmts = calloc(max, sizeof(Node*));
+    while (!consume("}"))
+    {
+      node->stmts[i++] = stmt();
+      if (i == max)
+      {
+        node->stmts = realloc(node->stmts, max *= 2);
+      }
+    }
+    return node;
+  }
+  else if (consume_keyword(TK_RETURN))
   {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;

@@ -51,6 +51,8 @@ typedef enum
 
   ND_ASSIGN,
   ND_LVAR,
+  ND_BLOCK,
+
   ND_EQ,
   ND_NEQ,
   ND_LESS,
@@ -93,6 +95,7 @@ struct Node
   Node *rhs;     //? 右辺
   int val;       //! kindがND_NUMの場合のみ使う
   int offset;    //* 変数の場合
+  Node **stmts;
 };
 
 // グローバル関数
