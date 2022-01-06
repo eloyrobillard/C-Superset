@@ -258,16 +258,19 @@ Node *stmt()
   { 
     node = calloc(1, sizeof(Node));
     node->kind = ND_BLOCK;
-    int i = 0, max = 2;
+    int i = 0;
+    size_t max = 2;
     node->stmts = calloc(max, sizeof(Node*));
     while (!consume("}"))
     {
       node->stmts[i++] = stmt();
-      if (i == max)
+      if (i + 1 == max)
       {
-        node->stmts = realloc(node->stmts, max *= 2);
+        node->stmts = realloc(node->stmts, max * 2);
+        max << 1;
       }
     }
+    node->stmts[i] = NULL;
     return node;
   }
   else if (consume_keyword(TK_RETURN))
