@@ -267,7 +267,7 @@ Node *stmt()
       if (i + 1 == max)
       {
         node->stmts = realloc(node->stmts, max * 2);
-        max << 1;
+        max <<= 1;
       }
     }
     node->stmts[i] = NULL;
