@@ -10,7 +10,9 @@
 
 /*
  * program    = stmt*
- * stmt       = "return"? expr ";"
+ * stmt       = expr ";"
+ *            | "{" stmt* "}"
+ *            | "return" expr ";"
  *            | "if" "(" expr ")" stmt ("else" stmt)?
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
