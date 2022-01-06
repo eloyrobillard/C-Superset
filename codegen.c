@@ -16,6 +16,13 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
+  case ND_BLOCK:
+    for (int i = 0; node->stmts[i]; i++)
+    {
+      gen(node->stmts[i]);
+      printf("\tpop rax\n");
+    }
+    return;
   case ND_RETURN:
     gen(node->lhs);
     printf("\tpop rax\n");
