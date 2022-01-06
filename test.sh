@@ -37,5 +37,9 @@ assert 130 " a = 0; for (;; a = a + 1) if (a == 130) return a;"
 assert 0 " a = 0; b = 0; for (;; b = b + 1) if (b > 130) return a;"
 assert 122 " a = 0; b = 0; for (;; b = b + 1) if (b > 60) return a; else a = a + 2;"
 assert 62 " a = 0; for (;;) if (a > 60) return a; else a = a + 2;"
+assert 62 "a = 0; if (1) a = 62; else if (0) a = 3; else a = 5; a;"
+assert 62 "a = 0; if (0) a = 62; else if (0) a = 3; else while (a< 62) a = a + 1; a;"
+assert 122 "b = 0; for (a = 0; a < 62; a = a + 1) if (a < 20) b = b + 2; else if (a < 40) b = b + 3; else b = b + 1; b;"
+assert 139 "for (a = 0;; a = a + 1) a;a;" #! SEGFAULT
 
 echo OK
