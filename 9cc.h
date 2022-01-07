@@ -94,7 +94,7 @@ struct FnCall
 {
   char *str;
   int len;
-  int args[6];
+  int *args;
   int argc;
 };
 

@@ -84,10 +84,16 @@ Node *handle_fncall(Node *node, Token *tok)
   int i = 0;
   if (!consume(")"))
   {
+    int max = 2;
+    node->call->args = calloc(max, sizeof(int));
     do
     {
       node->call->args[i++] = expect_num();
-    } while (consume(",") && i < 6);
+      if (i + 1 == max)
+      {
+        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(int));
+      }
+    } while (consume(","));
     expect(")");
   }
   node->call->argc = i;
