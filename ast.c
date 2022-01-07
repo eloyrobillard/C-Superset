@@ -81,15 +81,16 @@ Node *handle_fncall(Node *node, Token *tok)
   node->call = calloc(1, sizeof(FnCall));
   node->call->str = tok->str;
   node->call->len = tok->len;
+  int i = 0;
   if (!consume(")"))
   {
-    int i = 0;
     do
     {
       node->call->args[i++] = expect_num();
     } while (consume(",") && i < 6);
     expect(")");
   }
+  node->call->argc = i;
   return node;
 }
 

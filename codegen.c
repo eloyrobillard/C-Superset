@@ -18,8 +18,14 @@ void gen(Node *node)
   {
   case ND_FNCALL:
   {
+    // NOTE intentional memory leak (faster + less wordy)
     char *call = calloc(node->call->len, sizeof(char));
     strncpy(call, node->call->str, node->call->len);
+    char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+    for (int i = node->call->argc - 1; i >= 0; i--)
+    {
+      printf("\tpush %s\n", args[i]);
+    }
     printf("\tcall %s\n", call);
     return;
   }
