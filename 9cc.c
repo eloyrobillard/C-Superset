@@ -8,8 +8,13 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  usr_in = argv[1];
-  token = tokenize(argv[1]);
+  FILE *fp = fopen(argv[1], "r");
+
+  char *input = calloc(255, sizeof(char));
+  fread(input, 1, 255, fp);
+
+  usr_in = input;
+  token = tokenize(input);
   program();
 
   printf(".intel_syntax noprefix\n");
@@ -36,5 +41,7 @@ int main(int argc, char **argv)
   printf("\tmov rsp, rbp\n");
   printf("\tpop rbp\n");
   printf("\tret\n");
+
+  fclose(fp);
   return 0;
 }

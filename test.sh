@@ -1,4 +1,25 @@
 #!/bin/bash
+auto_test() {
+
+  expected="$1"
+  input="$2"
+
+  cc -c $input
+  ./9cc $input > tmp.s
+  cc -o tmp tmp.s
+  ./tmp
+  actual="$?"
+
+  if [ "$actual" = "$expected" ]; then
+    echo "$input => $actual"
+  else
+    echo "$input => expected $expected, but got $actual"
+    exit 1
+  fi
+}
+
+auto_test 22 "test.c" 
+
 assert() {
   expected="$1"
   input="$2"
