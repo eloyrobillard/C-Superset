@@ -25,8 +25,13 @@ void gen(Node *node)
     for (int i = node->call->argc - 1; i >= 0; i--)
     {
       printf("\tpush %s\n", args[i]);
+      printf("\tmov %s, %d\n", args[i], node->call->args[i]);
     }
     printf("\tcall %s\n", call);
+    for (int i = 0; i < node->call->argc; i++)
+    {
+      printf("\tpop %s\n", args[i]);
+    }
     return;
   }
   case ND_BLOCK:
@@ -51,42 +56,42 @@ void gen(Node *node)
     printf("\tcmp rax, 0\n");
     if (node->rhs)
     {
-      printf("\tje .Lelse%ld\n", (long)node);
+      printf("\tje .Lelse%d\n", (int)node);
       gen(node->lhs->rhs);
-      printf("\tjmp .Lend%ld\n", (long)node);
-      printf(".Lelse%ld:\n", (long)node);
+      printf("\tjmp .Lend%d\n", (int)node);
+      printf(".Lelse%d:\n", (int)node);
       gen(node->rhs);
     }
     else
     {
-      printf("\tje .Lend%ld\n", (long)node);
+      printf("\tje .Lend%d\n", (int)node);
       gen(node->lhs->rhs);
     }
-    printf(".Lend%ld:\n", (long)node);
+    printf(".Lend%d:\n", (int)node);
     return;
   case ND_WHILE:
-    printf(".Lbegin%ld:\n", (long)node);
+    printf(".Lbegin%d:\n", (int)node);
     gen(node->lhs);
     printf("\tpop rax\n");
     printf("\tcmp rax, 0\n");
-    printf("\tje .Lend%ld\n", (long)node);
+    printf("\tje .Lend%d\n", (int)node);
     gen(node->rhs);
-    printf("\tjmp .Lbegin%ld\n", (long)node);
-    printf(".Lend%ld:\n", (long)node);
+    printf("\tjmp .Lbegin%d\n", (int)node);
+    printf(".Lend%d:\n", (int)node);
     return;
   case ND_FOR:
     if (node->lhs->lhs)
       gen(node->lhs->lhs);
-    printf(".Lbegin%ld:\n", (long)node);
+    printf(".Lbegin%d:\n", (int)node);
     gen(node->lhs->rhs);
     printf("\tpop rax\n");
     printf("\tcmp rax, 0\n");
-    printf("\tje .Lend%ld\n", (long)node);
+    printf("\tje .Lend%d\n", (int)node);
     gen(node->rhs->rhs);
     if (node->rhs->lhs)
       gen(node->rhs->lhs);
-    printf("\tjmp .Lbegin%ld\n", (long)node);
-    printf(".Lend%ld:\n", (long)node);
+    printf("\tjmp .Lbegin%d\n", (int)node);
+    printf(".Lend%d:\n", (int)node);
     return;
   case ND_NUM:
     printf("\tpush %d\n", node->val);
