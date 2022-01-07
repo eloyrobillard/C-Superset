@@ -16,6 +16,13 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
+  case ND_FNCALL:
+  {
+    char *call = calloc(node->call->len, sizeof(char));
+    strncpy(call, node->call->str, node->call->len);
+    printf("\tcall %s\n", call);
+    return;
+  }
   case ND_BLOCK:
     for (int i = 0; node->stmts[i]; i++)
     {

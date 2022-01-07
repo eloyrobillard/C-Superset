@@ -51,6 +51,7 @@ typedef enum
 
   ND_ASSIGN,
   ND_LVAR,
+  ND_FNCALL,
   ND_BLOCK,
 
   ND_EQ,
@@ -84,6 +85,14 @@ struct LVar {
   int offset; // RBPからのオフセット
 };
 
+typedef struct Funct Funct;
+
+struct Funct
+{
+  char *str;
+  int len;
+};
+
 // 抽象構文木のノードの種類
 typedef struct Node Node;
 
@@ -95,6 +104,8 @@ struct Node
   Node *rhs;     //? 右辺
   int val;       //! kindがND_NUMの場合のみ使う
   int offset;    //* 変数の場合
+  char *str;     //? 関数呼び出しの場合
+  Funct *call;
   Node **stmts;
 };
 

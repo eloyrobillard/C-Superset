@@ -89,6 +89,14 @@ Node *primary()
   if (tok)
   {
     Node *node = calloc(1, sizeof(Node));
+    if (consume("("))
+    {
+      expect(")");
+      node->kind = ND_FNCALL;
+      node->call->str = tok->str;
+      node->call->len = tok->len;
+      return node;
+    }
     node->kind = ND_LVAR;
 
     LVar *lvar = find_lvar(tok);
