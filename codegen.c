@@ -18,29 +18,32 @@ void gen(Node *node)
   {
   case ND_FNCALL:
   {
-    // NOTE intentional memory leak (faster + less wordy)
-    char *call = calloc(node->call->len, sizeof(char));
-    strncpy(call, node->call->str, node->call->len);
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
+    int regc = node->call->argc > 6 ? 6 : node->call->argc;
+    for (int i = regc - 1; i >= 0; i--)
+    {
+      printf("\tpush %s\n", args[i]);
+    }
     int i = node->call->argc - 1;
     if (node->call->argc > 6)
     {
-      while (i >= 6)
+      for (; i >= 6; i--)
       {
-        printf("\tpush %d\n", node->call->args[i--]);
+        printf("\tpush %d\n", node->call->args[i]);
       }
     }
-    while (i >= 0)
+    for (; i >= 0; i--)
     {
-      printf("\tpush %s\n", args[i]);
-      printf("\tmov %s, %d\n", args[i], node->call->args[i--]);
+      printf("\tmov %s, %d\n", args[i], node->call->args[i]);
     }
+    // NOTE intentional memory leak (faster + less wordy)
+    char *call = calloc(node->call->len, sizeof(char));
+    strncpy(call, node->call->str, node->call->len);
     printf("\tcall %s\n", call);
-    int regc = node->call->argc > 6 ? 6 : node->call->argc;
-    for (int i = 0; i < regc; i++)
+    for (int j = 0; j < regc; j++)
     {
-      printf("\tpop %s\n", args[i]);
+      printf("\tpop %s\n", args[j]);
     }
     return;
   }
