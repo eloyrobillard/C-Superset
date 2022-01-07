@@ -88,18 +88,17 @@ struct LVar
   int offset; // RBPからのオフセット
 };
 
+// 抽象構文木のノードの種類
+typedef struct Node Node;
 typedef struct FnCall FnCall;
 
 struct FnCall
 {
   char *str;
   int len;
-  int *args;
+  Node **args;
   int argc;
 };
-
-// 抽象構文木のノードの種類
-typedef struct Node Node;
 
 // 抽象構文木のノードの型
 struct Node
@@ -121,6 +120,7 @@ LVar *new_lvar(char *name, int len);
 LVar *find_lvar(Token *tok);
 // ast.c
 bool at_eof();
+Node *primary();
 Node *expr();
 Node *stmt();
 void gen(Node *);

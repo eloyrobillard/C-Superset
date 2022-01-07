@@ -34,16 +34,21 @@ void gen(Node *node)
     {
       for (; i >= 6; i--)
       {
-        printf("\tpush %d\n", node->call->args[i]);
+        gen(node->call->args[i]);
+        printf("\tpop rax\n");
+        printf("\tpush rax\n");
       }
     }
     for (; i >= 0; i--)
     {
-      printf("\tmov %s, %d\n", args[i], node->call->args[i]);
+      gen(node->call->args[i]);
+      printf("\tpop rax\n");
+      printf("\tmov %s, rax\n", args[i]);
     }
     // NOTE intentional memory leak (faster + less wordy)
     char *call = calloc(node->call->len, sizeof(char));
     strncpy(call, node->call->str, node->call->len);
+    printf("\tpush rax\n");
     printf("\tcall %s\n", call);
     for (int j = 0; j < regc; j++)
     {

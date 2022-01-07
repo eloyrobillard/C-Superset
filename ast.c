@@ -85,13 +85,13 @@ Node *handle_fncall(Node *node, Token *tok)
   if (!consume(")"))
   {
     int max = 2;
-    node->call->args = calloc(max, sizeof(int));
+    node->call->args = calloc(max, sizeof(Node*));
     do
     {
-      node->call->args[i++] = expect_num();
+      node->call->args[i++] = primary();
       if (i + 1 == max)
       {
-        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(int));
+        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(Node*));
       }
     } while (consume(","));
     expect(")");
