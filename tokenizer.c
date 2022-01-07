@@ -51,7 +51,7 @@ Token *tokenize(char *p)
         cur = new_token(TK_IDENT, cur, p, i);
       p += i;
     }
-    else if (strchr(";(){}-+*/", *p))
+    else if (strchr(";(),{}-+*/", *p))
       cur = new_token(TK_RESERVED, cur, p++, 1);
     else if (*p == '!')
     {
