@@ -26,15 +26,15 @@ void gen(Node *node)
     int i = node->call->argc - 1;
     if (node->call->argc > 6)
     {
-      for (; i > 6; i--)
+      while (i >= 6)
       {
-        printf("\tpush %d\n", node->call->args[i]);
+        printf("\tpush %d\n", node->call->args[i--]);
       }
     }
-    for (; i >= 0; i--)
+    while (i >= 0)
     {
       printf("\tpush %s\n", args[i]);
-      printf("\tmov %s, %d\n", args[i], node->call->args[i]);
+      printf("\tmov %s, %d\n", args[i], node->call->args[i--]);
     }
     printf("\tcall %s\n", call);
     int regc = node->call->argc > 6 ? 6 : node->call->argc;
