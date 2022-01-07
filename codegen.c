@@ -18,6 +18,10 @@ void gen(Node *node)
   {
   case ND_FNCALL:
   {
+    // RSPが１６倍数のアドレスを参照している約束
+    if (node->call->argc & 1)
+      printf("\tsub rsp, 8\n");
+
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
     int regc = node->call->argc > 6 ? 6 : node->call->argc;
