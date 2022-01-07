@@ -5,7 +5,7 @@ auto_test() {
   input="$2"
 
   ./9cc $input > tmp.s
-  cc -o tmp tmp.s
+  cc -o tmp tmp.s foo.o
   ./tmp
   actual="$?"
 
@@ -17,7 +17,7 @@ auto_test() {
   fi
 }
 
-auto_test 5 "tests/test0.txt" 
+auto_test 0 "tests/test0.txt" 
 
 # assert() {
 #   expected="$1"
