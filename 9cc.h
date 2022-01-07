@@ -23,7 +23,9 @@
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = ("+" | "-")? primary
- * primary    = num | ident ("(" ")")? | "(" expr ")"
+ * primary    = num 
+ *            | ident ("(" (num ("," num)*)? ")")? 
+ *            | "(" expr ")"
  */
 
 typedef enum TK_Type
@@ -78,7 +80,8 @@ struct Token
 typedef struct LVar LVar;
 
 // ローカル変数の型
-struct LVar {
+struct LVar
+{
   LVar *next; // 次の変数かNULL
   char *name; // 変数の名前
   int len;    // 名前の長さ

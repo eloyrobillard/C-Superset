@@ -75,6 +75,16 @@ long expect_num()
   return val;
 }
 
+Node *handle_fncall(Node *node, Token *tok)
+{
+  expect(")");
+  node->kind = ND_FNCALL;
+  node->call = calloc(1, sizeof(FnCall));
+  node->call->str = tok->str;
+  node->call->len = tok->len;
+  return node;
+}
+
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -90,14 +100,7 @@ Node *primary()
   {
     Node *node = calloc(1, sizeof(Node));
     if (consume("("))
-    {
-      expect(")");
-      node->kind = ND_FNCALL;
-      node->call = calloc(1, sizeof(FnCall));
-      node->call->str = tok->str;
-      node->call->len = tok->len;
-      return node;
-    }
+      return handle_fncall(node, tok);
     node->kind = ND_LVAR;
 
     LVar *lvar = find_lvar(tok);
@@ -264,19 +267,19 @@ Node *stmt()
   Node *node;
 
   if (consume("{"))
-  { 
+  {
     node = calloc(1, sizeof(Node));
     node->kind = ND_BLOCK;
 
     int i = 0;
     size_t max = 2;
-    node->stmts = calloc(max, sizeof(Node*));
+    node->stmts = calloc(max, sizeof(Node *));
     while (!consume("}"))
     {
       node->stmts[i++] = stmt();
       if (i + 1 == max)
       {
-        node->stmts = realloc(node->stmts, max * 2 * sizeof(Node*));
+        node->stmts = realloc(node->stmts, max * 2 * sizeof(Node *));
         max <<= 1;
       }
     }
