@@ -66,7 +66,7 @@ void expect(char *op)
   token = token->next;
 }
 
-long expect_num()
+int expect_num()
 {
   if (token->type != TK_NUM)
     error_at(token->str, "数ではありません\n");
@@ -77,11 +77,19 @@ long expect_num()
 
 Node *handle_fncall(Node *node, Token *tok)
 {
-  expect(")");
   node->kind = ND_FNCALL;
   node->call = calloc(1, sizeof(FnCall));
   node->call->str = tok->str;
   node->call->len = tok->len;
+  if (!consume(")"))
+  {
+    int i = 0;
+    do
+    {
+      node->call->args[i++] = expect_num();
+    } while (consume(",") && i < 6);
+    expect(")");
+  }
   return node;
 }
 

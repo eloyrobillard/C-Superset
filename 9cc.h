@@ -94,6 +94,7 @@ struct FnCall
 {
   char *str;
   int len;
+  int args[6];
 };
 
 // 抽象構文木のノードの種類
