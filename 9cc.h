@@ -85,9 +85,9 @@ struct LVar {
   int offset; // RBPからのオフセット
 };
 
-typedef struct Funct Funct;
+typedef struct FnCall FnCall;
 
-struct Funct
+struct FnCall
 {
   char *str;
   int len;
@@ -105,7 +105,7 @@ struct Node
   int val;       //! kindがND_NUMの場合のみ使う
   int offset;    //* 変数の場合
   char *str;     //? 関数呼び出しの場合
-  Funct *call;
+  FnCall *call;
   Node **stmts;
 };
 

@@ -93,7 +93,7 @@ Node *primary()
     {
       expect(")");
       node->kind = ND_FNCALL;
-      node->call = calloc(1, sizeof(Funct));
+      node->call = calloc(1, sizeof(FnCall));
       node->call->str = tok->str;
       node->call->len = tok->len;
       return node;
