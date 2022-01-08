@@ -47,3 +47,60 @@ imul rdi
 // 足した結果をスタックにプッシュ
 push rax
 ```
+
+## 制御構造
+
+以下により、XXXは通し番号などにして、全てのラベルがユニークにするためにある。
+
+### if (A) B
+
+``` nasm
+  Aをコンパイルしたコード // スタックトップに結果が入っているはず
+  pop rax
+  cmp rax, 0
+  je  .LendXXX
+  Bをコンパイルしたコード
+.LendXXX:
+```
+
+### if (A) B else C
+
+``` nasm
+  Aをコンパイルしたコード // スタックトップに結果が入っているはず
+  pop rax
+  cmp rax, 0
+  je  .LelseXXX
+  Bをコンパイルしたコード
+  jmp .LendXXX
+.LelseXXX
+  Cをコンパイルしたコード
+.LendXXX
+```
+
+### while (A) B
+
+``` nasm
+.LbeginXXX:
+  ; Aをコンパイルしたコード
+  pop rax
+  cmp rax, 0
+  je .LendXXX
+  ; Bをコンパイルしたコード
+  jmp .LbeginXXX
+.LendXXX:
+```
+
+### for (A; B; C) D
+
+``` nasm
+  Aをコンパイルしたコード
+.LbeginXXX:
+  Bをコンパイルしたコード
+  pop rax
+  cmp rax, 0
+  je  .LendXXX
+  Dをコンパイルしたコード
+  Cをコンパイルしたコード
+  jmp .LbeginXXX
+.LendXXX:
+```
