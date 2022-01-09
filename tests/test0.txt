@@ -10,4 +10,3 @@ i=9;
 j=10;
 k=11;
 foo(a,b,c,d,e,f,g,h,i,j,k); 
-hoge();

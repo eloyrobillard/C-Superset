@@ -17,7 +17,7 @@ auto_test() {
   fi
 }
 
-auto_test 0 "tests/test0.txt" 
+auto_test 66 "tests/test0.txt" 
 
 # assert() {
 #   expected="$1"

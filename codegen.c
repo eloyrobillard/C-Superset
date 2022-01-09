@@ -63,6 +63,7 @@ void gen(Node *node)
     {
       printf("\tpop %s\n", args[j]);
     }
+    printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
   }
   case ND_BLOCK:
