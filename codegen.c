@@ -31,8 +31,6 @@ void gen(Node *node)
       for (; i >= 6; i--)
       {
         gen(node->call->args[i]);
-        printf("\tpop rax\n");
-        printf("\tpush rax\n");
       }
     }
     for (; i >= 0; i--)
@@ -144,7 +142,7 @@ void gen(Node *node)
     printf("\tpop rdi\n");        // 代入値をゲット
     printf("\tpop rax\n");        // 変数のアドレスをゲット
     printf("\tmov [rax], rdi\n"); // アドレスに代入する
-    printf("\tpush rdi\n");       // なんで？
+    printf("\tpush rdi\n");       // スタックで値を提供する
     return;
   default:
     break;
