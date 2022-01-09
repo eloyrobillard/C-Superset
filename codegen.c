@@ -60,11 +60,8 @@ void gen(Node *node)
     printf("\tjmp .Lend%ld\n", (long)node);
     printf(".Lend%ld:\n", (long)node);
 
-    // NOTE intentional memory leak (faster + less wordy)
-    char *call = calloc(node->call->len, sizeof(char));
-    strncpy(call, node->call->str, node->call->len);
     printf("\tpush rax\n");
-    printf("\tcall %s\n", call);
+    printf("\tcall %.*s\n", node->call->len, node->call->str);
     for (int j = 0; j < regc; j++)
     {
       printf("\tpop %s\n", args[j]);
