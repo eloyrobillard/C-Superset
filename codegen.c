@@ -58,7 +58,6 @@ void gen(Node *node)
     printf("\tjmp .Lend%ld\n", (long)node);
     printf(".Lend%ld:\n", (long)node);
 
-    printf("\tpush rax\n");
     printf("\tcall %.*s\n", node->call->len, node->call->str);
     for (int j = 0; j < regc; j++)
     {
