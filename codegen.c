@@ -18,10 +18,6 @@ void gen(Node *node)
   {
   case ND_FNCALL:
   {
-    // RSPが１６倍数のアドレスを参照している約束
-    if (node->call->argc & 1)
-      printf("\tsub rsp, 8\n");
-
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
     int regc = node->call->argc > 6 ? 6 : node->call->argc;
@@ -45,6 +41,25 @@ void gen(Node *node)
       printf("\tpop rax\n");
       printf("\tmov %s, rax\n", args[i]);
     }
+
+    // RSPが１６倍数のアドレスを参照している約束
+    printf("\tpush rax\n");
+    printf("\tpush rdx\n");
+    printf("\tpush r8\n");
+    printf("\tmov rax, rsp\n");
+    printf("\txor rdx, rdx\n");
+    printf("\tmov r8, 16\n");
+    printf("\tcqo\n");
+    printf("\tdiv r8\n");
+    printf("\tcmp rdx, 0\n");
+    printf("\tpop r8\n");
+    printf("\tpop rdx\n");
+    printf("\tpop rax\n");
+    printf("\tjz .Lend%ld\n", (long)node);
+    printf("\tadd rsp, 8\n");
+    printf("\tjmp .Lend%ld\n", (long)node);
+    printf(".Lend%ld:\n", (long)node);
+
     // NOTE intentional memory leak (faster + less wordy)
     char *call = calloc(node->call->len, sizeof(char));
     strncpy(call, node->call->str, node->call->len);
