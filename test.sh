@@ -20,6 +20,7 @@ auto_test() {
 auto_test 2 "tests/test0.txt" 
 auto_test 4 "tests/test1.txt" 
 auto_test 198 "tests/test2.txt" 
+auto_test 46 "tests/test3.txt" 
 
 # assert() {
 #   expected="$1"

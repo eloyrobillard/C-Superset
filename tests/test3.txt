@@ -1,0 +1,10 @@
+var = 1;
+b = 3;
+
+while (var < 32)
+{
+  var = bar(var) + bar(b);
+  for (; b < var;) 
+    b = b+3;
+}
+var;
