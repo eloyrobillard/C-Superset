@@ -22,17 +22,13 @@ void gen(Node *node)
     // 引数渡し
     int regc = node->call->argc > 6 ? 6 : node->call->argc;
     for (int i = regc - 1; i >= 0; i--)
-    {
       printf("\tpush %s\n", args[i]);
-    }
+
     int i = node->call->argc - 1;
     if (node->call->argc > 6)
-    {
       for (; i >= 6; i--)
-      {
         gen(node->call->args[i]);
-      }
-    }
+        
     for (; i >= 0; i--)
     {
       gen(node->call->args[i]);
@@ -41,28 +37,29 @@ void gen(Node *node)
     }
 
     // RSPが１６倍数のアドレスを参照している約束
-    printf("\tpush rax\n");
-    printf("\tpush rdx\n");
-    printf("\tpush r8\n");
-    printf("\tmov rax, rsp\n");
-    printf("\txor rdx, rdx\n");
-    printf("\tmov r8, 16\n");
-    printf("\tcqo\n");
-    printf("\tdiv r8\n");
-    printf("\tcmp rdx, 0\n");
-    printf("\tpop r8\n");
-    printf("\tpop rdx\n");
-    printf("\tpop rax\n");
-    printf("\tjz .Lend%ld\n", (long)node);
-    printf("\tadd rsp, 8\n");
-    printf("\tjmp .Lend%ld\n", (long)node);
-    printf(".Lend%ld:\n", (long)node);
-
+    // printf("\tpush rax\n");
+    // printf("\tpush rdx\n");
+    // printf("\tpush r8\n");
+    // printf("\tmov rax, rsp\n");
+    // printf("\txor rdx, rdx\n");
+    // printf("\tmov r8, 16\n");
+    // printf("\tcqo\n");
+    // printf("\tdiv r8\n");
+    // printf("\tcmp rdx, 0\n");
+    // printf("\tpop r8\n");
+    // printf("\tpop rdx\n");
+    // printf("\tpop rax\n");
+    // printf("\tjz .Lend%ld\n", (long)node);
+    // printf("\tadd rsp, 8\n");
+    // printf("\tjmp .Lend%ld\n", (long)node);
+    // printf(".Lend%ld:\n", (long)node);
+    
     printf("\tcall %.*s\n", node->call->len, node->call->str);
     for (int j = 0; j < regc; j++)
-    {
       printf("\tpop %s\n", args[j]);
-    }
+    // スタックに入ってる引数を捨てるために
+    for (int j = node->call->argc - 1; j >= 6; j--)
+      printf("\tpop rdi\n");
     printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
   }
@@ -83,6 +80,7 @@ void gen(Node *node)
     printf("\tret\n");
     return;
   case ND_IF:
+  {
     gen(node->lhs->lhs);
     printf("\tpop rax\n");
     printf("\tcmp rax, 0\n");
@@ -101,7 +99,9 @@ void gen(Node *node)
     }
     printf(".Lend%ld:\n", (long)node);
     return;
+  }
   case ND_WHILE:
+  {
     printf(".Lbegin%ld:\n", (long)node);
     gen(node->lhs);
     printf("\tpop rax\n");
@@ -111,7 +111,9 @@ void gen(Node *node)
     printf("\tjmp .Lbegin%ld\n", (long)node);
     printf(".Lend%ld:\n", (long)node);
     return;
+  }
   case ND_FOR:
+  {
     if (node->lhs->lhs)
       gen(node->lhs->lhs);
     printf(".Lbegin%ld:\n", (long)node);
@@ -125,12 +127,12 @@ void gen(Node *node)
     printf("\tjmp .Lbegin%ld\n", (long)node);
     printf(".Lend%ld:\n", (long)node);
     return;
+  }
   case ND_NUM:
     printf("\tpush %d\n", node->val);
     return;
   case ND_LVAR:
     gen_lval(node);
-
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
