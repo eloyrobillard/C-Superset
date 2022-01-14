@@ -28,7 +28,7 @@ void gen(Node *node)
     if (node->call->argc > 6)
       for (; i >= 6; i--)
         gen(node->call->args[i]);
-        
+
     for (; i >= 0; i--)
     {
       gen(node->call->args[i]);
@@ -53,7 +53,7 @@ void gen(Node *node)
     // printf("\tadd rsp, 8\n");
     // printf("\tjmp .Lend%ld\n", (long)node);
     // printf(".Lend%ld:\n", (long)node);
-    
+
     printf("\tcall %.*s\n", node->call->len, node->call->str);
     for (int j = 0; j < regc; j++)
       printf("\tpop %s\n", args[j]);
