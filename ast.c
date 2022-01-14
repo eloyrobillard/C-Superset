@@ -321,12 +321,21 @@ Node *stmt()
   return node;
 }
 
+Node *fn()
+{
+  Token *tok = consume_ident();
+  if (tok == NULL)
+    error("名前ではないトークンです");
+  
+  
+}
+
 void program()
 {
   int i = 0;
   while (!at_eof())
   {
-    code[i] = stmt();
+    code[i] = fn();
     if (code[i++]->kind == ND_RETURN)
       break;
   }

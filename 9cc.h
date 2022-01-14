@@ -9,7 +9,8 @@
 #include <string.h>
 
 /*
- * program    = stmt*
+ * program    = fn*
+ * fn         = ident "(" (ident ("," ident)*)* ")" "{" stmt* "}"
  * stmt       = expr ";"
  *            | "{" stmt* "}"
  *            | "return" expr ";"
@@ -100,6 +101,15 @@ struct FnCall
   int argc;
 };
 
+typedef struct FnDef FnDef;
+struct FnDef
+{
+  FnDef *next;
+  char *name;
+  int len;      // 関数名の長さ
+  LVar *locals;
+};
+
 // 抽象構文木のノードの型
 struct Node
 {
@@ -133,6 +143,7 @@ void error_at(char *loc, const char *fmt, ...);
 Node *code[100];
 Token *token;
 char *usr_in;
-LVar *locals;
+LVar *globals;
+FnDef *fns;
 
 #endif // NCC_H
