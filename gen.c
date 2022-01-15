@@ -25,20 +25,28 @@ void gen(Node *node)
     printf("\tpush rbp\n");
     printf("\tmov rbp, rsp\n");
     printf("\tsub rsp, 208\n");
-    
-    for (int i = 0; node->def->body->stmts[i]; i++) {
-      gen(node->def->body->stmts[i]);
+
+    int i = 0;
+    while (node->def->body->stmts[i+1])
+    {
+      gen(node->def->body->stmts[i++]);
 
       // 式の評価結果としてスタックに一つの値が残っている
       // はずなので、スタックが溢れないようにポップしておく
       printf("\tpop rax\n");
     }
 
-     // エピローグ
-    // 最後の式の結果がRAXに残っているのでそれが返り値になる
-    printf("\tmov rsp, rbp\n");
-    printf("\tpop rbp\n");
-    printf("\tret\n");
+    // NOTE: 関数にリターンがない際に備え
+    gen(node->def->body->stmts[i]);
+    if (node->def->body->stmts[i]->kind != ND_RETURN)
+    {
+      // エピローグ
+      // 最後の式の結果がRAXに残っているのでそれが返り値になる
+      printf("\tmov rsp, rbp\n");
+      printf("\tpop rbp\n");
+      printf("\tret\n");
+    }
+
     return;
   }
   case ND_FNCALL:
