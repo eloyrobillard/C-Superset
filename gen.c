@@ -53,6 +53,7 @@ void gen(Node *node)
     {
       // エピローグ
       // 最後の式の結果がRAXに残っているのでそれが返り値になる
+      printf("\tmov rax, 0\n");
       printf("\tmov rsp, rbp\n");
       printf("\tpop rbp\n");
       printf("\tret\n");
