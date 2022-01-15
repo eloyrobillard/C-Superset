@@ -10,9 +10,9 @@
 
 /*
  * program    = fn*
- * fn         = ident "(" (ident ("," ident)*)* ")" "{" stmt* "}"
+ * fn         = ident "(" (ident ("," ident)*)* ")" BLOCK
  * stmt       = expr ";"
- *            | "{" stmt* "}"
+ *            | BLOCK
  *            | "return" expr ";"
  *            | "if" "(" expr ")" stmt ("else" stmt)?
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
@@ -25,8 +25,9 @@
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = ("+" | "-")? primary
  * primary    = num 
- *            | ident ("(" (num ("," num)*)? ")")? 
+ *            | ident ("(" (primary ("," primary)*)? ")")? 
  *            | "(" expr ")"
+ * BLOCK      = "{" stmt* "}"
  */
 
 typedef enum TK_Type
@@ -108,7 +109,7 @@ struct FnDef
   char *name;
   int len;      // 関数名の長さ
   int paramc;
-  LVar **params;
+  Node **params;
   Node *body;
 };
 

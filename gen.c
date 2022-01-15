@@ -16,6 +16,16 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
+  case ND_FNDEF:
+  {
+    printf("%.*s:\n", node->def->len, node->def->name);
+    // for (int i = 0; i < node->def->paramc; i++)
+    // {
+    //   gen(node->def->params[i]);
+    // }
+    gen(node->def->body);
+    return;
+  }
   case ND_FNCALL:
   {
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
@@ -71,6 +81,7 @@ void gen(Node *node)
     }
     return;
   case ND_RETURN:
+  {
     gen(node->lhs);
     printf("\tpop rax\n");
     // エピローグ
@@ -79,6 +90,7 @@ void gen(Node *node)
     printf("\tpop rbp\n");
     printf("\tret\n");
     return;
+  }
   case ND_IF:
   {
     gen(node->lhs->lhs);
@@ -138,6 +150,7 @@ void gen(Node *node)
     printf("\tpush rax\n");
     return;
   case ND_ASSIGN:
+  {
     gen_lval(node->lhs);
     gen(node->rhs); // 代入値の処理
 
@@ -146,6 +159,7 @@ void gen(Node *node)
     printf("\tmov [rax], rdi\n"); // アドレスに代入する
     printf("\tpush rdi\n");       // スタックで値を提供する
     return;
+  }
   default:
     break;
   }
