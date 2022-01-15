@@ -55,6 +55,7 @@ typedef enum
   ND_ASSIGN,
   ND_LVAR,
   ND_FNCALL,
+  ND_FNDEF,
   ND_BLOCK,
 
   ND_EQ,
@@ -104,10 +105,11 @@ struct FnCall
 typedef struct FnDef FnDef;
 struct FnDef
 {
-  FnDef *next;
   char *name;
   int len;      // 関数名の長さ
-  LVar *locals;
+  int paramc;
+  LVar **params;
+  Node *body;
 };
 
 // 抽象構文木のノードの型
@@ -120,6 +122,7 @@ struct Node
   int offset;    //* 変数の場合
   char *str;     //? 関数呼び出しの場合
   FnCall *call;
+  FnDef *def;
   Node **stmts;
 };
 
@@ -143,7 +146,7 @@ void error_at(char *loc, const char *fmt, ...);
 Node *code[100];
 Token *token;
 char *usr_in;
-LVar *globals;
+LVar *locals;
 FnDef *fns;
 
 #endif // NCC_H

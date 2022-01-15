@@ -326,8 +326,40 @@ Node *fn()
   Token *tok = consume_ident();
   if (tok == NULL)
     error("名前ではないトークンです");
+
+  expect("(");
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FNDEF;
+  node->def = calloc(1, sizeof(FnDef));
+  node->def->name = tok->str;
+  node->def->len = tok->len;
+
+  int i = 0;
+  if (!consume(")"))
+  {
+    int max = 2;
+    node->def->params = calloc(max, sizeof(LVar*));
+    do
+    {
+      Token *tok = consume_ident();
+      if (tok == NULL)
+        error("名前ではないトークンです");
+      node->def->params[i++] = new_lvar(tok->str, tok->len);
+      if (i + 1 == max)
+      {
+        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(LVar*));
+      }
+    } while (consume(","));
+    expect(")");
+  }
+  node->def->paramc = i;
   
-  
+  node->def->body = stmt();
+
+  if (node->def->body->kind != ND_BLOCK)
+    error("関数に中身はない");
+
+  return node;
 }
 
 void program()
