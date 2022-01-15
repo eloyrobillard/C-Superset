@@ -1,7 +1,7 @@
 main()
 {
   a=1; b=2; c=3; d=4;
-  return a + sum(a,b,c,d);
+  return a+b+sum(a*2,b+c,c,d);
 }
 
 sum(a, b, v3, v4)

@@ -25,7 +25,7 @@
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = ("+" | "-")? primary
  * primary    = num 
- *            | ident ("(" (primary ("," primary)*)? ")")? 
+ *            | ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
  * BLOCK      = "{" stmt* "}"
  */

@@ -88,7 +88,7 @@ Node *handle_fncall(Node *node, Token *tok)
     node->call->args = calloc(max, sizeof(Node*));
     do
     {
-      node->call->args[i++] = primary();
+      node->call->args[i++] = expr();
       if (i + 1 == max)
       {
         node->call->args = realloc(node->call->args, (max *= 2) * sizeof(Node*));
