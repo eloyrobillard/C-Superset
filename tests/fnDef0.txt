@@ -1,0 +1,6 @@
+john()
+{
+  a=1;
+  a + bar(a);
+  return a;
+}
