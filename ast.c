@@ -338,16 +338,29 @@ Node *fn()
   if (!consume(")"))
   {
     int max = 2;
-    node->def->params = calloc(max, sizeof(LVar*));
+    node->def->params = calloc(max, sizeof(Node*));
     do
     {
       Token *tok = consume_ident();
       if (tok == NULL)
         error("名前ではないトークンです");
-      node->def->params[i++] = new_lvar(tok->str, tok->len);
+      Node *param = calloc(1, sizeof(Node));
+      param->kind = ND_LVAR;
+
+      // TODO handle shadowing
+      LVar *lvar = find_lvar(tok);
+      if (lvar)
+        param->offset = lvar->offset;
+      else
+      {
+        LVar *lvar = new_lvar(tok->str, tok->len);
+        param->offset = lvar->offset;
+        locals = lvar;
+      }
+      node->def->params[i++] = param;
       if (i + 1 == max)
       {
-        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(LVar*));
+        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(Node*));
       }
     } while (consume(","));
     expect(")");
