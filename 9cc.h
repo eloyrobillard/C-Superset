@@ -1,5 +1,5 @@
-#ifndef NCC_H
-#define NCC_H
+#ifndef NINE_CC_H
+#define NINE_CC_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -74,7 +74,6 @@ typedef struct Token Token;
 struct Token
 {
   TK_TYPE type;
-  struct Token *next;
   long val;  // for int tokens
   char *str; // for all tokens
   int len;
@@ -142,12 +141,16 @@ void program();
 // error.c
 void error(char *, ...);
 void error_at(char *loc, const char *fmt, ...);
+// tokens.c
+void init_tokens();
+Token *add_token(Token);
+void next_token();
+Token *get_token();
 
 // グローバル変数
 Node *code[100];
-Token *token;
 char *usr_in;
 LVar *locals;
 FnDef *fns;
 
-#endif // NCC_H
+#endif // NINE_CC_H

@@ -18,13 +18,14 @@ void gen(Node *node)
   {
   case ND_FNDEF:
   {
+    printf("\n");
     printf("%.*s:\n", node->def->len, node->def->name);
 
     // プロローグ
     // 変数26個分の領域を確保する
     printf("\tpush rbp\n");
     printf("\tmov rbp, rsp\n");
-    printf("\tsub rsp, 208\n");
+    printf("\tsub rsp, 288\n");
 
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     for (int i = 0; i < node->def->paramc; i++)
@@ -75,9 +76,9 @@ void gen(Node *node)
   {
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
-    int regc = node->call->argc > 6 ? 6 : node->call->argc;
-    for (int i = regc - 1; i >= 0; i--)
-      printf("\tpush %s\n", args[i]);
+    // int regc = node->call->argc > 6 ? 6 : node->call->argc;
+    // for (int i = regc - 1; i >= 0; i--)
+    //   printf("\tpush %s\n", args[i]);
 
     int i = node->call->argc - 1;
     if (node->call->argc > 6)
@@ -110,11 +111,11 @@ void gen(Node *node)
     // printf(".Lend%ld:\n", (long)node);
 
     printf("\tcall %.*s\n", node->call->len, node->call->str);
-    for (int j = 0; j < regc; j++)
-      printf("\tpop %s\n", args[j]);
+    // for (int j = 0; j < regc; j++)
+    //   printf("\tpop %s\n", args[j]);
+    // for (int j = node->call->argc - 1; j >= 6; j--)
+      // printf("\tpop rdi\n");
     // スタックに入ってる引数を捨てるために
-    for (int j = node->call->argc - 1; j >= 6; j--)
-      printf("\tpop rdi\n");
     printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
   }

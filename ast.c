@@ -2,7 +2,7 @@
 
 bool at_eof()
 {
-  return token->type == TK_EOF;
+  return get_token()->type == TK_EOF;
 }
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
@@ -33,45 +33,45 @@ Node *new_if_node(Node *cond, Node *ifstmt, Node *els)
 
 bool consume(char *op)
 {
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (get_token()->type != TK_RESERVED || strlen(op) != get_token()->len || memcmp(get_token()->str, op, get_token()->len))
     return false;
 
-  token = token->next;
+  next_token();
   return true;
 }
 
 bool consume_keyword(TK_TYPE type)
 {
-  if (token->type != type)
+  if (get_token()->type != type)
     return false;
 
-  token = token->next;
+  next_token();
   return true;
 }
 
 Token *consume_ident()
 {
-  if (token->type != TK_IDENT)
+  if (get_token()->type != TK_IDENT)
     return NULL;
 
-  Token *tok = token;
-  token = token->next;
+  Token *tok = get_token();
+  next_token();
   return tok;
 }
 
 void expect(char *op)
 {
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
-    error_at(token->str, "'%c'ではありません\n", op);
-  token = token->next;
+  if (get_token()->type != TK_RESERVED || strlen(op) != get_token()->len || memcmp(get_token()->str, op, get_token()->len))
+    error_at(get_token()->str, "'%c'ではありません\n", op);
+  next_token();
 }
 
 int expect_num()
 {
-  if (token->type != TK_NUM)
-    error_at(token->str, "数ではありません\n");
-  int val = token->val;
-  token = token->next;
+  if (get_token()->type != TK_NUM)
+    error_at(get_token()->str, "数ではありません\n");
+  int val = get_token()->val;
+  next_token();
   return val;
 }
 
@@ -317,7 +317,7 @@ Node *stmt()
     node = expr();
 
   if (!consume(";"))
-    error_at(token->str, "';'ではないトークンです");
+    error_at(get_token()->str, "';'ではないトークンです");
   return node;
 }
 

@@ -22,7 +22,8 @@ int main(int argc, char **argv)
   }
 
   usr_in = input;
-  token = tokenize(input);
+  init_tokens();
+  tokenize(input);
   program();
 
   printf(".intel_syntax noprefix\n");
