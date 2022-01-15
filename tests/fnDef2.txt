@@ -4,7 +4,9 @@ main()
   return a + sum(a,b,c,d);
 }
 
-sum(v1, v2, v3, v4)
+sum(a, b, v3, v4)
 {
-  return v1+v2+v3+v4;
+  v4 = 3;
+  v3 = 1;
+  return a+b+v3+v4;
 }

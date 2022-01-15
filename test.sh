@@ -18,9 +18,9 @@ auto_test() {
 }
 
 auto_test 3 "tests/fnDef0.txt" 
-auto_test 4 "tests/fnDef1.txt" 
-# auto_test 198 "tests/fnDef2.txt" 
-# auto_test 46 "tests/fnDef3.txt" 
+auto_test 11 "tests/fnDef1.txt" 
+auto_test 8 "tests/fnDef2.txt" 
+auto_test 66 "tests/fnDef3.txt" 
 # auto_test 213 "tests/fnDef4.txt" 
 
 # assert() {

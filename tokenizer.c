@@ -1,6 +1,6 @@
 #include "9cc.h"
 
-bool is_alnum(char c)
+bool is_alnum_(char c)
 {
   return isalnum(c) || c == '_';
 }
@@ -34,7 +34,7 @@ Token *tokenize(char *p)
     if ('a' <= *p && *p <= 'z' || *p == '_')
     {
       int i = 1;
-      while (is_alnum(*(p + i)))
+      while (is_alnum_(*(p + i)))
         i++;
 
       if (i == 2 && strncmp(p, "if", i) == 0)

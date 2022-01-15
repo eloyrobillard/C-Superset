@@ -33,8 +33,18 @@ void gen(Node *node)
       gen_lval(node->def->params[i]);
       // 引数の値の獲得
       printf("\tpop rax\n");
-      printf("\tmov [rax], %s\n", args[i]); // アドレスに代入する
-      printf("\tpush %s\n", args[i]);       // スタックで値を提供する
+      if (i < 6)
+      {
+        printf("\tmov [rax], %s\n", args[i]); // アドレスに代入する
+        printf("\tpush %s\n", args[i]);       // スタックで値を提供する
+      }
+      else
+      {
+        printf("\tpush rdi\n");
+        printf("\tmov rdi, [rbp+%d]\n", 16 + 8 * (i-6));
+        printf("\tmov [rax], rdi\n");
+        printf("\tpop rdi\n");
+      }
     }
 
     int i = 0;

@@ -10,8 +10,16 @@ int main(int argc, char **argv)
 
   FILE *fp = fopen(argv[1], "r");
 
-  char *input = calloc(255, sizeof(char));
-  fread(input, 1, 255, fp);
+  int in_max = 256;
+  char *input = calloc(256, sizeof(char));
+  char ch = fgetc(fp);
+  for (int i = 0; ch != EOF; i++)
+  {
+    input[i] = ch;
+    if (i+1 == in_max)
+      input = realloc(input, sizeof(char) * (in_max *= 2));
+    ch = fgetc(fp);
+  }
 
   usr_in = input;
   token = tokenize(input);
