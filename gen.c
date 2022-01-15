@@ -26,8 +26,19 @@ void gen(Node *node)
     printf("\tmov rbp, rsp\n");
     printf("\tsub rsp, 208\n");
 
+    char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+    for (int i = 0; i < node->def->paramc; i++)
+    {
+      // 引数のアドレスの確保
+      gen_lval(node->def->params[i]);
+      // 引数の値の獲得
+      printf("\tpop rax\n");
+      printf("\tmov [rax], %s\n", args[i]); // アドレスに代入する
+      printf("\tpush %s\n", args[i]);       // スタックで値を提供する
+    }
+
     int i = 0;
-    while (node->def->body->stmts[i+1])
+    while (node->def->body->stmts[i + 1])
     {
       gen(node->def->body->stmts[i++]);
 

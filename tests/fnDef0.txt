@@ -1,6 +1,7 @@
 main()
 {
-  john();
+  var = john();
+  return 2 + var;
 }
 
 john()

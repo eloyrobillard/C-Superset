@@ -1,0 +1,10 @@
+main()
+{
+  a=1; b=2; c=3; d=4;
+  a + sum(a,b,c,d);
+}
+
+sum(v1, v2, v3, v4)
+{
+  return v1+v2+v3+v4;
+}
