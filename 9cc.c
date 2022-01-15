@@ -21,13 +21,8 @@ int main(int argc, char **argv)
   printf(".globl main\n");
   printf("\n");
 
-  for (int i = 0; code[i]; i++) {
+  for (int i = 0; code[i]; i++)
     gen(code[i]);
-
-    // 式の評価結果としてスタックに一つの値が残っている
-    // はずなので、スタックが溢れないようにポップしておく
-    printf("\tpop rax\n");
-  }
 
   fclose(fp);
   return 0;

@@ -25,19 +25,14 @@ void gen(Node *node)
     printf("\tpush rbp\n");
     printf("\tmov rbp, rsp\n");
     printf("\tsub rsp, 208\n");
-    // for (int i = 0; i < node->def->paramc; i++)
-    // {
-    //   gen(node->def->params[i]);
-    // }
-    gen(node->def->body);
+    
+    for (int i = 0; node->def->body->stmts[i]; i++) {
+      gen(node->def->body->stmts[i]);
 
-    // for (int i = 0; code[i]; i++) {
-    //   gen(code[i]);
-
-    //   // 式の評価結果としてスタックに一つの値が残っている
-    //   // はずなので、スタックが溢れないようにポップしておく
-    //   printf("\tpop rax\n");
-    // }
+      // 式の評価結果としてスタックに一つの値が残っている
+      // はずなので、スタックが溢れないようにポップしておく
+      printf("\tpop rax\n");
+    }
 
      // エピローグ
     // 最後の式の結果がRAXに残っているのでそれが返り値になる
