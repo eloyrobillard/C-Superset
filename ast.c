@@ -40,7 +40,7 @@ bool consume(char *op)
   return true;
 }
 
-bool consume_keyword(TK_TYPE type)
+bool consume_keyword(TK_KIND type)
 {
   if (get_token()->type != type)
     return false;

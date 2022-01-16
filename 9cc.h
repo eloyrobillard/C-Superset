@@ -38,7 +38,7 @@
  * LVAL       = "*"? ident
  */
 
-typedef enum TK_Type
+typedef enum TK_Kind
 {
   // 指定されたキーワード
   TK_RETURN,
@@ -46,12 +46,13 @@ typedef enum TK_Type
   TK_ELSE,
   TK_FOR,
   TK_WHILE,
+  TK_TYPE,
 
   TK_RESERVED,
   TK_IDENT, // 識別子
   TK_NUM,
   TK_EOF
-} TK_TYPE;
+} TK_KIND;
 
 typedef enum
 {
@@ -84,7 +85,7 @@ typedef enum
 typedef struct Token Token;
 struct Token
 {
-  TK_TYPE type;
+  TK_KIND type;
   long val;  // for int tokens
   char *str; // for all tokens
   int len;
