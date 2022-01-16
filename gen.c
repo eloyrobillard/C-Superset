@@ -16,6 +16,19 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
+  case ND_ADDR:
+  {
+    gen_lval(node->rhs);
+    return;
+  }
+  case ND_DEREF:
+  {
+    gen(node->rhs);
+    printf("\tpop rax\n");
+    printf("\tmov rax, [rax]\n");
+    printf("\tpush rax\n");
+    return;
+  }
   case ND_FNDEF:
   {
     printf("\n");
@@ -39,7 +52,7 @@ void gen(Node *node)
       else
       {
         printf("\tpush rdi\n");
-        printf("\tmov rdi, [rbp+%d]\n", 16 + 8 * (i-6));
+        printf("\tmov rdi, [rbp+%d]\n", 16 + 8 * (i - 6));
         printf("\tmov [rax], rdi\n");
         printf("\tpop rdi\n");
       }
@@ -47,7 +60,7 @@ void gen(Node *node)
     }
 
     int i = 0;
-    while (node->def->body->stmts[i+1])
+    while (node->def->body->stmts[i + 1])
     {
       gen(node->def->body->stmts[i++]);
 
