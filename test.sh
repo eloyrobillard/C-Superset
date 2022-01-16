@@ -22,6 +22,8 @@ auto_test 11 "tests/fnDef1.txt"
 auto_test 14 "tests/fnDef2.txt" 
 auto_test 124 "tests/fnDef3.txt" 
 auto_test 55 "tests/fnDef4.txt" 
+auto_test 3 "tests/deref0.txt" 
+auto_test 3 "tests/deref1.txt" 
 
 # assert() {
 #   expected="$1"
