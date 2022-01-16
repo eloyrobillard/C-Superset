@@ -18,10 +18,8 @@
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
  * expr       = assign
- *            | declare
- * declare    = TYPE ident
- * assign     = equality
- *            = LVAL "=" assign
+ *            | DECL
+ * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
@@ -29,11 +27,13 @@
  * unary      = ("+" | "-")? primary
  *            | "&" unary
  *            | "*" unary
- * primary    = num 
+ * primary    = num
+ *            | LVAL
  *            | ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
  * 
  * BLOCK      = "{" stmt* "}"
+ * DECL       = TYPE ident
  * TYPE       = "i64"
  * LVAL       = "*"? ident
  */

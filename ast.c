@@ -100,6 +100,62 @@ Node *handle_fncall(Node *node, Token *tok)
   return node;
 }
 
+Node *handle_if()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_IF;
+  expect("(");
+  Node *if_node = calloc(1, sizeof(Node));
+  if_node->lhs = expr();
+  expect(")");
+  if_node->rhs = stmt();
+  node->lhs = if_node;
+
+  if (consume_keyword(TK_ELSE))
+    node->rhs = stmt();
+  return node;
+}
+
+Node *handle_for()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FOR;
+  Node *n0 = calloc(1, sizeof(Node));
+  node->lhs = n0;
+  n0->rhs = new_node_num(1);
+  Node *n1 = calloc(1, sizeof(Node));
+  node->rhs = n1;
+  expect("(");
+  if (!consume(";"))
+  {
+    n0->lhs = expr();
+    expect(";");
+  }
+  if (!consume(";"))
+  {
+    n0->rhs = expr();
+    expect(";");
+  }
+  if (!consume(")"))
+  {
+    n1->lhs = expr();
+    expect(")");
+  }
+  n1->rhs = stmt();
+  return node;
+}
+
+Node *handle_while()
+{
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_WHILE;
+  expect("(");
+  node->lhs = expr();
+  expect(")");
+  node->rhs = stmt();
+  return node;
+}
+
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -223,62 +279,6 @@ Node *assign()
 Node *expr()
 {
   return assign();
-}
-
-Node *handle_if()
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_IF;
-  expect("(");
-  Node *if_node = calloc(1, sizeof(Node));
-  if_node->lhs = expr();
-  expect(")");
-  if_node->rhs = stmt();
-  node->lhs = if_node;
-
-  if (consume_keyword(TK_ELSE))
-    node->rhs = stmt();
-  return node;
-}
-
-Node *handle_for()
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_FOR;
-  Node *n0 = calloc(1, sizeof(Node));
-  node->lhs = n0;
-  n0->rhs = new_node_num(1);
-  Node *n1 = calloc(1, sizeof(Node));
-  node->rhs = n1;
-  expect("(");
-  if (!consume(";"))
-  {
-    n0->lhs = expr();
-    expect(";");
-  }
-  if (!consume(";"))
-  {
-    n0->rhs = expr();
-    expect(";");
-  }
-  if (!consume(")"))
-  {
-    n1->lhs = expr();
-    expect(")");
-  }
-  n1->rhs = stmt();
-  return node;
-}
-
-Node *handle_while()
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_WHILE;
-  expect("(");
-  node->lhs = expr();
-  expect(")");
-  node->rhs = stmt();
-  return node;
 }
 
 Node *stmt()
