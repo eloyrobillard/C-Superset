@@ -10,7 +10,7 @@
 
 /*
  * program    = fn*
- * fn         = ident "(" (ident ("," ident)*)* ")" BLOCK
+ * fn         = TYPE ident "(" (ident ("," ident)*)* ")" BLOCK
  * stmt       = expr ";"
  *            | BLOCK
  *            | "return" expr ";"
@@ -18,7 +18,10 @@
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
  * expr       = assign
- * assign     = equality ("=" assign)?
+ *            | declare
+ * declare    = TYPE ident
+ * assign     = equality
+ *            = LVAL "=" assign
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
@@ -29,7 +32,10 @@
  * primary    = num 
  *            | ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
+ * 
  * BLOCK      = "{" stmt* "}"
+ * TYPE       = "i64"
+ * LVAL       = "*"? ident
  */
 
 typedef enum TK_Type
