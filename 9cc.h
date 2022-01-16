@@ -24,6 +24,8 @@
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = ("+" | "-")? primary
+ *            | "&" unary
+ *            | "*" unary
  * primary    = num 
  *            | ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
@@ -58,6 +60,9 @@ typedef enum
   ND_FNCALL,
   ND_FNDEF,
   ND_BLOCK,
+
+  ND_ADDR,  // 参照（&）
+  ND_DEREF,
 
   ND_EQ,
   ND_NEQ,
