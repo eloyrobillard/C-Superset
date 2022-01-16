@@ -32,13 +32,10 @@ void gen(Node *node)
     {
       // 引数のアドレスの確保
       gen_lval(node->def->params[i]);
-      // 引数の値の獲得
       printf("\tpop rax\n");
+      // 引数の値の獲得
       if (i < 6)
-      {
         printf("\tmov [rax], %s\n", args[i]); // アドレスに代入する
-        printf("\tpush %s\n", args[i]);       // スタックで値を提供する
-      }
       else
       {
         printf("\tpush rdi\n");
@@ -46,10 +43,11 @@ void gen(Node *node)
         printf("\tmov [rax], rdi\n");
         printf("\tpop rdi\n");
       }
+      // printf("\tpush [rax]\n");  // スタックで値を提供する
     }
 
     int i = 0;
-    while (node->def->body->stmts[i + 1])
+    while (node->def->body->stmts[i+1])
     {
       gen(node->def->body->stmts[i++]);
 
@@ -113,8 +111,8 @@ void gen(Node *node)
     printf("\tcall %.*s\n", node->call->len, node->call->str);
     // for (int j = 0; j < regc; j++)
     //   printf("\tpop %s\n", args[j]);
-    // for (int j = node->call->argc - 1; j >= 6; j--)
-      // printf("\tpop rdi\n");
+    for (int j = node->call->argc - 1; j >= 6; j--)
+      printf("\tpop rdi\n");
     // スタックに入ってる引数を捨てるために
     printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
