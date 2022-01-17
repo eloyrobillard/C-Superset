@@ -173,15 +173,16 @@ Node *primary()
     if (consume("("))
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
-
+    
     LVar *lvar = find_lvar(tok);
     if (lvar)
       node->offset = lvar->offset;
     else
     {
-      LVar *lvar = new_lvar(tok->str, tok->len);
-      node->offset = lvar->offset;
-      locals = lvar;
+      error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
+      // LVar *lvar = new_lvar(tok->str, tok->len);
+      // node->offset = lvar->offset;
+      // locals = lvar;
     }
 
     return node;

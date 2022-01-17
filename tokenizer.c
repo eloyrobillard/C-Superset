@@ -34,13 +34,8 @@ Token *tokenize(char *p)
 
       if (i == 2 && strncmp(p, "if", i) == 0)
         new_token(TK_IF, p, i);
-      else if (i == 3)
-      {
-        if (strncmp(p, "for", i) == 0)
-          new_token(TK_FOR, p, i);
-        else if (strncmp(p, "i64", i) == 0)
-          new_token(TK_TYPE, p, i);
-      }
+      else if (i == 3 && strncmp(p, "for", i) == 0)
+        new_token(TK_FOR, p, i);
       else if (i == 4 && strncmp(p, "else", i) == 0)
         new_token(TK_ELSE, p, i);
       else if (i == 5 && strncmp(p, "while", i) == 0)

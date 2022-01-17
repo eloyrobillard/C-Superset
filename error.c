@@ -16,7 +16,10 @@ void error_at(char *loc, const char *fmt, ...)
   va_start(ap, fmt);
 
   int off = loc - usr_in;
-  fprintf(stderr, "%s\n", usr_in);
+  int lf = 0;
+  while (loc[lf] != '\n' && loc[lf] != EOF)
+    lf++;
+  fprintf(stderr, "%.*s\n", off+lf, usr_in);
   fprintf(stderr, "%*s", off, " "); // pos個の空白を出力
   fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
