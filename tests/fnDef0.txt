@@ -1,11 +1,11 @@
-main()
+i64 main()
 {
   i64 var;
   var = john();
   return 2 + var;
 }
 
-john()
+i64 john()
 {
   i64 a;
   a=1;

@@ -1,5 +1,6 @@
-main ()
+i64 main ()
 {
+  i64 x; i64 y;
   x = 3;
   y = &x;
   return *y;

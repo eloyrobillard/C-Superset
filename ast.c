@@ -175,7 +175,7 @@ Node *decl()
     node->kind = ND_LVAR;
     LVar *lvar = find_lvar(tok);
     if (lvar)
-      error_at(tok->str, "\"%.*s\" を再定義するはいけません", tok->len, tok->str);
+      error_at(tok->str, "\"%.*s\" の再定義ができません", tok->len, tok->str);
     else
     {
       LVar *lvar = new_lvar(tok->str, tok->len);
@@ -376,13 +376,14 @@ Node *fn()
     node->def->params = calloc(max, sizeof(Node *));
     do
     {
+      Token *tok = get_token();
       if (!consume_type())
-        error("変数型ではないトークンです");
+        error_at(tok->str, "変数型ではありません");
       
       Node *param = decl();
 
       // TODO handle shadowing
-      
+
       node->def->params[i++] = param;
       if (i + 1 == max)
       {
