@@ -50,14 +50,16 @@ bool consume_keyword(TK_KIND type)
   return true;
 }
 
-bool consume_type()
+Type *consume_type()
 {
   Token *tok = get_token();
-  if (tok->type != TK_IDENT || tok->len != 3 || memcmp(tok->str, "i64", tok->len))
-    return false;
-
+  Type *type = calloc(1, sizeof(Type));
+  if (tok->len == 3 || memcmp(tok->str, "i64", tok->len) == 0)
+    type->ty = I64;
+  else
+    return NULL;
   next_token();
-  return true;
+  return type;
 }
 
 Token *consume_ident()
@@ -165,28 +167,6 @@ Node *handle_while()
   expect(")");
   node->rhs = stmt();
   return node;
-}
-
-Node *decl()
-{
-  Token *tok = consume_ident();
-  if (tok)
-  {
-    Node *node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
-    LVar *lvar = find_lvar(tok);
-    if (lvar)
-      error_at(tok->str, "\"%.*s\" の再定義ができません", tok->len, tok->str);
-    else
-    {
-      LVar *lvar = new_lvar(tok->str, tok->len);
-      node->offset = lvar->offset;
-      locals = lvar;
-    }
-    return node;
-  }
-  else
-    error("名前ではありません");
 }
 
 Node *primary()
@@ -305,10 +285,46 @@ Node *assign()
   return node;
 }
 
+Type *get_ptr(Type *type)
+{
+  Type *final_ty = calloc(1, sizeof(Type));
+  while (consume("*"))
+  {
+    final_ty->ty = PTR;
+    final_ty->ptr_to = type;
+    type = final_ty;
+  }
+  return type;
+}
+
+Node *decl(Type *type)
+{
+  Token *tok = consume_ident();
+  if (tok)
+  {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    LVar *lvar = find_lvar(tok);
+    if (lvar)
+      error_at(tok->str, "\"%.*s\" の再定義ができません", tok->len, tok->str);
+    else
+    {
+      LVar *lvar = new_lvar(tok->str, tok->len, type);
+      node->offset = lvar->offset;
+
+      locals = lvar;
+    }
+    return node;
+  }
+  else
+    error("名前ではありません");
+}
+
 Node *expr()
 {
-  if (consume_type())
-    return decl();
+  Type *type = consume_type();
+  if (type)
+    return decl(type);
 
   return assign();
 }
@@ -362,7 +378,7 @@ Node *fn()
   Token *maybe_kata = get_token();
   if (!consume_type())
     error_at(maybe_kata->str, "型ではありません");
-  
+
   Token *tok = consume_ident();
   if (tok == NULL)
     error("名前ではありません");
@@ -382,10 +398,11 @@ Node *fn()
     do
     {
       Token *tok = get_token();
-      if (!consume_type())
+      Type *type = consume_type();
+      if (type == NULL)
         error_at(tok->str, "型ではありません");
-      
-      Node *param = decl();
+
+      Node *param = decl(type);
 
       // TODO handle shadowing
 

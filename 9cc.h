@@ -91,6 +91,13 @@ struct Token
   int len;
 };
 
+typedef struct Type Type;
+
+struct Type {
+  enum { I64, PTR } ty;
+  Type *ptr_to;
+};
+
 typedef struct LVar LVar;
 
 // ローカル変数の型
@@ -100,6 +107,7 @@ struct LVar
   char *name; // 変数の名前
   int len;    // 名前の長さ
   int offset; // RBPからのオフセット
+  Type *type;
 };
 
 // 抽象構文木のノードの種類
@@ -141,7 +149,7 @@ struct Node
 // グローバル関数
 // tokenizer.c
 Token *tokenize(char *);
-LVar *new_lvar(char *name, int len);
+LVar *new_lvar(char *name, int len, Type *type);
 LVar *find_lvar(Token *tok);
 // ast.c
 bool at_eof();
@@ -150,6 +158,7 @@ Node *expr();
 Node *stmt();
 void gen(Node *);
 void program();
+Type *get_ptr(Type *);
 // error.c
 void error(char *, ...);
 void error_at(char *loc, const char *fmt, ...);
