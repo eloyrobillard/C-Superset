@@ -25,7 +25,7 @@ void error_at(char *loc, const char *fmt, ...)
   while (*line_start != '\n' && line_start >= usr_in)
     line_start--;
   int spaces = loc - line_start - 1;
-  fprintf(stderr, "%*s", spaces, " "); // pos個の空白を出力
+  fprintf(stderr, "%.*s", spaces, " "); // pos個の空白を出力
   fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
