@@ -49,6 +49,16 @@ bool consume_keyword(TK_KIND type)
   return true;
 }
 
+bool consume_type()
+{
+  Token *tok = get_token();
+  if (tok->type != TK_IDENT || strncmp(tok->str, "i64", tok->len) != 0)
+    return false;
+
+  next_token();
+  return true;
+}
+
 Token *consume_ident()
 {
   if (get_token()->type != TK_IDENT)
@@ -85,13 +95,13 @@ Node *handle_fncall(Node *node, Token *tok)
   if (!consume(")"))
   {
     int max = 2;
-    node->call->args = calloc(max, sizeof(Node*));
+    node->call->args = calloc(max, sizeof(Node *));
     do
     {
       node->call->args[i++] = expr();
       if (i + 1 == max)
       {
-        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(Node*));
+        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(Node *));
       }
     } while (consume(","));
     expect(")");
@@ -156,6 +166,28 @@ Node *handle_while()
   return node;
 }
 
+Node *decl()
+{
+  Token *tok = consume_ident();
+  if (tok)
+  {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    LVar *lvar = find_lvar(tok);
+    if (lvar)
+      error_at(tok->str, "\"%.*s\" を再定義するはいけません", tok->len, tok->str);
+    else
+    {
+      LVar *lvar = new_lvar(tok->str, tok->len);
+      node->offset = lvar->offset;
+      locals = lvar;
+    }
+    return node;
+  }
+  else
+    error("名前ではありません");
+}
+
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -173,17 +205,12 @@ Node *primary()
     if (consume("("))
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
-    
+
     LVar *lvar = find_lvar(tok);
     if (lvar)
       node->offset = lvar->offset;
     else
-    {
       error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
-      // LVar *lvar = new_lvar(tok->str, tok->len);
-      // node->offset = lvar->offset;
-      // locals = lvar;
-    }
 
     return node;
   }
@@ -279,6 +306,9 @@ Node *assign()
 
 Node *expr()
 {
+  if (consume_type())
+    return decl();
+
   return assign();
 }
 
@@ -343,14 +373,13 @@ Node *fn()
   if (!consume(")"))
   {
     int max = 2;
-    node->def->params = calloc(max, sizeof(Node*));
+    node->def->params = calloc(max, sizeof(Node *));
     do
     {
-      Token *tok = consume_ident();
-      if (tok == NULL)
-        error("名前ではないトークンです");
-      Node *param = calloc(1, sizeof(Node));
-      param->kind = ND_LVAR;
+      if (!consume_type())
+        error("変数型ではないトークンです");
+      
+      Node *param = decl();
 
       // TODO handle shadowing
       LVar *lvar = find_lvar(tok);
@@ -365,13 +394,13 @@ Node *fn()
       node->def->params[i++] = param;
       if (i + 1 == max)
       {
-        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(Node*));
+        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(Node *));
       }
     } while (consume(","));
     expect(")");
   }
   node->def->paramc = i;
-  
+
   node->def->body = stmt();
 
   if (node->def->body->kind != ND_BLOCK)
