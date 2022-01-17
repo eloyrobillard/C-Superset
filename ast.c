@@ -382,15 +382,7 @@ Node *fn()
       Node *param = decl();
 
       // TODO handle shadowing
-      LVar *lvar = find_lvar(tok);
-      if (lvar)
-        param->offset = lvar->offset;
-      else
-      {
-        LVar *lvar = new_lvar(tok->str, tok->len);
-        param->offset = lvar->offset;
-        locals = lvar;
-      }
+      
       node->def->params[i++] = param;
       if (i + 1 == max)
       {
