@@ -33,7 +33,8 @@ Node *new_if_node(Node *cond, Node *ifstmt, Node *els)
 
 bool consume(char *op)
 {
-  if (get_token()->type != TK_RESERVED || strlen(op) != get_token()->len || memcmp(get_token()->str, op, get_token()->len))
+  Token *tok = get_token();
+  if (tok->type != TK_RESERVED || strlen(op) != tok->len || memcmp(tok->str, op, tok->len))
     return false;
 
   next_token();
@@ -52,7 +53,7 @@ bool consume_keyword(TK_KIND type)
 bool consume_type()
 {
   Token *tok = get_token();
-  if (tok->type != TK_IDENT || strncmp(tok->str, "i64", tok->len) != 0)
+  if (tok->type != TK_IDENT || tok->len != 3 || memcmp(tok->str, "i64", tok->len))
     return false;
 
   next_token();
@@ -358,9 +359,13 @@ Node *stmt()
 
 Node *fn()
 {
+  Token *maybe_kata = get_token();
+  if (!consume_type())
+    error_at(maybe_kata->str, "型ではありません");
+  
   Token *tok = consume_ident();
   if (tok == NULL)
-    error("名前ではないトークンです");
+    error("名前ではありません");
 
   expect("(");
   Node *node = calloc(1, sizeof(Node));
@@ -378,7 +383,7 @@ Node *fn()
     {
       Token *tok = get_token();
       if (!consume_type())
-        error_at(tok->str, "変数型ではありません");
+        error_at(tok->str, "型ではありません");
       
       Node *param = decl();
 

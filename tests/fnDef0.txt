@@ -1,4 +1,4 @@
-i64 main()
+i65 main()
 {
   i64 var;
   var = john();
