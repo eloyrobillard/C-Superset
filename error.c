@@ -15,12 +15,17 @@ void error_at(char *loc, const char *fmt, ...)
   va_list ap;
   va_start(ap, fmt);
 
-  int off = loc - usr_in;
-  int lf = 0;
-  while (loc[lf] != '\n' && loc[lf] != EOF)
+  char *lf = loc;
+  while (*lf != '\n' && *lf != EOF)
     lf++;
-  fprintf(stderr, "%.*s\n", off+lf, usr_in);
-  fprintf(stderr, "%*s", off, " "); // pos個の空白を出力
+  int off = lf - usr_in;
+  fprintf(stderr, "%.*s\n", off, usr_in);
+
+  char *line_start = loc;
+  while (*line_start != '\n' && line_start >= usr_in)
+    line_start--;
+  int spaces = loc - line_start - 1;
+  fprintf(stderr, "%*s", spaces, " "); // pos個の空白を出力
   fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
