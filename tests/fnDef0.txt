@@ -2,13 +2,14 @@ i64 main()
 {
   i64 var;
   var = john();
-  return 2 + var;
+  i64 *p;
+  p = &var;
+  return 2 + *p;
 }
 
 i64 john()
 {
   i64 a;
   a=1;
-  a + bar(a);
-  return a;
+  return a + bar(a);
 }
