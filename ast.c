@@ -54,10 +54,26 @@ Type *consume_type()
 {
   Token *tok = get_token();
   Type *type = calloc(1, sizeof(Type));
-  if (tok->len == 3 || memcmp(tok->str, "i64", tok->len) == 0)
-    type->ty = I64;
-  else
+  switch (tok->len)
+  {
+  case 3:
+  {
+    if (memcmp(tok->str, "i64", tok->len) == 0)
+      type->ty = I64;
+    else if (memcmp(tok->str, "i32", tok->len) == 0 || memcmp(tok->str, "int", tok->len) == 0)
+      type->ty = I32;
+    break;
+  }
+  case 4:
+  {
+    if (memcmp(tok->str, "long", tok->len) == 0)
+      type->ty = I64;
+    break;
+  }
+  default:
     return NULL;
+  }
+
   next_token();
   return type;
 }

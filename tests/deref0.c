@@ -1,6 +1,6 @@
-i64 main ()
+int main ()
 {
-  i64 x; i64 y;
+  long x; long *y;
   x = 3;
   y = &x;
   return *y;

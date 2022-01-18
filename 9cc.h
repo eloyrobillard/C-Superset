@@ -94,7 +94,7 @@ struct Token
 typedef struct Type Type;
 
 struct Type {
-  enum { I64, PTR } ty;
+  enum { I32, I64, PTR } ty;
   Type *ptr_to;
 };
 

@@ -1,4 +1,4 @@
-i64 fib(i64 n)
+long fib(long n)
 {
   if (n == 0)
     return 0;
@@ -8,7 +8,7 @@ i64 fib(i64 n)
     return fib(n-2) + fib(n-1);
 }
 
-i64 main()
+int main()
 {
   return fib(10);
 }

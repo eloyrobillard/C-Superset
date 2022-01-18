@@ -1,8 +1,0 @@
-i64 main ()
-{
-  i64 x; i64 y; i64 z;
-  x = 3;
-  y = 5;
-  z = &y + 8;
-  return *z;
-}
