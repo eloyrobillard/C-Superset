@@ -62,12 +62,16 @@ Type *consume_type()
       type->ty = I64;
     else if (memcmp(tok->str, "i32", tok->len) == 0 || memcmp(tok->str, "int", tok->len) == 0)
       type->ty = I32;
+    else
+      return NULL;
     break;
   }
   case 4:
   {
     if (memcmp(tok->str, "long", tok->len) == 0)
       type->ty = I64;
+    else
+      return NULL;
     break;
   }
   default:
@@ -80,10 +84,10 @@ Type *consume_type()
 
 Token *consume_ident()
 {
-  if (get_token()->type != TK_IDENT)
+  Token *tok = get_token();
+  if (tok->type != TK_IDENT)
     return NULL;
 
-  Token *tok = get_token();
   next_token();
   return tok;
 }
@@ -327,7 +331,7 @@ Node *decl(Type *type)
     {
       LVar *lvar = new_lvar(tok->str, tok->len);
       node->offset = lvar->offset;
-      node->type = get_ptr(type);
+      node->type = type;
       locals = lvar;
     }
     return node;
@@ -340,7 +344,7 @@ Node *expr()
 {
   Type *type = consume_type();
   if (type)
-    return decl(type);
+    return decl(get_ptr(type));
 
   return assign();
 }

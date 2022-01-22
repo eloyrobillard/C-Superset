@@ -17,13 +17,13 @@ auto_test() {
   fi
 }
 
-auto_test 3 "tests/fnDef0.txt" 
-auto_test 11 "tests/fnDef1.txt" 
-auto_test 14 "tests/fnDef2.txt" 
-auto_test 124 "tests/fnDef3.txt" 
-auto_test 55 "tests/fnDef4.txt" 
-auto_test 3 "tests/deref0.txt" 
-auto_test 3 "tests/deref1.txt" 
+auto_test 4 "tests/fnDef0.c" 
+auto_test 11 "tests/fnDef1.c" 
+auto_test 14 "tests/fnDef2.c" 
+auto_test 124 "tests/fnDef3.c" 
+auto_test 55 "tests/fnDef4.c" 
+auto_test 3 "tests/deref0.c" 
+auto_test 3 "tests/deref1.c" 
 
 # assert() {
 #   expected="$1"

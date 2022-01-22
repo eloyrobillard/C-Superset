@@ -1,5 +1,3 @@
-long bar(long);
-
 long john()
 {
   long a;
