@@ -1,8 +1,8 @@
-long sum(long a, long b, long v3, long v4)
+long sum(long va, long vb, long v3, long v4)
 {
   v4 = 3;
   v3 = 1;
-  return a+b+v3+v4;
+  return va+vb+v3+v4;
 }
 
 int main()

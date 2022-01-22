@@ -1,5 +1,3 @@
-int foo(long,long,long,long,long,long,long,long,long,long,long);
-
 long weird_op(long m1, long m2, long m3, long m4, long m5, long m6, long m7)
 {
   foo(m1,m2,m3,m4,m5,m6,m7,0,0,0,0);
