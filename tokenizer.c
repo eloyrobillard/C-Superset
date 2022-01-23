@@ -46,7 +46,15 @@ Token *tokenize(char *p)
         new_token(TK_IDENT, p, i);
       p += i;
     }
-    else if (strchr(";(),{}-+*/&", *p))
+    else if (*p == '/')
+    {
+      if (*(p + 1) == '/')
+        while (*p != '\n' && *(p++) != EOF)
+          ;
+      else
+        new_token(TK_RESERVED, p++, 1);
+    }
+    else if (strchr(";(),{}-+*&", *p))
       new_token(TK_RESERVED, p++, 1);
     else if (*p == '!')
     {
