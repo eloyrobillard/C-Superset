@@ -5,6 +5,41 @@ bool at_eof()
   return get_token()->type == TK_EOF;
 }
 
+LVar *new_lvar(char *name, int len, Type *type)
+{
+  LVar *lvar = calloc(1, sizeof(LVar));
+  lvar->next = scope->locals;
+  lvar->name = name;
+  lvar->len = len;
+  lvar->type = type;
+  lvar->offset = 8 + (scope->locals ? scope->locals->offset : 0);
+  return lvar;
+}
+
+LVar *find_lvar(Token *tok)
+{
+  for (LVar *var = scope->locals; var; var = var->next)
+    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
+      return var;
+  return NULL;
+}
+
+Scope *enter_scope()
+{
+  Scope *inner_scope = calloc(1, sizeof(Scope));
+  if (scope->childc + 1 >= scope->childm)
+    scope->children = realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
+  scope->children[scope->childc++] = inner_scope;
+  inner_scope->parent = scope;
+  scope = inner_scope;
+  return scope;
+}
+
+Scope *exit_scope()
+{
+  return (scope = scope->parent);
+}
+
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
 {
   Node *node = calloc(1, sizeof(Node));

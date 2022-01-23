@@ -132,6 +132,16 @@ struct FnDef
   Node *body;
 };
 
+typedef struct Scope Scope;
+
+struct Scope {
+  Scope *parent;
+  Scope **children;
+  int childc;
+  int childm;
+  LVar *locals;
+};
+
 // 抽象構文木のノードの型
 struct Node
 {
@@ -171,7 +181,7 @@ Token *get_token();
 // グローバル変数
 Node *code[100];
 char *usr_in;
-LVar *locals;
+Scope *scope;
 FnDef *fns;
 
 #endif // NINE_CC_H

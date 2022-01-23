@@ -11,6 +11,7 @@ Node *primary()
     return node;
   }
 
+  
   Token *tok = consume_ident();
   if (tok)
   {
@@ -144,7 +145,7 @@ Node *decl(Type *type)
       LVar *lvar = new_lvar(tok->str, tok->len, type);
       node->offset = lvar->offset;
       node->type = type;
-      locals = lvar;
+      scope->locals = lvar;
     }
     return node;
   }
@@ -215,6 +216,9 @@ Node *fn()
   if (tok == NULL)
     error("名前ではありません");
 
+  // 新しいスコープを準備
+  enter_scope();
+
   expect("(");
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FNDEF;
@@ -259,6 +263,8 @@ Node *fn()
 void program()
 {
   int i = 0;
+  // グローバルスコープを作成
+  scope = calloc(1, sizeof(Scope));
   while (!at_eof())
   {
     code[i] = fn();
