@@ -22,7 +22,7 @@ profout:
 				gcc -pg 9cc.c
 
 profile: profout
-				./a.out " 5 +6 -4 +20 + 5 "
+				./a.out 
 				gprof ./a.out gmon.out
 
 memcheck: profout

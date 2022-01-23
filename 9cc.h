@@ -54,7 +54,7 @@ typedef enum TK_Kind
   TK_EOF
 } TK_KIND;
 
-typedef enum
+typedef enum NodeKind
 {
   // 指定されたキーワード
   ND_RETURN = 1,
@@ -153,7 +153,6 @@ Token *tokenize(char *);
 LVar *new_lvar(char *name, int len, Type *);
 LVar *find_lvar(Token *tok);
 // ast.c
-bool at_eof();
 Node *primary();
 Node *expr();
 Node *stmt();
