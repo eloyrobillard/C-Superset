@@ -268,7 +268,7 @@ void program()
 {
   int i = 0;
   // グローバルスコープを作成
-  scope = (Scope*)create_scope();
+  scope = create_scope();
   while (!at_eof())
   {
     code[i] = fn();
