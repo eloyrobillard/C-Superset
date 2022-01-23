@@ -31,6 +31,8 @@ Scope *enter_scope()
     scope->children = realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
   scope->children[scope->childc++] = inner_scope;
   inner_scope->parent = scope;
+  // 内スコープは外スコープの変数を含む
+  inner_scope->locals = scope->locals;
   scope = inner_scope;
   return scope;
 }

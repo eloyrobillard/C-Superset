@@ -168,6 +168,8 @@ Node *stmt()
 
   if (consume("{"))
   {
+    enter_scope();
+
     node = calloc(1, sizeof(Node));
     node->kind = ND_BLOCK;
 
@@ -184,6 +186,7 @@ Node *stmt()
       }
     }
     node->stmts[i] = NULL;
+    exit_scope();
     return node;
   }
   else if (consume_keyword(TK_RETURN))
@@ -257,6 +260,7 @@ Node *fn()
   if (node->def->body->kind != ND_BLOCK)
     error("関数に中身はない");
 
+  exit_scope();
   return node;
 }
 
