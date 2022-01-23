@@ -107,6 +107,7 @@ struct LVar
   char *name; // 変数の名前
   int len;    // 名前の長さ
   int offset; // RBPからのオフセット
+  Type *type;
 };
 
 // 抽象構文木のノードの種類
@@ -149,7 +150,7 @@ struct Node
 // グローバル関数
 // tokenizer.c
 Token *tokenize(char *);
-LVar *new_lvar(char *name, int len);
+LVar *new_lvar(char *name, int len, Type *);
 LVar *find_lvar(Token *tok);
 // ast.c
 bool at_eof();

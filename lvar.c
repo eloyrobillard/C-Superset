@@ -1,11 +1,12 @@
 #include "9cc.h"
 
-LVar *new_lvar(char *name, int len)
+LVar *new_lvar(char *name, int len, Type *type)
 {
   LVar *lvar = calloc(1, sizeof(LVar));
   lvar->next = locals;
   lvar->name = name;
   lvar->len = len;
+  lvar->type = type;
   lvar->offset = 8 + (locals ? locals->offset : 0);
   return lvar;
 }

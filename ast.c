@@ -329,7 +329,7 @@ Node *decl(Type *type)
       error_at(tok->str, "\"%.*s\" の再定義ができません", tok->len, tok->str);
     else
     {
-      LVar *lvar = new_lvar(tok->str, tok->len);
+      LVar *lvar = new_lvar(tok->str, tok->len, type);
       node->offset = lvar->offset;
       node->type = type;
       locals = lvar;

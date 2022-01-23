@@ -1,8 +1,10 @@
 int main()
 {
-  int x;
-  int *y;
+  int a;
+  int *x;
+  x = &a;
+  int **y;
   y = &x;
-  *y = 3;
-  return x;
+  **y = 3;
+  return a;
 }
