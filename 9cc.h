@@ -28,14 +28,12 @@
  *            | "&" unary
  *            | "*" unary
  * primary    = num
- *            | LVAL
  *            | ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
  * 
  * BLOCK      = "{" stmt* "}"
  * DECL       = TYPE ident
- * TYPE       = "i64"
- * LVAL       = "*"? ident
+ * TYPE       = "i64" / "long" / "i32" / "int"
  */
 
 typedef enum TK_Kind
@@ -140,6 +138,7 @@ struct Scope {
   int childc;
   int childm;
   LVar *locals;
+  int localc;
 };
 
 // 抽象構文木のノードの型
@@ -150,7 +149,8 @@ struct Node
   Node *rhs;     //? 右辺
   int val;       //! kindがND_NUMの場合のみ使う
   int offset;    //* 変数の場合
-  char *str;     //? 関数呼び出しの場合
+  int derefs;    // ポインタを代入する際 
+  char *str;    //? 関数呼び出しの場合
   FnCall *call;
   FnDef *def;
   Node **stmts;

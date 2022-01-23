@@ -11,7 +11,6 @@ Node *primary()
     return node;
   }
 
-  
   Token *tok = consume_ident();
   if (tok)
   {
@@ -146,6 +145,7 @@ Node *decl(Type *type)
       node->offset = lvar->offset;
       node->type = type;
       scope->locals = lvar;
+      scope->localc++;
     }
     return node;
   }
@@ -243,8 +243,6 @@ Node *fn()
 
       Node *param = decl(type);
 
-      // TODO handle shadowing
-
       node->def->params[i++] = param;
       if (i + 1 == max)
       {
@@ -258,7 +256,7 @@ Node *fn()
   node->def->body = stmt();
 
   if (node->def->body->kind != ND_BLOCK)
-    error("関数に中身はない");
+    error("関数に中身は必要");
 
   exit_scope();
   return node;
