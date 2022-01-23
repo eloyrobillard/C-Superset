@@ -1,6 +1,6 @@
-long sum(long v1, long v2, long v3, long v4)
+long sum(long a, long b, long c, long d)
 {
-  return v1+v2+v3+v4;
+  return a+b+c+d;
 }
 
 int main()

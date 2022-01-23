@@ -38,7 +38,7 @@ void gen(Node *node)
     // 変数26個分の領域を確保する
     printf("\tpush rbp\n");
     printf("\tmov rbp, rsp\n");
-    printf("\tsub rsp, 288\n");
+    printf("\tsub rsp, 208\n");
 
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     for (int i = 0; i < node->def->paramc; i++)

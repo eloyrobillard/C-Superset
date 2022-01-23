@@ -1,13 +1,13 @@
-long weird_op(long m1, long m2, long m3, long m4, long m5, long m6, long m7)
+long weird_op(long a, long b, long c, long d, long e, long f, long g)
 {
-  foo(m1,m2,m3,m4,m5,m6,m7,0,0,0,0);
-  return m1*m2*m3*m4/(m5*m6*m7);
+  foo(a,b,c,d,e,f,g,0,0,0,0);
+  return a*b*c*d/(e*f*g);
 }
 
-long fred(long v1, long v2, long v3, long v4, long v5, long v6, long v7, long v8, long v9, long v10, long v11)
+long fred(long a, long b, long c, long d, long e, long f, long g, long h, long i, long j, long k)
 {
-  foo(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11);
-  return v1+v2+v3+v4+v5+v6+v7+v8+v9+v10+v11 + weird_op(3*(v2<v5),2,4*v7,1,1,2,2);
+  foo(a,b,c,d,e,f,g,h,i,j,k);
+  return a+b+c+d+e+f+g+h+i+j+k + weird_op(3*(b<e),2,4*g,1,1,2,2);
 }
 
 int main()

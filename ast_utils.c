@@ -1,4 +1,4 @@
-#include "9cc.h"
+#include "ast_utils.h"
 
 bool at_eof()
 {
@@ -24,21 +24,32 @@ LVar *find_lvar(Token *tok)
   return NULL;
 }
 
-Scope *enter_scope()
+Scope *create_scope()
 {
   Scope *inner_scope = calloc(1, sizeof(Scope));
+  inner_scope->parent = scope;
+  // 内スコープは外スコープの変数を含む
+  if (inner_scope->parent)
+    inner_scope->locals = scope->locals;
+  inner_scope->childm = 2;
+  inner_scope->children = calloc(2, sizeof(Scope *));
+  return inner_scope;
+}
+
+Scope *enter_scope()
+{
+  Scope *inner_scope = create_scope();
   if (scope->childc + 1 >= scope->childm)
     scope->children = realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
   scope->children[scope->childc++] = inner_scope;
-  inner_scope->parent = scope;
-  // 内スコープは外スコープの変数を含む
-  inner_scope->locals = scope->locals;
   scope = inner_scope;
   return scope;
 }
 
 Scope *exit_scope()
 {
+  if (scope->parent == NULL)
+    error("グローバルスコープからの脱出は無効です");
   return (scope = scope->parent);
 }
 

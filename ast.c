@@ -268,7 +268,7 @@ void program()
 {
   int i = 0;
   // グローバルスコープを作成
-  scope = calloc(1, sizeof(Scope));
+  scope = (Scope*)create_scope();
   while (!at_eof())
   {
     code[i] = fn();
