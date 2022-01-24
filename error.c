@@ -39,7 +39,7 @@ void warning(char *fmt, ...)
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
-  return;
+  return va_end(ap);
 }
 
 void warning_at(char *loc, const char *fmt, ...)
@@ -62,5 +62,5 @@ void warning_at(char *loc, const char *fmt, ...)
   fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
-  return;
+  return va_end(ap);
 }
