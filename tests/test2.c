@@ -4,8 +4,12 @@ long sum(long a, long b, long c, long d)
   d = 3;
   if (a < b)
   {
-    long a;
-    a = 5;
+    long a = 3;
+    long *x;
+    x = &a;
+    long **y;
+    y = &x;
+    **y = 5;
     return a + b + c + d;
   }
   return a + b + c + d;

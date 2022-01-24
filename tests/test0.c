@@ -16,5 +16,7 @@ int main()
   var = john();
   long *p;
   p = &var;
+  // ポインタ算術、xを参照
+  /* z = &y + 8 + x; */
   return 2 + *p;
 }

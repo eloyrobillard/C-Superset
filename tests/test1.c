@@ -20,5 +20,7 @@ int main() // free comment city
   b = 2;
   c = 3;
   d = 4;
-  return a + sum(a, b, c, d);
+  long *y = &c;
+  *y = *y + 20;
+  return *y + sum(a, b, c, d);
 }
