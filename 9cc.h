@@ -23,7 +23,8 @@
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
- * unary      = ("+" | "-")? primary
+ * unary      = "sizeof" unary
+ *            | ("+" | "-")? primary
  *            | "&" unary
  *            | "*" unary
  * primary    = num
@@ -177,6 +178,8 @@ void init_tokens();
 Token *add_token(Token);
 void next_token();
 Token *get_token();
+// abi.c
+int size_of(Type *);
 
 // グローバル変数
 Node *code[100];
