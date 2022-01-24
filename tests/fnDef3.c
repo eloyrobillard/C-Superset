@@ -12,32 +12,21 @@ long fred(long a, long b, long c, long d, long e, long f, long g, long h, long i
 
 int main()
 {
-  long a;
-  long b;
-  long c;
-  long d;
-  long e;
-  long f;
-  long g;
-  long h;
-  long i;
-  long j;
-  long k;
-  a = 1;
-  b = 2;
-  c = 3;
-  d = 4;
-  e = 5;
-  f = 6;
-  g = 7;
-  h = 8;
-  i = 9;
-  j = 10;
-  k = 11;
+  long a = 1;
+  long b = 2;
+  long c = 3;
+  long d = 4;
+  long e = 5;
+  long f = 6;
+  long g = 7;
+  long h = 8;
+  long i = 9;
+  long j = 10;
+  long k = 11;
+
   if (a < g)
   {
-    long a;
-    a = 100;
+    long a = 100;
   }
   long out;
   out = j - c + g + fred(a * 2, b, c + 1, d, e, f, g, h, i, j, k);

@@ -13,13 +13,9 @@ long sum(long a, long b, long c, long d)
 
 int main()
 {
-  long a;
-  long b;
-  long c;
-  long d;
-  a = 1;
-  b = 2;
-  c = 3;
-  d = 4;
+  long a = 1;
+  long b = 2;
+  long c = 3;
+  long d = 4;
   return a + b + sum(a * 2, b + c, c, d);
 }
