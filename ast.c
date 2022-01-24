@@ -24,7 +24,10 @@ Node *primary()
     {
       LVar *lvar = find_lvar(tok, scope);
       if (lvar)
+      {
         node->offset = lvar->offset;
+        node->type = lvar->type;
+      }
       else
         error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
     }
@@ -32,7 +35,7 @@ Node *primary()
     {
       LVar *lvar = new_lvar(tok->str, tok->len, type);
       node->offset = lvar->offset;
-      node->type = lvar->type;
+      node->type = type;
     }
 
     return node;
@@ -77,7 +80,15 @@ Node *add()
   for (;;)
   {
     if (consume("+"))
-      node = new_node(ND_ADD, node, mul());
+    {
+      Node *rhs = mul();
+      if (rhs->type && rhs->type->ty == PTR)
+        error_at(get_token()->str, "ポインタの右辺値を用いる加算は無効です");
+      if (node->type && node->type->ty == PTR)
+        node = new_node(ND_ADD, node, new_node(ND_MUL, new_node_num(8), rhs));
+      else
+        node = new_node(ND_ADD, node, rhs);
+    }
     else if (consume("-"))
       node = new_node(ND_SUB, node, mul());
     else
@@ -126,18 +137,6 @@ Node *assign()
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
   return node;
-}
-
-Type *get_ptr(Type *type)
-{
-  Type *final_ty = calloc(1, sizeof(Type));
-  while (consume("*"))
-  {
-    final_ty->ty = PTR;
-    final_ty->ptr_to = type;
-    type = final_ty;
-  }
-  return type;
 }
 
 Node *decl(Type *type)

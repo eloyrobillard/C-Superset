@@ -210,11 +210,13 @@ void gen(Node *node)
     printf("\tpush %d\n", node->val);
     return;
   case ND_LVAR:
+  {
     gen_lval_addr(node);
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
     return;
+  }
   case ND_ASSIGN:
   {
     gen_lval_addr(node->lhs);
