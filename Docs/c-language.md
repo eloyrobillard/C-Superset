@@ -40,3 +40,20 @@ private 等のより正確なキーワードは使われなかったのは古い
 * a+1：a が変数だが、1を足すとただの数字になる
 * (&a)+1：同じく、普通の整数になってしまった
 * *((&a)+1)：stack smashing detected エラー（適当にスタックの領域を踏むことは許されていない）
+
+## ABI
+
+## Windows ABI
+
+* 型 -> LLP64
+  * intとlong = 32ビット
+  * long longとポインタ = 64ビット
+
+### System V ABI
+
+Unix -> Linux, BSD.
+
+* ELFの定義
+* 型 -> LP64：
+  * int = 32ビット
+  * longとポインタ = 64ビット
