@@ -1,3 +1,4 @@
+#include <math.h>
 #include "9cc.h"
 
 int size_of(Type *type)
@@ -10,4 +11,21 @@ int size_of(Type *type)
   case I32:
     return 4;
   }
+}
+
+int expr_size(Node *node)
+{
+  if (node->kind == ND_NUM)
+  {
+    long i_lim = pow(2, 31);
+    if (node->val > i_lim - 1 || node->val < -i_lim)
+      return 8;
+    return 4;
+  }
+  else if (node->kind == ND_LVAR)
+    return size_of(node->type);
+ 
+  int lsize = expr_size(node->lhs);
+  int rsize = expr_size(node->rhs);
+  return lsize > rsize ? lsize : rsize;
 }
