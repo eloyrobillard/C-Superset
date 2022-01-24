@@ -20,17 +20,20 @@ Node *primary()
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
 
-    LVar *lvar = find_lvar(tok, scope);
-    if (lvar)
-      node->offset = lvar->offset;
-    else if (type)
+    if (type == NULL)
     {
-      lvar = new_lvar(tok->str, tok->len, type);
+      LVar *lvar = find_lvar(tok, scope);
+      if (lvar)
+        node->offset = lvar->offset;
+      else
+        error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
+    }
+    else
+    {
+      LVar *lvar = new_lvar(tok->str, tok->len, type);
       node->offset = lvar->offset;
       node->type = lvar->type;
     }
-    else
-      error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
 
     return node;
   }
