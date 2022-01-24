@@ -18,7 +18,6 @@
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
  * expr       = assign
- *            | DECL
  * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
@@ -28,11 +27,10 @@
  *            | "&" unary
  *            | "*" unary
  * primary    = num
- *            | ident ("(" (expr ("," expr)*)? ")")? 
+ *            | TYPE? ident ("(" (expr ("," expr)*)? ")")? 
  *            | "(" expr ")"
  * 
  * BLOCK      = "{" stmt* "}"
- * DECL       = TYPE ident
  * TYPE       = "i64" / "long" / "i32" / "int"
  */
 

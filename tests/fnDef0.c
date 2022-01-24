@@ -1,10 +1,8 @@
 long john()
 {
-  long a;
-  a=1;
+  long a = 1;
   {
-    long a;
-    a = 36;
+    long a = 36;
   }
   return a + bar(a);
 }

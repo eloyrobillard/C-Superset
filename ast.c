@@ -11,6 +11,7 @@ Node *primary()
     return node;
   }
 
+  Type *type = get_ptr(consume_type());
   Token *tok = consume_ident();
   if (tok)
   {
@@ -22,6 +23,12 @@ Node *primary()
     LVar *lvar = find_lvar(tok, scope);
     if (lvar)
       node->offset = lvar->offset;
+    else if (type)
+    {
+      lvar = new_lvar(tok->str, tok->len, type);
+      node->offset = lvar->offset;
+      node->type = lvar->type;
+    }
     else
       error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
 
@@ -111,6 +118,7 @@ Node *equality()
 
 Node *assign()
 {
+
   Node *node = equality();
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
@@ -147,9 +155,6 @@ Node *decl(Type *type)
 
 Node *expr()
 {
-  Type *type = consume_type();
-  if (type)
-    return decl(get_ptr(type));
 
   return assign();
 }
