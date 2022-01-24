@@ -87,6 +87,7 @@ struct Token
   long val;  // for int tokens
   char *str; // for all tokens
   int len;
+  Token *next;
 };
 
 typedef struct Type Type;
@@ -188,5 +189,6 @@ Node *code[100];
 char *usr_in;
 Scope *scope;
 FnDef *fns;
+Token *token;
 
 #endif // NINE_CC_H

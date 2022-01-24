@@ -2,7 +2,7 @@
 
 bool at_eof()
 {
-  return get_token()->type == TK_EOF;
+  return token->type == TK_EOF;
 }
 
 LVar *new_lvar(char *name, int len, Type *type)
@@ -84,20 +84,20 @@ Node *new_if_node(Node *cond, Node *ifstmt, Node *els)
 
 bool consume(char *op)
 {
-  Token *tok = get_token();
+  Token *tok = token;
   if (tok->type != TK_RESERVED || strlen(op) != tok->len || memcmp(tok->str, op, tok->len))
     return false;
 
-  next_token();
+  token = token->next;
   return true;
 }
 
 bool consume_keyword(TK_KIND type)
 {
-  if (get_token()->type != type)
+  if (token->type != type)
     return false;
 
-  next_token();
+  token = token->next;
   return true;
 }
 
@@ -115,7 +115,7 @@ Type *get_ptr(Type *type)
 
 Type *consume_type()
 {
-  Token *tok = get_token();
+  Token *tok = token;
   Type *type = calloc(1, sizeof(Type));
   switch (tok->len)
   {
@@ -141,33 +141,33 @@ Type *consume_type()
     return NULL;
   }
 
-  next_token();
+  token = token->next;
   return type;
 }
 
 Token *consume_ident()
 {
-  Token *tok = get_token();
+  Token *tok = token;
   if (tok->type != TK_IDENT)
     return NULL;
 
-  next_token();
+  token = token->next;
   return tok;
 }
 
 void expect(char *op)
 {
-  if (get_token()->type != TK_RESERVED || strlen(op) != get_token()->len || memcmp(get_token()->str, op, get_token()->len))
-    error_at(get_token()->str, "'%c'ではありません\n", op);
-  next_token();
+  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+    error_at(token->str, "'%c'ではありません\n", op);
+  token = token->next;
 }
 
 int expect_num()
 {
-  if (get_token()->type != TK_NUM)
-    error_at(get_token()->str, "数ではありません\n");
-  int val = get_token()->val;
-  next_token();
+  if (token->type != TK_NUM)
+    error_at(token->str, "数ではありません\n");
+  int val = token->val;
+  token = token->next;
   return val;
 }
 

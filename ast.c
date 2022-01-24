@@ -85,7 +85,7 @@ Node *add()
     {
       Node *rhs = mul();
       if (rhs->type && rhs->type->ty == PTR)
-        error_at(get_token()->str, "ポインタの右辺値を用いる加算は無効です");
+        error_at(token->str, "ポインタの右辺値を用いる加算は無効です");
       if (node->type && node->type->ty == PTR)
         node = new_node(ND_ADD, node, new_node(ND_MUL, new_node_num(size_of(node->type->ptr_to)), rhs));
       else
@@ -97,7 +97,7 @@ Node *add()
       if (node->type && node->type->ty == PTR && rhs->type && rhs->type->ty == PTR)
         node = new_node(ND_DIV, new_node(ND_SUB, node, rhs), new_node_num(size_of(node->type->ptr_to)));
       else if ((node->type && node->type->ty == PTR) || (rhs->type && rhs->type->ty == PTR))
-        error_at(get_token()->str, "ポインタと整数間の減算は無効です");
+        error_at(token->str, "ポインタと整数間の減算は無効です");
       else
         node = new_node(ND_SUB, node, rhs);
     }
@@ -214,13 +214,13 @@ Node *stmt()
     node = expr();
 
   if (!consume(";"))
-    error_at(get_token()->str, "';'ではないトークンです");
+    error_at(token->str, "';'ではないトークンです");
   return node;
 }
 
 Node *fn()
 {
-  Token *maybe_kata = get_token();
+  Token *maybe_kata = token;
   if (!consume_type())
     error_at(maybe_kata->str, "型ではありません");
 
@@ -245,7 +245,7 @@ Node *fn()
     node->def->params = calloc(max, sizeof(Node *));
     do
     {
-      Token *tok = get_token();
+      Token *tok = token;
       Type *type = consume_type();
       if (type == NULL)
         error_at(tok->str, "型ではありません");

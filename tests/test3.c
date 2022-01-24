@@ -6,7 +6,7 @@ long weird_op(long a, long b, long c, long d, long e, long f, long g)
 
 long fred(long a, long b, long c, long d, long e, long f, long g, long h, long i, long j, long k)
 {
-  foo(sizeof a, b, c, d, e, f, g, h, i, j, k);
+  foo(sizeof sizeof a, b, c, d, e, f, g, h, i, j, k);
   return a + b + c + d + e + f + g + h + i + j + k + weird_op(3 * (b < e), 2, 4 * g, 1, 1, 2, 2);
 }
 
