@@ -13,6 +13,9 @@ LVar *new_lvar(char *name, int len, Type *type)
   lvar->len = len;
   lvar->type = type;
   lvar->offset = 8 + (scope->locals ? scope->locals->offset : 0);
+
+  scope->locals = lvar;
+  scope->localc++;
   return lvar;
 }
 
