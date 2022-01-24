@@ -103,6 +103,18 @@ bool consume_keyword(TK_KIND type)
   return true;
 }
 
+Type *get_ptr(Type *type)
+{
+  if (consume("*"))
+  {
+    Type *final_ty = calloc(1, sizeof(Type));
+    final_ty->ty = PTR;
+    final_ty->ptr_to = type;
+    return get_ptr(final_ty);
+  }
+  return type;
+}
+
 Type *consume_type()
 {
   Token *tok = get_token();

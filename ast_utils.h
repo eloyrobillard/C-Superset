@@ -12,6 +12,7 @@ Scope *enter_scope();
 Scope *exit_scope();
 bool consume(char *op);
 bool consume_keyword(TK_KIND type);
+Type *get_ptr(Type *type);
 Type *consume_type();
 Token *consume_ident();
 void expect(char *op);
