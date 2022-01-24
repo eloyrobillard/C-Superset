@@ -19,11 +19,13 @@ LVar *new_lvar(char *name, int len, Type *type)
   return lvar;
 }
 
-LVar *find_lvar(Token *tok)
+LVar *find_lvar(Token *tok, Scope *scope)
 {
   for (LVar *var = scope->locals; var; var = var->next)
     if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
       return var;
+  if (scope->parent)
+    return find_lvar(tok, scope->parent);
   return NULL;
 }
 
