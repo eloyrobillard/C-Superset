@@ -90,7 +90,15 @@ Node *add()
         node = new_node(ND_ADD, node, rhs);
     }
     else if (consume("-"))
-      node = new_node(ND_SUB, node, mul());
+    {
+      Node *rhs = mul();
+      if (node->type && node->type->ty == PTR && rhs->type && rhs->type->ty == PTR)
+        node = new_node(ND_DIV, new_node(ND_SUB, node, rhs), new_node_num(8));
+      else if ((node->type && node->type->ty == PTR) || (rhs->type && rhs->type->ty == PTR))
+        error_at(get_token()->str, "ポインタと整数間の減算は無効です");
+      else
+        node = new_node(ND_SUB, node, rhs);
+    }
     else
       return node;
   }

@@ -20,7 +20,10 @@ int main() // free comment city
   b = 2;
   c = 3;
   d = 4;
+  long *x1;
+  alloc4(&x1, 1, 2, 4, 8);
+  long *x2 = x1 + 2;
   long *y = &c;
-  *y = *y + 20;
+  *y = *y + 10 * (x2 - x1);
   return *y + sum(a, b, c, d);
 }
