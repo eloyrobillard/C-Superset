@@ -5,5 +5,6 @@ int main ()
   y = 5;
   // ポインタ算術、xを参照
   z = &y + 8 + x - x;
+  /* z = &y + 8 + x; */
   return *z;
 }

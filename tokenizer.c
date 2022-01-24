@@ -51,6 +51,14 @@ Token *tokenize(char *p)
       if (*(p + 1) == '/')
         while (*p != '\n' && *(p++) != EOF)
           ;
+      else if (*(p + 1) == '*')
+      {
+        // "/*/" のような場面をスキップ
+        p += 2;
+        while ((*p != '*' || *(p + 1) != '/') && *p != EOF)
+          p++;
+        p += 2;
+      }
       else
         new_token(TK_RESERVED, p++, 1);
     }

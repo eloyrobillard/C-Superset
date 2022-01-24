@@ -4,6 +4,9 @@ long john()
   {
     long a = 36;
   }
+  /*
+  a = 11;
+  */
   return a + bar(a);
 }
 
