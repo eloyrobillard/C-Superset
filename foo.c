@@ -1,4 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+void alloc4(long **p, long a, long b, long c, long d)
+{
+  (*p) = malloc(sizeof(long) * 4);
+  (*p)[0] = a;
+  (*p)[1] = b;
+  (*p)[2] = c;
+  (*p)[3] = d;
+}
 
 int foo(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k)
 {

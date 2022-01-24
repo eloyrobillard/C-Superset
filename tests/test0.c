@@ -7,7 +7,12 @@ long john()
   /*
   a = 11;
   */
-  return a + bar(a);
+  long *p;
+  alloc4(&p, 1, 2, 4, a);
+  long *q = p + 2;
+  bar(*q);
+  q = p + 3;
+  return *q + bar(a);
 }
 
 int main()
