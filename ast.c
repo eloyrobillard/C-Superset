@@ -19,7 +19,7 @@ Node *primary()
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
 
-    LVar *lvar = find_lvar(tok);
+    LVar *lvar = find_lvar(tok, scope);
     if (lvar)
       node->offset = lvar->offset;
     else
@@ -136,17 +136,12 @@ Node *decl(Type *type)
   {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
-    LVar *lvar = find_lvar(tok);
+    LVar *lvar = find_lvar(tok, scope);
     if (lvar)
-      error_at(tok->str, "\"%.*s\" の再定義ができません", tok->len, tok->str);
-    else
-    {
-      LVar *lvar = new_lvar(tok->str, tok->len, type);
-      node->offset = lvar->offset;
-      node->type = type;
-      scope->locals = lvar;
-      scope->localc++;
-    }
+      warning_at(tok->str, "\"%.*s\" の再定義です", tok->len, tok->str);
+    lvar = new_lvar(tok->str, tok->len, type);
+    node->offset = lvar->offset;
+    node->type = type;
     return node;
   }
   else
