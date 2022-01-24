@@ -53,6 +53,8 @@ Node *unary()
     return new_node(ND_ADDR, NULL, unary());
   else if (consume("*"))
     return new_node(ND_DEREF, NULL, unary());
+  else if (consume_keyword(TK_SIZEOF))
+    return new_node_num(expr_size(unary()));
 
   consume("+");
   return primary();

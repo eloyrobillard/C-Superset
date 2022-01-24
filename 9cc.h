@@ -38,6 +38,7 @@
 typedef enum TK_Kind
 {
   // 指定されたキーワード
+  TK_SIZEOF,
   TK_RETURN,
   TK_IF,
   TK_ELSE,
@@ -180,6 +181,7 @@ void next_token();
 Token *get_token();
 // abi.c
 int size_of(Type *);
+int expr_size(Node *);
 
 // グローバル変数
 Node *code[100];

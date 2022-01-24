@@ -19,7 +19,7 @@ int main() // free comment city
   a = 1;
   b = 2;
   c = 3;
-  d = 4;
+  d = sizeof 4;
   int *x1;
   ialloc4(&x1, 1, 2, 4, 8);
   int *x2 = x1 + 2;

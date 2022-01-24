@@ -42,6 +42,8 @@ Token *tokenize(char *p)
         new_token(TK_WHILE, p, i);
       else if (i == 6 && strncmp(p, "return", i) == 0)
         new_token(TK_RETURN, p, i);
+      else if (i == 6 && strncmp(p, "sizeof", i) == 0)
+        new_token(TK_SIZEOF, p, i);
       else
         new_token(TK_IDENT, p, i);
       p += i;
