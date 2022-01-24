@@ -2,14 +2,23 @@
 
 void gen_lval_addr(Node *node)
 {
-  // 変数の確認
-  if (node->kind != ND_LVAR)
+  if (node->kind == ND_DEREF)
+  {
+    gen_lval_addr(node->rhs);
+    printf("\tpop rax\n");
+    printf("\tmov rax, [rax]\n");
+    printf("\tpush rax\n");
+  }
+  else if (node->kind == ND_LVAR)
+  {
+    // アドレスの計算
+    printf("\tmov rax, rbp\n");
+    printf("\tsub rax, %d\n", node->offset);
+    // アドレスをプッシュ
+    printf("\tpush rax\n");
+  }
+  else
     error("代入の左辺値が変数ではありません");
-  // アドレスの計算
-  printf("\tmov rax, rbp\n");
-  printf("\tsub rax, %d\n", node->offset);
-  // アドレスをプッシュ
-  printf("\tpush rax\n");
 }
 
 void gen(Node *node)

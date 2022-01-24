@@ -22,7 +22,7 @@ auto_test 15 "tests/fnDef1.c"
 auto_test 17 "tests/fnDef2.c" 
 auto_test 124 "tests/fnDef3.c" 
 auto_test 55 "tests/fnDef4.c" 
-auto_test 3 "tests/deref0.c" 
+auto_test 23 "tests/deref0.c" 
 auto_test 3 "tests/deref1.c" 
 auto_test 3 "tests/deref2.c" 
 
