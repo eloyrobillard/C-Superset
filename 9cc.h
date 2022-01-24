@@ -161,7 +161,7 @@ struct Node
 // tokenizer.c
 Token *tokenize(char *);
 LVar *new_lvar(char *name, int len, Type *);
-LVar *find_lvar(Token *tok);
+LVar *find_lvar(Token *tok, Scope *);
 // ast.c
 Node *primary();
 Node *expr();
@@ -172,6 +172,8 @@ Type *get_ptr(Type *);
 // error.c
 void error(char *, ...);
 void error_at(char *loc, const char *fmt, ...);
+void warning(char *, ...);
+void warning_at(char *loc, const char *fmt, ...);
 // tokens.c
 void init_tokens();
 Token *add_token(Token);

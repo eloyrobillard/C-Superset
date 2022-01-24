@@ -137,8 +137,8 @@ Node *decl(Type *type)
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
     LVar *lvar = find_lvar(tok, scope);
-    if (lvar)
-      warning_at(tok->str, "\"%.*s\" の再定義です", tok->len, tok->str);
+    // if (lvar)
+    //   warning_at(tok->str, "\"%.*s\" の再定義です", tok->len, tok->str);
     lvar = new_lvar(tok->str, tok->len, type);
     node->offset = lvar->offset;
     node->type = type;

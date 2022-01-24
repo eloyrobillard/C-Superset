@@ -1,5 +1,10 @@
 long sum(long a, long b, long c, long d)
 {
+  {
+    long b;
+    b = 3;
+    a = b;
+  }
   return a+b+c+d;
 }
 
