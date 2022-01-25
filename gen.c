@@ -1,5 +1,21 @@
 #include "9cc.h"
 
+int sum_locals(Scope *scope)
+{
+  int sum = 0;
+  LVar *locals = scope->locals;
+  for (int i = 0; i < scope->localc; i++)
+  {
+    sum += type_size(locals->type);
+    locals = locals->next;
+  }
+  for (int i = 0; i < scope->childc; i++)
+  {
+    sum += sum_locals(scope->children[i]);
+  }
+  return sum;
+}
+
 void gen_lval_addr(Node *node)
 {
   if (node->kind == ND_DEREF)
@@ -47,7 +63,7 @@ void gen(Node *node)
     // 変数26個分の領域を確保する
     printf("\tpush rbp\n");
     printf("\tmov rbp, rsp\n");
-    printf("\tsub rsp, 208\n");
+    printf("\tsub rsp, %d\n", sum_locals(node->scope));
 
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     for (int i = 0; i < node->def->paramc; i++)

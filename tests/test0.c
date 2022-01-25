@@ -1,8 +1,8 @@
 long john()
 {
-  long a = 1;
+  int a = 1;
   {
-    long a = 36;
+    int a = 36;
   }
   /*
   a = 11;
