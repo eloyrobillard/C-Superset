@@ -39,6 +39,9 @@
 
 typedef enum TK_Kind
 {
+  // 型名
+  TK_I32 = 1, TK_I64,
+
   // 指定されたキーワード
   TK_SIZEOF,
   TK_RETURN,
