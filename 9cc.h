@@ -106,9 +106,11 @@ struct Type
   {
     I32,
     I64,
-    PTR
+    PTR,
+    AR,
   } ty;
   Type *ptr_to;
+  size_t array_size;
 };
 
 typedef struct LVar LVar;
