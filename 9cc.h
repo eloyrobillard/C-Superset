@@ -18,7 +18,8 @@
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
  * expr       = assign
- * assign     = equality ("=" assign)?
+ * assign     = equality
+ *            | equality "=" assign
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
@@ -30,6 +31,7 @@
  *            | "*" unary
  *            | unary 
  * primary    = num
+ *            | "{" expr ("," expr)* "}"
  *            | TYPE
  *            | TYPE? ident ("[" num "]")*
  *            | ident ("(" (expr ("," expr)*)? ")")?
