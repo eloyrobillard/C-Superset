@@ -12,7 +12,8 @@ LVar *new_lvar(char *name, int len, Type *type)
   lvar->name = name;
   lvar->len = len;
   lvar->type = type;
-  lvar->offset = 8 + (scope->locals ? scope->locals->offset : 0);
+
+  lvar->offset = 8 + (scope->locals ? type_size(scope->locals->type) + scope->locals->offset : 0);
 
   scope->locals = lvar;
   scope->localc++;
@@ -62,6 +63,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
   node->kind = kind;
   node->lhs = lhs;
   node->rhs = rhs;
+  node->scope = scope;
   return node;
 }
 
@@ -70,6 +72,7 @@ Node *new_node_num(int val)
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val = val;
+  node->scope = scope;
   return node;
 }
 

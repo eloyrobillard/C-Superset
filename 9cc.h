@@ -169,6 +169,7 @@ struct Node
   NodeKind kind; //* ノードの型
   Node *lhs;     //! 左辺
   Node *rhs;     //? 右辺
+  Scope *scope;
   union
   {
     int val;    //! kindがND_NUMの場合のみ使う
