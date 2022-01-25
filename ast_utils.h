@@ -3,6 +3,13 @@
 
 #include "9cc.h"
 
+typedef struct MaybeExpr MaybeExpr;
+
+struct MaybeExpr {
+  bool is_expr;
+  Node *node;
+};
+
 bool at_eof();
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
@@ -20,6 +27,7 @@ int expect_num();
 Node *handle_fncall(Node *node, Token *tok);
 Node *block();
 Node *final_block();
+MaybeExpr *try_expr();
 Node *if_expr();
 Node *if_stmt();
 Node *handle_for();

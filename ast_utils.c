@@ -215,9 +215,65 @@ Node *final_block()
 {
   if (consume("{"))
   {
-    // Node *node = new_node();
+    enter_scope();
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_BLOCK;
+
+    int i = 0;
+    size_t max = 2;
+    node->stmts = calloc(max, sizeof(Node *));
+    while (!consume("}"))
+    {
+      MaybeExpr *maybe_expr = try_expr();
+      node->stmts[i++] = maybe_expr->node;
+      if (i + 1 == max)
+      {
+        node->stmts = realloc(node->stmts, max * 2 * sizeof(Node *));
+        max <<= 1;
+      }
+    }
+    node->stmts[i] = NULL;
+    exit_scope();
+    return node;
   }
   return expr();
+}
+
+MaybeExpr *try_expr()
+{
+  MaybeExpr *maybe_expr = calloc(1, sizeof(MaybeExpr));
+  if (consume("{"))
+  {
+    maybe_expr->node = block();
+    return maybe_expr;
+  }
+  else if (consume_keyword(TK_FOR))
+  {
+    maybe_expr->node = handle_for();
+    return maybe_expr;
+  }
+  else if (consume_keyword(TK_WHILE))
+  {
+    maybe_expr->node = handle_while();
+    return maybe_expr;
+  }
+  else if (consume_keyword(TK_IF))
+  {
+    maybe_expr->node = if_stmt();
+    return maybe_expr;
+  }
+
+  if (consume_keyword(TK_RETURN))
+    maybe_expr->node = new_node(ND_RETURN, expr(), NULL);
+  else
+  {
+    maybe_expr->is_expr = true;
+    maybe_expr->node = expr();
+  }
+
+  if (!consume(";"))
+    error_at(token->str, "';'ではないトークンです");
+  return maybe_expr;
 }
 
 Node *if_stmt()
@@ -241,11 +297,11 @@ Node *if_expr()
   Node *if_node = new_node(0, expr(), NULL);
   if_node->lhs = expr();
   expect(")");
-  if_node->rhs = stmt();
+  if_node->rhs = final_block();
   node->lhs = if_node;
 
   if (consume_keyword(TK_ELSE))
-    node->rhs = stmt();
+    node->rhs = final_block();
   return node;
 }
 
