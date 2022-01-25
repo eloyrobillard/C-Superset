@@ -184,7 +184,7 @@ Node *stmt();
 void gen(Node *);
 void program();
 Type *get_ptr(Type *);
-// error.c
+// debug.c
 void error(char *, ...);
 void error_at(char *loc, const char *fmt, ...);
 void warning(char *, ...);
