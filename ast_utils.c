@@ -101,7 +101,7 @@ Type *get_ar(Type *type)
     final_ty->ptr_to = type;
     final_ty->array_size = expect_num();
     expect("]");
-    return get_ptr(final_ty);
+    return get_ar(final_ty);
   }
   return type;
 }

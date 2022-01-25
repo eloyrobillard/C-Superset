@@ -5,11 +5,13 @@ int type_size(Type *type)
 {
   switch (type->ty)
   {
-  case PTR:
-  case I64:
-    return 8;
-  case I32:
-    return 4;
+    case ARRAY:
+      return type->array_size * type_size(type->ptr_to);
+    case PTR:
+    case I64:
+      return 8;
+    case I32:
+      return 4;
   }
 }
 

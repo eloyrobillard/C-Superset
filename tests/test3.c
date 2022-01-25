@@ -16,9 +16,9 @@ int main()
   alloc4(&p, 0,1,2,3);
   long *p2 = p + 2;
   long a = 1;
-  long b = 2;
+  long b[10][10][2][4] = 2;
   long c = p2 - p + 1;
-  long d = sizeof(i32);
+  long d = sizeof(b);
   long e = sizeof(i32 *) - 3;
   long f = 6;
   long g = 7;
