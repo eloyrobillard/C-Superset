@@ -229,13 +229,19 @@ Node *final_block()
     int i = 0;
     size_t max = 2;
     node->stmts = calloc(max, sizeof(Node *));
+
+    // 表現ブロックのデバッグ用
     MaybeExpr *maybe_expr;
+    bool is_final = false;
+    Token *tok; // １つ前のトークンを指参照
     while (!consume("}"))
     {
       maybe_expr = try_expr();
       node->stmts[i++] = maybe_expr->node;
+      tok = token;
       if (maybe_expr->is_expr && !consume(";"))
       {
+        is_final = true;
         expect("}");
         break;
       }
@@ -245,6 +251,8 @@ Node *final_block()
         max <<= 1;
       }
     }
+    if (!is_final)
+      error_at(tok->str, "戻し表現にセミコロンをつけてはいけません");
     node->stmts[i] = NULL;
     exit_scope();
     return node;

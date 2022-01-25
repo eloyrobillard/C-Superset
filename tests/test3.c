@@ -30,7 +30,8 @@ int main()
   a = if (a > g)
   {
     long a = 10
-  } else a;
+  }
+  else a;
   long out = j - c + g + fred(a * 2, b, c + 1, d, e, f, g, h, i, j, k);
   foo(a, b, c, d, e, f, g, h, i, j, k);
   return out;
