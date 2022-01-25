@@ -73,15 +73,6 @@ Node *new_node_num(int val)
   return node;
 }
 
-Node *new_if_node(Node *cond, Node *ifstmt, Node *els)
-{
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_IF;
-  node->lhs = new_node((NodeKind)NULL, cond, ifstmt);
-  node->rhs = els;
-  return node;
-}
-
 bool consume(char *op)
 {
   Token *tok = token;
@@ -197,12 +188,26 @@ Node *handle_fncall(Node *node, Token *tok)
   return node;
 }
 
-Node *handle_if()
+Node *if_stmt()
 {
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_IF;
+  Node *node = new_node(ND_IF, NULL, NULL);
   expect("(");
-  Node *if_node = calloc(1, sizeof(Node));
+  Node *if_node = new_node(0, expr(), NULL);
+  if_node->lhs = expr();
+  expect(")");
+  if_node->rhs = stmt();
+  node->lhs = if_node;
+
+  if (consume_keyword(TK_ELSE))
+    node->rhs = stmt();
+  return node;
+}
+
+Node *if_expr()
+{
+  Node *node = new_node(ND_IF, NULL, NULL);
+  expect("(");
+  Node *if_node = new_node(NULL, expr(), NULL);
   if_node->lhs = expr();
   expect(")");
   if_node->rhs = stmt();
@@ -215,12 +220,10 @@ Node *handle_if()
 
 Node *handle_for()
 {
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_FOR;
-  Node *n0 = calloc(1, sizeof(Node));
+  Node *node = new_node(ND_FOR, NULL, NULL);
+  Node *n0 = new_node(0, NULL, new_node_num(1));
   node->lhs = n0;
-  n0->rhs = new_node_num(1);
-  Node *n1 = calloc(1, sizeof(Node));
+  Node *n1 = new_node(0, NULL, NULL);
   node->rhs = n1;
   expect("(");
   if (!consume(";"))
@@ -244,8 +247,7 @@ Node *handle_for()
 
 Node *handle_while()
 {
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_WHILE;
+  Node *node = new_node(ND_WHILE, NULL, NULL);
   expect("(");
   node->lhs = expr();
   expect(")");
