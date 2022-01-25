@@ -106,26 +106,17 @@ Type *get_ptr(Type *type)
 
 Type *consume_type()
 {
-  Token *tok = token;
   Type *type = calloc(1, sizeof(Type));
-  switch (tok->len)
+  switch (token->type)
   {
-  case 3:
+  case TK_I32:
   {
-    if (memcmp(tok->str, "i64", tok->len) == 0)
-      type->ty = I64;
-    else if (memcmp(tok->str, "i32", tok->len) == 0 || memcmp(tok->str, "int", tok->len) == 0)
-      type->ty = I32;
-    else
-      return NULL;
+    type->ty = I32;
     break;
   }
-  case 4:
+  case TK_I64:
   {
-    if (memcmp(tok->str, "long", tok->len) == 0)
-      type->ty = I64;
-    else
-      return NULL;
+    type->ty = I64;
     break;
   }
   default:
