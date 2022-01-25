@@ -162,6 +162,14 @@ int expect_num()
   return val;
 }
 
+void expect_keyword(TK_KIND type, const char *fmt)
+{
+  if (token->type != type)
+    error_at(token->str, fmt);
+
+  token = token->next;
+}
+
 Node *handle_fncall(Node *node, Token *tok)
 {
   node->kind = ND_FNCALL;
@@ -306,8 +314,8 @@ Node *if_expr()
   if_node->rhs = final_block();
   node->lhs = if_node;
 
-  if (consume_keyword(TK_ELSE))
-    node->rhs = final_block();
+  expect_keyword(TK_ELSE, "else条件は必須です");
+  node->rhs = final_block();
   return node;
 }
 
