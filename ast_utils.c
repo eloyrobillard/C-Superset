@@ -188,6 +188,38 @@ Node *handle_fncall(Node *node, Token *tok)
   return node;
 }
 
+Node *block()
+{
+  enter_scope();
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_BLOCK;
+
+  int i = 0;
+  size_t max = 2;
+  node->stmts = calloc(max, sizeof(Node *));
+  while (!consume("}"))
+  {
+    node->stmts[i++] = stmt();
+    if (i + 1 == max)
+    {
+      node->stmts = realloc(node->stmts, max * 2 * sizeof(Node *));
+      max <<= 1;
+    }
+  }
+  node->stmts[i] = NULL;
+  exit_scope();
+  return node;
+}
+
+Node *final_block()
+{
+  if (consume("{"))
+  {
+    Node *node = new_node();
+  }
+  return expr();
+}
+
 Node *if_stmt()
 {
   Node *node = new_node(ND_IF, NULL, NULL);
