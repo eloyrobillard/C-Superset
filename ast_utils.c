@@ -216,8 +216,7 @@ Node *final_block()
   if (consume("{"))
   {
     enter_scope();
-    Node *node = calloc(1, sizeof(Node));
-    node->kind = ND_BLOCK;
+    Node *node = new_node(ND_FINBLOCK, NULL, NULL);
 
     int i = 0;
     size_t max = 2;
@@ -303,7 +302,6 @@ Node *if_expr()
   Node *node = new_node(ND_IF, NULL, NULL);
   expect("(");
   Node *if_node = new_node(0, expr(), NULL);
-  if_node->lhs = expr();
   expect(")");
   if_node->rhs = final_block();
   node->lhs = if_node;

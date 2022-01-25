@@ -139,13 +139,26 @@ void gen(Node *node)
     printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
   }
+  case ND_FINBLOCK:
+  {
+    int i = 0;
+    for (; node->stmts[i + 1]; i++)
+    {
+      gen(node->stmts[i]);
+      printf("\tpop rax\n");
+    }
+    gen(node->stmts[i]);
+    return;
+  }
   case ND_BLOCK:
+  {
     for (int i = 0; node->stmts[i]; i++)
     {
       gen(node->stmts[i]);
       printf("\tpop rax\n");
     }
     return;
+  }
   case ND_RETURN:
   {
     gen(node->lhs);
@@ -207,8 +220,10 @@ void gen(Node *node)
     return;
   }
   case ND_NUM:
+  {
     printf("\tpush %d\n", node->val);
     return;
+  }
   case ND_LVAR:
   {
     gen_lval_addr(node);

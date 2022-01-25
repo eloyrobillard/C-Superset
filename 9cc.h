@@ -24,6 +24,7 @@
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = "sizeof" unary
+ *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK / expr)
  *            | ("+" | "-")? primary
  *            | "&" unary
  *            | "*" unary
@@ -32,6 +33,7 @@
  *            | "(" expr ")"
  * 
  * BLOCK      = "{" stmt* "}"
+ * FINAL_BLOCK = "{" stmt* expr "}"
  * TYPE       = "i64" / "long" / "i32" / "int"
  */
 
@@ -64,6 +66,7 @@ typedef enum NodeKind
   ND_LVAR,
   ND_FNCALL,
   ND_FNDEF,
+  ND_FINBLOCK,
   ND_BLOCK,
 
   ND_ADDR,  // 参照（&）

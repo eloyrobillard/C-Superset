@@ -55,6 +55,8 @@ Node *unary()
     return new_node(ND_DEREF, NULL, unary());
   else if (consume_keyword(TK_SIZEOF))
     return new_node_num(expr_size(unary()));
+  else if (consume_keyword(TK_IF))
+    return if_expr();
 
   consume("+");
   return primary();
@@ -167,49 +169,24 @@ Node *decl(Type *type)
 
 Node *expr()
 {
-
   return assign();
 }
 
 Node *stmt()
 {
-  Node *node;
-
   if (consume("{"))
-  {
-    enter_scope();
-
-    node = calloc(1, sizeof(Node));
-    node->kind = ND_BLOCK;
-
-    int i = 0;
-    size_t max = 2;
-    node->stmts = calloc(max, sizeof(Node *));
-    while (!consume("}"))
-    {
-      node->stmts[i++] = stmt();
-      if (i + 1 == max)
-      {
-        node->stmts = realloc(node->stmts, max * 2 * sizeof(Node *));
-        max <<= 1;
-      }
-    }
-    node->stmts[i] = NULL;
-    exit_scope();
-    return node;
-  }
-  else if (consume_keyword(TK_RETURN))
-  {
-    node = calloc(1, sizeof(Node));
-    node->kind = ND_RETURN;
-    node->lhs = expr();
-  }
-  else if (consume_keyword(TK_IF))
-    return handle_if();
+    return block();
   else if (consume_keyword(TK_FOR))
     return handle_for();
   else if (consume_keyword(TK_WHILE))
     return handle_while();
+  else if (consume_keyword(TK_IF))
+    return if_stmt();
+
+  Node *node;
+
+  if (consume_keyword(TK_RETURN))
+    node = new_node(ND_RETURN, expr(), NULL);
   else
     node = expr();
 

@@ -2,7 +2,7 @@ long sum(long a, long b, long c, long d)
 {
   c = 1;
   d = 3;
-  if (a < b)
+  return if (a < b)
   {
     long a = 3;
     long *x;
@@ -10,9 +10,9 @@ long sum(long a, long b, long c, long d)
     long **y;
     y = &x;
     **y = 5;
-    return a + b + c + d;
+    a + b + c + d
   }
-  return a + b + c + d;
+  else a + b + c + d;
 }
 
 int main()
