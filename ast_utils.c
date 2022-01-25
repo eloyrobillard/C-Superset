@@ -222,11 +222,17 @@ Node *final_block()
     int i = 0;
     size_t max = 2;
     node->stmts = calloc(max, sizeof(Node *));
+    MaybeExpr *maybe_expr;
     while (!consume("}"))
     {
-      MaybeExpr *maybe_expr = try_expr();
+      maybe_expr = try_expr();
       node->stmts[i++] = maybe_expr->node;
-      if (i + 1 == max)
+      if (maybe_expr->is_expr && !consume(";"))
+      {
+        expect("}");
+        break;
+      }
+      else if (i + 1 == max)
       {
         node->stmts = realloc(node->stmts, max * 2 * sizeof(Node *));
         max <<= 1;
@@ -264,15 +270,17 @@ MaybeExpr *try_expr()
   }
 
   if (consume_keyword(TK_RETURN))
+  {
     maybe_expr->node = new_node(ND_RETURN, expr(), NULL);
+    if (!consume(";"))
+      error_at(token->str, "';'ではないトークンです");
+  }
   else
   {
     maybe_expr->is_expr = true;
     maybe_expr->node = expr();
   }
 
-  if (!consume(";"))
-    error_at(token->str, "';'ではないトークンです");
   return maybe_expr;
 }
 
