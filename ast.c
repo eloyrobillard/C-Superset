@@ -15,7 +15,7 @@ Node *primary()
   Token *tok = consume_ident();
   if (tok)
   {
-    Node *node = calloc(1, sizeof(Node));
+    Node *node = new_node(0, NULL, NULL);
     if (consume("("))
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
@@ -156,8 +156,7 @@ Node *decl(Type *type)
   Token *tok = consume_ident();
   if (tok)
   {
-    Node *node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
+    Node *node = new_node(ND_LVAR, NULL, NULL);
     LVar *lvar = new_lvar(tok->str, tok->len, type);
     node->offset = lvar->offset;
     node->type = type;
@@ -209,8 +208,7 @@ Node *fn()
   enter_scope();
 
   expect("(");
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_FNDEF;
+  Node *node = new_node(ND_FNDEF, NULL, NULL);
   node->def = calloc(1, sizeof(FnDef));
   node->def->name = tok->str;
   node->def->len = tok->len;
