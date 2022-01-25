@@ -29,9 +29,9 @@
  *            | "&" unary
  *            | "*" unary
  * primary    = num
- *            | TYPE? ident ("(" (expr ("," expr)*)? ")")? 
+ *            | TYPE? ident ("(" (expr ("," expr)*)? ")")?
  *            | "(" expr ")"
- * 
+ *
  * BLOCK      = "{" stmt* "}"
  * FINAL_BLOCK = "{" stmt* expr "}"
  * TYPE       = "i64" / "long" / "i32" / "int"
@@ -69,7 +69,7 @@ typedef enum NodeKind
   ND_FINBLOCK,
   ND_BLOCK,
 
-  ND_ADDR,  // 参照（&）
+  ND_ADDR, // 参照（&）
   ND_DEREF,
 
   ND_EQ,
@@ -95,8 +95,14 @@ struct Token
 
 typedef struct Type Type;
 
-struct Type {
-  enum { I32, I64, PTR } ty;
+struct Type
+{
+  enum
+  {
+    I32,
+    I64,
+    PTR
+  } ty;
   Type *ptr_to;
 };
 
@@ -128,7 +134,7 @@ typedef struct FnDef FnDef;
 struct FnDef
 {
   char *name;
-  int len;      // 関数名の長さ
+  int len; // 関数名の長さ
   int paramc;
   Node **params;
   Node *body;
@@ -136,7 +142,8 @@ struct FnDef
 
 typedef struct Scope Scope;
 
-struct Scope {
+struct Scope
+{
   Scope *parent;
   Scope **children;
   int childc;
@@ -151,14 +158,18 @@ struct Node
   NodeKind kind; //* ノードの型
   Node *lhs;     //! 左辺
   Node *rhs;     //? 右辺
-  int val;       //! kindがND_NUMの場合のみ使う
-  int offset;    //* 変数の場合
-  int derefs;    // ポインタを代入する際 
-  char *str;    //? 関数呼び出しの場合
-  FnCall *call;
-  FnDef *def;
-  Node **stmts;
-  Type *type;
+  union
+  {
+    int val;    //! kindがND_NUMの場合のみ使う
+    int offset; //* 変数の場合
+  };
+  union
+  {
+    FnCall *call;
+    FnDef *def;
+    Node **stmts;
+    Type *type;
+  };
 };
 
 // グローバル関数
