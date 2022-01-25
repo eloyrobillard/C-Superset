@@ -1,7 +1,7 @@
 #include <math.h>
 #include "9cc.h"
 
-int size_of(Type *type)
+int type_size(Type *type)
 {
   switch (type->ty)
   {
@@ -23,8 +23,8 @@ int expr_size(Node *node)
     return 4;
   }
   else if (node->kind == ND_LVAR)
-    return size_of(node->type);
- 
+    return type_size(node->type);
+
   int lsize = expr_size(node->lhs);
   int rsize = expr_size(node->rhs);
   return lsize > rsize ? lsize : rsize;

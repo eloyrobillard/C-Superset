@@ -54,7 +54,12 @@ Node *unary()
   else if (consume("*"))
     return new_node(ND_DEREF, NULL, unary());
   else if (consume_keyword(TK_SIZEOF))
+  {
+    Type *type = get_ptr(consume_type());
+    if (type)
+      return new_node_num(type_size(type));
     return new_node_num(expr_size(unary()));
+  }
   else if (consume_keyword(TK_IF))
     return if_expr();
 

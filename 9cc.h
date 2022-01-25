@@ -23,7 +23,7 @@
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
- * unary      = "sizeof" unary
+ * unary      = "sizeof" (TYPE / unary)
  *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK / expr)
  *            | ("+" | "-")? primary
  *            | "&" unary
@@ -198,7 +198,7 @@ Token *add_token(Token);
 void next_token();
 Token *get_token();
 // abi.c
-int size_of(Type *);
+int type_size(Type *);
 int expr_size(Node *);
 
 // グローバル変数
