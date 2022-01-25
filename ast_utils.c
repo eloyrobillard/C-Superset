@@ -215,7 +215,7 @@ Node *final_block()
 {
   if (consume("{"))
   {
-    Node *node = new_node();
+    // Node *node = new_node();
   }
   return expr();
 }
@@ -225,7 +225,6 @@ Node *if_stmt()
   Node *node = new_node(ND_IF, NULL, NULL);
   expect("(");
   Node *if_node = new_node(0, expr(), NULL);
-  if_node->lhs = expr();
   expect(")");
   if_node->rhs = stmt();
   node->lhs = if_node;
@@ -239,7 +238,7 @@ Node *if_expr()
 {
   Node *node = new_node(ND_IF, NULL, NULL);
   expect("(");
-  Node *if_node = new_node(NULL, expr(), NULL);
+  Node *if_node = new_node(0, expr(), NULL);
   if_node->lhs = expr();
   expect(")");
   if_node->rhs = stmt();

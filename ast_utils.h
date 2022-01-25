@@ -18,7 +18,10 @@ Token *consume_ident();
 void expect(char *op);
 int expect_num();
 Node *handle_fncall(Node *node, Token *tok);
-Node *handle_if();
+Node *block();
+Node *final_block();
+Node *if_expr();
+Node *if_stmt();
 Node *handle_for();
 Node *handle_while();
 
