@@ -18,11 +18,11 @@ int main()
   long a = 1;
   long b = 2;
   long c = p2 - p + 1;
-  long d = 4;
+  long d = sizeof int;
   long e = 5;
   long f = 6;
   long g = 7;
-  long h = 8;
+  long h = sizeof long *;
   long i = 9;
   long j = 10;
   long k = 11;
