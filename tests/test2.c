@@ -2,7 +2,8 @@ long sum(long a, long b, long c, long d)
 {
   c = 1;
   d = 3;
-  return if (a < b)
+  return if (a == b) 5
+  else if (a < b)
   {
     long a = 3;
     long *x;
