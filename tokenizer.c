@@ -75,7 +75,7 @@ Token *tokenize(char *p)
       else
         current = new_token(current, TK_RESERVED, p++, 1);
     }
-    else if (strchr(";(),{}-+*&", *p))
+    else if (strchr(";(),{}-+*&[]", *p))
       current = new_token(current, TK_RESERVED, p++, 1);
     else if (*p == '!')
     {

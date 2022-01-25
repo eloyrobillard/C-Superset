@@ -11,8 +11,12 @@ Node *primary()
     return node;
   }
 
-  Type *type = get_ptr(consume_type());
+  Type *type = consume_type();
+  if (type)
+    type = get_ptr(type);
   Token *tok = consume_ident();
+  if (type)
+    type = get_ar(type);
   if (tok)
   {
     Node *node = new_node(0, NULL, NULL);

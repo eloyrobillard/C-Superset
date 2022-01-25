@@ -28,9 +28,11 @@
  *            | ("+" | "-")? primary
  *            | "&" unary
  *            | "*" unary
+ *            | unary 
  * primary    = num
  *            | TYPE
- *            | TYPE? ident ("(" (expr ("," expr)*)? ")")?
+ *            | TYPE? ident ("[" num "]")*
+ *            | ident ("(" (expr ("," expr)*)? ")")?
  *            | "(" expr ")"
  *
  * BLOCK      = "{" stmt* "}"
@@ -107,7 +109,7 @@ struct Type
     I32,
     I64,
     PTR,
-    AR,
+    ARRAY,
   } ty;
   Type *ptr_to;
   size_t array_size;
