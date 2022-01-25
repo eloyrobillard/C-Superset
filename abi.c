@@ -22,7 +22,7 @@ int expr_size(Node *node)
       return 8;
     return 4;
   }
-  else if (node->kind == ND_LVAR)
+  else if (node->kind == ND_LVAR || node->kind == ND_TYPETK)
     return type_size(node->type);
 
   int lsize = expr_size(node->lhs);

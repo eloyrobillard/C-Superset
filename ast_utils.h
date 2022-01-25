@@ -24,12 +24,12 @@ Type *consume_type();
 Token *consume_ident();
 void expect(char *op);
 int expect_num();
-Node *handle_fncall(Node *node, Token *tok);
 Node *block();
 Node *final_block();
 MaybeExpr *try_expr();
 Node *if_expr();
 Node *if_stmt();
+Node *handle_fncall(Node *node, Token *tok);
 Node *handle_for();
 Node *handle_while();
 

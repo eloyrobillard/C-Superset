@@ -23,12 +23,13 @@
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
- * unary      = "sizeof" (TYPE / unary)
+ * unary      = "sizeof" unary
  *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK / expr)
  *            | ("+" | "-")? primary
  *            | "&" unary
  *            | "*" unary
  * primary    = num
+ *            | TYPE
  *            | TYPE? ident ("(" (expr ("," expr)*)? ")")?
  *            | "(" expr ")"
  *
@@ -65,8 +66,9 @@ typedef enum NodeKind
   ND_FOR,
   ND_WHILE,
 
-  ND_ASSIGN,
+  ND_TYPETK,
   ND_LVAR,
+  ND_ASSIGN,
   ND_FNCALL,
   ND_FNDEF,
   ND_FINBLOCK,

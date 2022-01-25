@@ -18,8 +18,8 @@ int main()
   long a = 1;
   long b = 2;
   long c = p2 - p + 1;
-  long d = sizeof int;
-  long e = 5;
+  long d = sizeof(i32);
+  long e = sizeof(i32 *) - 3;
   long f = 6;
   long g = 7;
   long h = sizeof long *;
