@@ -10,6 +10,7 @@ Other features I'm working on:
 
 * Global scope as `main`, inspired by Nim
 * Rust-like type syntax (i32, i64, etc)
+* a module system
 * LLVM integration (one day)
 
 ## Get Started
