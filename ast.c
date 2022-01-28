@@ -14,39 +14,45 @@ Node *primary()
   else if (consume("{"))
   {
     Node *node = new_node(ND_ARRLIT, NULL, NULL);
-    node->arg_list = arg_list();
+    node->arg_list = arg_list("}");
     return node;
   }
 
   Type *type = consume_type();
   if (type)
     type = get_ptr(type);
-  Token *tok = consume_ident();
+  Token *ident = consume_ident();
   if (type)
     type = get_ar(type);
-  if (tok)
+  if (ident)
   {
     Node *node = new_node(0, NULL, NULL);
     if (consume("("))
-      return handle_fncall(node, tok);
+    {
+      Node *node = new_node(ND_FNCALL, NULL, NULL);
+      node->arg_list = arg_list(")");
+      node->arg_list->str = ident->str;
+      node->arg_list->len = ident->len;
+      return node;
+    }
     node->kind = ND_LVAR;
 
     // 式内参照
     if (type == NULL)
     {
-      LVar *lvar = find_lvar(tok, scope);
+      LVar *lvar = find_lvar(ident, scope);
       if (lvar)
       {
         node->offset = lvar->offset;
         node->type = lvar->type;
       }
       else
-        error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
+        error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
     }
     // 定義か宣言
     else
     {
-      LVar *lvar = new_lvar(tok->str, tok->len, type);
+      LVar *lvar = new_lvar(ident->str, ident->len, type);
       node->offset = lvar->offset;
       node->type = type;
     }

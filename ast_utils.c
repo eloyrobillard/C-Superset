@@ -181,8 +181,6 @@ void expect_keyword(TK_KIND type, const char *fmt)
 ArgList *arg_list(char *terminator)
 {
   ArgList *arg_list = calloc(1, sizeof(ArgList));
-  arg_list->str = token->str;
-  arg_list->len = token->len;
   int i = 0;
   if (!consume(terminator))
   {
