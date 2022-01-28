@@ -3,12 +3,13 @@
 int sum_locals(Scope *scope)
 {
   int sum = 0;
-  LVar *locals = scope->locals;
-  for (int i = 0; i < scope->localc; i++)
-  {
-    sum += type_size(locals->type);
-    locals = locals->next;
-  }
+  sum = scope->localc * 8;
+  // LVar *locals = scope->locals;
+  // for (int i = 0; i < scope->localc; i++)
+  // {
+  //   sum += type_size(locals->type);
+  //   locals = locals->next;
+  // }
   for (int i = 0; i < scope->childc; i++)
   {
     sum += sum_locals(scope->children[i]);

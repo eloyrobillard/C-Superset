@@ -10,6 +10,13 @@ Node *primary()
     expect(")");
     return node;
   }
+  // 配列初期値
+  else if (consume("{"))
+  {
+    Node *node = new_node(ND_ARRLIT, NULL, NULL);
+    node->arg_list = arg_list();
+    return node;
+  }
 
   Type *type = consume_type();
   if (type)
@@ -24,6 +31,7 @@ Node *primary()
       return handle_fncall(node, tok);
     node->kind = ND_LVAR;
 
+    // 式内参照
     if (type == NULL)
     {
       LVar *lvar = find_lvar(tok, scope);
@@ -35,6 +43,7 @@ Node *primary()
       else
         error_at(tok->str, "識別子 \"%.*s\" が定義されていません", tok->len, tok->str);
     }
+    // 定義か宣言
     else
     {
       LVar *lvar = new_lvar(tok->str, tok->len, type);

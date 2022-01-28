@@ -13,7 +13,7 @@ LVar *new_lvar(char *name, int len, Type *type)
   lvar->len = len;
   lvar->type = type;
 
-  lvar->offset = (scope->locals ? type_size(scope->locals->type) + scope->locals->offset : 8);
+  lvar->offset = (scope->locals ? /* type_size(scope->locals->type) */ 8 + scope->locals->offset : 8);
 
   scope->locals = lvar;
   scope->localc++;
@@ -178,29 +178,35 @@ void expect_keyword(TK_KIND type, const char *fmt)
   token = token->next;
 }
 
-Node *handle_fncall(Node *node, Token *tok)
+ArgList *arg_list(char *terminator)
 {
-  node->kind = ND_FNCALL;
-  node->call = calloc(1, sizeof(FnCall));
-  node->call->str = tok->str;
-  node->call->len = tok->len;
+  ArgList *arg_list = calloc(1, sizeof(ArgList));
+  arg_list->str = token->str;
+  arg_list->len = token->len;
   int i = 0;
-  if (!consume(")"))
+  if (!consume(terminator))
   {
     int max = 2;
-    node->call->args = calloc(max, sizeof(Node *));
+    arg_list->args = calloc(max, sizeof(Node *));
     do
     {
       Node *arg = expr();
-      node->call->args[i++] = arg;
+      arg_list->args[i++] = arg;
       if (i + 1 == max)
       {
-        node->call->args = realloc(node->call->args, (max *= 2) * sizeof(Node *));
+        arg_list->args = realloc(arg_list->args, (max *= 2) * sizeof(Node *));
       }
     } while (consume(","));
-    expect(")");
+    expect(terminator);
   }
-  node->call->argc = i;
+  arg_list->argc = i;
+  return arg_list;
+}
+
+Node *handle_fncall(Node *node, Token *tok)
+{
+  node->kind = new_node(ND_FNCALL, NULL, NULL);
+  node->arg_list = arg_list(")");
   return node;
 }
 

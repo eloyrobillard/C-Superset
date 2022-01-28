@@ -71,6 +71,7 @@ typedef enum NodeKind
   ND_WHILE,
 
   ND_TYPETK,
+  ND_ARRLIT,
   ND_LVAR,
   ND_ASSIGN,
   ND_FNCALL,
@@ -131,9 +132,9 @@ struct LVar
 
 // 抽象構文木のノードの種類
 typedef struct Node Node;
-typedef struct FnCall FnCall;
+typedef struct ArgList ArgList;
 
-struct FnCall
+struct ArgList
 {
   char *str;
   int len;
@@ -177,7 +178,7 @@ struct Node
   };
   union
   {
-    FnCall *call;
+    ArgList *arg_list;
     FnDef *def;
     Node **stmts;
     Type *type;

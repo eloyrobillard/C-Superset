@@ -30,6 +30,7 @@ Node *final_block();
 MaybeExpr *try_expr();
 Node *if_expr();
 Node *if_stmt();
+ArgList *arg_list(char *terminator);
 Node *handle_fncall(Node *node, Token *tok);
 Node *handle_for();
 Node *handle_while();
