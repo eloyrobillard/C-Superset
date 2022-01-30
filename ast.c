@@ -102,11 +102,24 @@ Node *unary()
   // 配列要素の参照
   if (consume("["))
   {
+    Node *place = new_node_num(0);
     do
     {
-      new_node(ND_ADD, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->ptr_to)), expr()));
+      place = new_node(
+        ND_ADD, new_node(
+          ND_MUL, new_node_num(10), place
+        ), expr()
+      );
       expect("]");
     } while (consume("["));
+    // *(p + k)
+    prim = new_node(ND_DEREF, NULL, new_node(
+      ND_ADD, prim, new_node(
+        ND_MUL, new_node_num(
+          8// type_size(prim->type->ptr_to)
+        ), place
+      )
+    ));
   }
   return prim;
 }

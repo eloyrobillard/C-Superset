@@ -54,8 +54,7 @@ void gen(Node *node)
         printf("\tpop rax\n");
         printf("\tpush rdi\n");
         printf("\tmov rdi, rbp\n");
-        printf("\tsub rdi, %d\n", node->offset);
-        printf("\tsub rdi, %d\n", 8 * i);
+        printf("\tsub rdi, %d\n", node->offset + 8*i);
         printf("\tmov [rdi], rax\n");
         printf("\tpop rdi\n");
         printf("\tpush rax\n");
