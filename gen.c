@@ -27,7 +27,7 @@ void gen_lval_addr(Node *node)
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
   }
-  else if (node->kind == ND_LVAR)
+  else if (node->kind == ND_LVAR || node->kind == ND_ARR)
   {
     // アドレスの計算
     printf("\tmov rax, rbp\n");
@@ -51,14 +51,14 @@ void gen(Node *node)
       for (int i = 0; i < node->arg_list->argc; i++)
       {
         gen(node->arg_list->args[i]);
-        printf("\tpop rax");
-        printf("\tpush rdi");
-        printf("\tmov rdi, rbp");
-        printf("\tsub rdi, %d", node->offset);
-        printf("\tsub rdi, %d", 8 * i);
-        printf("\tmov [rdi], rax");
-        printf("\tpop rdi");
-        printf("\tpush rax");
+        printf("\tpop rax\n");
+        printf("\tpush rdi\n");
+        printf("\tmov rdi, rbp\n");
+        printf("\tsub rdi, %d\n", node->offset);
+        printf("\tsub rdi, %d\n", 8 * i);
+        printf("\tmov [rdi], rax\n");
+        printf("\tpop rdi\n");
+        printf("\tpush rax\n");
       }
     }
     return;
