@@ -7,8 +7,8 @@ int sum_locals(Scope *scope)
   for (int i = 0; i < scope->localc; i++)
   {
     sum += locals->type->ty == ARRAY
-               ? type_size(locals->type) / 8
-               : 1;
+               ? type_size(locals->type)
+               : 8;
     locals = locals->next;
   }
   for (int i = 0; i < scope->childc; i++)
