@@ -26,13 +26,14 @@
  * unary      = "sizeof" unary
  *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK / expr)
  *            | ("+" | "-")? primary
+ *            | primary ("[" expr "]")+  -- 配列要素の参照
  *            | "&" unary
  *            | "*" unary
- *            | unary 
  * primary    = num
  *            | "{" expr ("," expr)* "}"
  *            | TYPE
- *            | TYPE? ident ("[" num "]")*
+ *            | TYPE? ident
+ *            | TYPE ident ("[" num "]")+  -- 配列初期化のみ
  *            | ident ("(" (expr ("," expr)*)? ")")?
  *            | "(" expr ")"
  *

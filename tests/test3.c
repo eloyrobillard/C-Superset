@@ -16,7 +16,7 @@ int main()
   alloc4(&p, 0,1,2,3);
   long *p2 = p + 2;
   long a = 1;
-  long b[10][10][2][4] = {2};
+  long b[10] = {2};
   long c = p2 - p + 1;
   long d = sizeof(b);
   long e = sizeof(i32 *) - 3;
@@ -32,7 +32,7 @@ int main()
     long a = 10
   }
   else a;
-  long out = j - c + g + fred(a * 2, b, c + 1, d, e, f, g, h, i, j, k);
+  long out = j - c + g + fred(a * 2, b[0], c + 1, d, e, f, g, h, i, j, k);
   foo(a, b, c, d, e, f, g, h, i, j, k);
   return out;
 }

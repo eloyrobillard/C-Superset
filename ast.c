@@ -27,6 +27,7 @@ Node *primary()
   if (ident)
   {
     Node *node = new_node(0, NULL, NULL);
+    // 関数呼び出し
     if (consume("("))
     {
       Node *node = new_node(ND_FNCALL, NULL, NULL);
@@ -35,6 +36,7 @@ Node *primary()
       node->arg_list->len = ident->len;
       return node;
     }
+
     node->kind = ND_LVAR;
 
     // 式内参照
@@ -49,12 +51,14 @@ Node *primary()
       else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
     }
-    else if (type->ty == ARRAY && consume("=")) 
+    else if (type->ty == ARRAY && consume("="))
     {
       node->kind = ND_ARR;
       Node *maybe_arglist = primary();
-      if (maybe_arglist)
+      if (maybe_arglist->arg_list)
         node->arg_list = maybe_arglist->arg_list;
+      else
+        error_at(token->str, "配列の初期値ではありません");
       LVar *lvar = new_lvar(ident->str, ident->len, type);
       node->offset = lvar->offset;
       node->type = type;
@@ -94,7 +98,17 @@ Node *unary()
     return if_expr();
 
   consume("+");
-  return primary();
+  Node *prim = primary();
+  // 配列要素の参照
+  if (consume("["))
+  {
+    do
+    {
+      new_node(ND_ADD, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->ptr_to)), expr()));
+      expect("]");
+    } while (consume("["));
+  }
+  return prim;
 }
 
 Node *mul()
