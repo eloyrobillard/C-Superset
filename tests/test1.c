@@ -12,18 +12,11 @@ long sum(long a, long b, long c, long d)
 
 int main() // free comment city
 {
-  long a;
-  long b;
-  long c;
-  long d;
-  a = 1;
-  b = 2;
-  c = 3;
-  d = sizeof 4;
+  long a[] = {1, 2, 3, sizeof 4};
   int *x1;
   ialloc4(&x1, 1, 2, 4, 8);
   int *x2 = x1 + 2;
-  long *y = &c;
+  long *y = &a[2];
   *y = *y + 10 * (x2 - x1);
-  return *y + sum(a, b, c, d);
+  return *y + sum(a[0], a[1], a[2], a[3]);
 }

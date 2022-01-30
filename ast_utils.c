@@ -13,11 +13,12 @@ LVar *new_lvar(char *name, int len, Type *type)
   lvar->len = len;
   lvar->type = type;
 
-  lvar->offset = (scope->locals 
-    ? (scope->locals->type->ty == ARRAY 
-      ? type_size(scope->locals->type) + 8
-      : 8) + scope->locals->offset 
-    : 8);
+  lvar->offset = (scope->locals
+                      ? (scope->locals->type->ty == ARRAY
+                             ? type_size(scope->locals->type) + 8
+                             : 8) +
+                            scope->locals->offset
+                      : 8);
 
   scope->locals = lvar;
   scope->localc++;
@@ -106,8 +107,11 @@ Type *get_ar(Type *type)
     Type *rec_ty = calloc(1, sizeof(Type));
     rec_ty->ty = ARRAY;
     rec_ty->ptr_to = type;
-    rec_ty->array_size = expect_num();
-    expect("]");
+    if (!consume("]"))
+    {
+      rec_ty->array_size = expect_num();
+      expect("]");
+    }
     Type *final_ty = get_ar(rec_ty);
     final_ty->elem_type = type;
     return final_ty;

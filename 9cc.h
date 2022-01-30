@@ -33,7 +33,7 @@
  *            | "{" expr ("," expr)* "}"
  *            | TYPE
  *            | TYPE? ident
- *            | TYPE ident ("[" num "]")+  -- 配列初期化のみ
+ *            | TYPE ident ("[" num? "]")+  -- 配列初期化のみ
  *            | ident ("(" (expr ("," expr)*)? ")")?
  *            | "(" expr ")"
  *
