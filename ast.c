@@ -62,6 +62,8 @@ Node *primary()
       LVar *lvar = new_lvar(ident->str, ident->len, type);
       node->offset = lvar->offset;
       node->type = type;
+      if (type->array_size == 0)
+        node->type->array_size = node->arg_list->argc;
     }
     // 定義か宣言
     else
