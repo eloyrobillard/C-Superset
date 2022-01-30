@@ -89,9 +89,19 @@ Node *unary()
   if (consume("-"))
     return new_node(ND_SUB, new_node_num(0), primary());
   else if (consume("&"))
-    return new_node(ND_ADDR, NULL, unary());
+  {
+    Node *rhs = unary();
+    if (rhs->kind == ND_DEREF)
+      return rhs->rhs;
+    return new_node(ND_ADDR, NULL, rhs);
+  }
   else if (consume("*"))
-    return new_node(ND_DEREF, NULL, unary());
+  {
+    Node *rhs = unary();
+    if (rhs->kind == ND_ADDR)
+      return rhs->rhs;
+    return new_node(ND_DEREF, NULL, rhs);
+  }
   else if (consume_keyword(TK_SIZEOF))
     return new_node_num(expr_size(unary()));
   else if (consume_keyword(TK_IF))

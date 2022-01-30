@@ -18,11 +18,11 @@ int sum_locals(Scope *scope)
   return sum;
 }
 
-void gen_lval_addr(Node *node)
+void get_addr(Node *node)
 {
   if (node->kind == ND_DEREF)
   {
-    gen_lval_addr(node->rhs);
+    get_addr(node->rhs);
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
@@ -45,7 +45,7 @@ void gen(Node *node)
   {
   case ND_ARR:
   {
-    gen_lval_addr(node);
+    get_addr(node);
     // ポインタを配列の最初要素を指させる
     printf("\tpop rax\n");
     printf("\tpush rbx\n");
@@ -69,7 +69,7 @@ void gen(Node *node)
   }
   case ND_ADDR:
   {
-    gen_lval_addr(node->rhs);
+    get_addr(node->rhs);
     return;
   }
   case ND_DEREF:
@@ -95,7 +95,7 @@ void gen(Node *node)
     for (int i = 0; i < node->def->paramc; i++)
     {
       // 引数のアドレスの確保
-      gen_lval_addr(node->def->params[i]);
+      get_addr(node->def->params[i]);
       printf("\tpop rax\n");
       // 引数の値の獲得
       if (i < 6)
@@ -268,7 +268,7 @@ void gen(Node *node)
   }
   case ND_LVAR:
   {
-    gen_lval_addr(node);
+    get_addr(node);
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
@@ -276,7 +276,7 @@ void gen(Node *node)
   }
   case ND_ASSIGN:
   {
-    gen_lval_addr(node->lhs);
+    get_addr(node->lhs);
     gen(node->rhs); // 代入値の処理
 
     printf("\tpop rdi\n");        // 代入値をゲット
