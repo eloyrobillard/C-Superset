@@ -13,7 +13,11 @@ LVar *new_lvar(char *name, int len, Type *type)
   lvar->len = len;
   lvar->type = type;
 
-  lvar->offset = (scope->locals ? /* type_size(scope->locals->type) */ 8 + scope->locals->offset : 8);
+  lvar->offset = (scope->locals 
+    ? (scope->locals->type->ty == ARRAY 
+      ? type_size(scope->locals->type) 
+      : 8) + scope->locals->offset 
+    : 8);
 
   scope->locals = lvar;
   scope->localc++;
@@ -199,13 +203,6 @@ ArgList *arg_list(char *terminator)
   }
   arg_list->argc = i;
   return arg_list;
-}
-
-Node *handle_fncall(Node *node, Token *tok)
-{
-  node->kind = new_node(ND_FNCALL, NULL, NULL);
-  node->arg_list = arg_list(")");
-  return node;
 }
 
 Node *block()

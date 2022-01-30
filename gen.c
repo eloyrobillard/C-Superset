@@ -3,13 +3,14 @@
 int sum_locals(Scope *scope)
 {
   int sum = 0;
-  sum = scope->localc * 8;
-  // LVar *locals = scope->locals;
-  // for (int i = 0; i < scope->localc; i++)
-  // {
-  //   sum += type_size(locals->type);
-  //   locals = locals->next;
-  // }
+  LVar *locals = scope->locals;
+  for (int i = 0; i < scope->localc; i++)
+  {
+    sum += locals->type->ty == ARRAY 
+      ? type_size(locals->type) / 8
+      : 1;
+    locals = locals->next;
+  }
   for (int i = 0; i < scope->childc; i++)
   {
     sum += sum_locals(scope->children[i]);
@@ -113,18 +114,18 @@ void gen(Node *node)
   {
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
-    // int regc = node->call->argc > 6 ? 6 : node->call->argc;
+    // int regc = node->arg_list->argc > 6 ? 6 : node->arg_list->argc;
     // for (int i = regc - 1; i >= 0; i--)
     //   printf("\tpush %s\n", args[i]);
 
-    int i = node->call->argc - 1;
-    if (node->call->argc > 6)
+    int i = node->arg_list->argc - 1;
+    if (node->arg_list->argc > 6)
       for (; i >= 6; i--)
-        gen(node->call->args[i]);
+        gen(node->arg_list->args[i]);
 
     for (; i >= 0; i--)
     {
-      gen(node->call->args[i]);
+      gen(node->arg_list->args[i]);
       printf("\tpop rax\n");
       printf("\tmov %s, rax\n", args[i]);
     }
@@ -147,10 +148,10 @@ void gen(Node *node)
     // printf("\tjmp .Lend%ld\n", (long)node);
     // printf(".Lend%ld:\n", (long)node);
 
-    printf("\tcall %.*s\n", node->call->len, node->call->str);
+    printf("\tcall %.*s\n", node->arg_list->len, node->arg_list->str);
     // for (int j = 0; j < regc; j++)
     //   printf("\tpop %s\n", args[j]);
-    for (int j = node->call->argc - 1; j >= 6; j--)
+    for (int j = node->arg_list->argc - 1; j >= 6; j--)
       printf("\tpop rdi\n");
     // スタックに入ってる引数を捨てるために
     printf("\tpush rax\n"); // callの返し値をスタックに保存

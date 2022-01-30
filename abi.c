@@ -11,7 +11,7 @@ int type_size(Type *type)
     case I64:
       return 8;
     case I32:
-      return 4;
+      return 8;
   }
 }
 
