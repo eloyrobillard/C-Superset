@@ -47,14 +47,15 @@ void gen(Node *node)
   {
     gen_lval_addr(node);
     printf("\tpop rax\n");
-    printf("\tmov qword ptr [rax], %d\n", node->offset+8);
+    printf("\tmov rax, [rax]\n");
+    printf("\tpush rax\n");
     if (node->arg_list)
     {
       for (int i = 0; i < node->arg_list->argc; i++)
       {
         gen(node->arg_list->args[i]);
         printf("\tmov rax, rbp\n");
-        printf("\tsub rax, %d\n", node->offset + 8*(i+1));
+        printf("\tsub rax, %d\n", node->offset + 8*i);
         printf("\tpop qword ptr [rax]\n");
         printf("\tpush rax\n");
       }
