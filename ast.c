@@ -114,7 +114,7 @@ Node *unary()
     } while (consume("["));
     // *(p + k)
     prim = new_node(ND_DEREF, NULL, new_node(
-      ND_SUB, new_node(ND_ADDR, NULL, prim), new_node(
+      ND_SUB, prim, new_node(
         ND_MUL, new_node_num(
           type_size(prim->type->ptr_to)
         ), place
