@@ -7,7 +7,7 @@ int sum_locals(Scope *scope)
   for (int i = 0; i < scope->localc; i++)
   {
     sum += locals->type->ty == ARRAY
-               ? type_size(locals->type)
+               ? 8 + type_size(locals->type)
                : 8;
     locals = locals->next;
   }
@@ -46,17 +46,16 @@ void gen(Node *node)
   case ND_ARR:
   {
     gen_lval_addr(node);
+    printf("\tpop rax\n");
+    printf("\tmov qword ptr [rax], %d\n", node->offset+8);
     if (node->arg_list)
     {
       for (int i = 0; i < node->arg_list->argc; i++)
       {
         gen(node->arg_list->args[i]);
-        printf("\tpop rax\n");
-        printf("\tpush rdi\n");
-        printf("\tmov rdi, rbp\n");
-        printf("\tsub rdi, %d\n", node->offset + 8*i);
-        printf("\tmov [rdi], rax\n");
-        printf("\tpop rdi\n");
+        printf("\tmov rax, rbp\n");
+        printf("\tsub rax, %d\n", node->offset + 8*(i+1));
+        printf("\tpop qword ptr [rax]\n");
         printf("\tpush rax\n");
       }
     }
