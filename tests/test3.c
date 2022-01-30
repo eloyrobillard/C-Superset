@@ -33,6 +33,6 @@ int main()
   }
   else a;
   long out = j - c + g + fred(a * 2, *(b+1), c + 1, d, e, f, g, h, i, j, k);
-  foo(b[3], *(b+1), c, d, e, f, g, h, i, j, k);
+  foo(b[0][3], *(b+1), c, d, e, f, g, h, i, j, k);
   return out;
 }

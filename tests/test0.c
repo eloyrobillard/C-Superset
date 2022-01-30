@@ -8,11 +8,11 @@ long john()
   a = 11;
   */
   long *p;
-  alloc4(&p, 1, 2, 4, a);
+  alloc4(&p, 1, 2, 4, 8);
   long *q = p + 2;
   bar(*q);
   q = p + 3;
-  return *q + bar(a);
+  return bar(*q) + a;
 }
 
 int main()

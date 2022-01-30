@@ -106,20 +106,11 @@ Node *unary()
     do
     {
       place = new_node(
-        ND_ADD, new_node(
-          ND_MUL, new_node_num(10), place
-        ), expr()
-      );
+          ND_ADD, new_node(ND_MUL, new_node_num(10), place), expr());
       expect("]");
     } while (consume("["));
     // *(p + k)
-    prim = new_node(ND_DEREF, NULL, new_node(
-      ND_SUB, prim, new_node(
-        ND_MUL, new_node_num(
-          type_size(prim->type->elem_type)
-        ), place
-      )
-    ));
+    prim = new_node(ND_DEREF, NULL, new_node(ND_SUB, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->elem_type)), place)));
   }
   return prim;
 }
@@ -151,7 +142,12 @@ Node *add()
       if (rhs->type && (rhs->type->ty == PTR || rhs->type->ty == ARRAY))
         error_at(token->str, "ポインタの右辺値を用いる加算は無効です");
       if (node->type && (node->type->ty == PTR || node->type->ty == ARRAY))
-        node = new_node(ND_ADD, node, new_node(ND_MUL, new_node_num(type_size(node->type->ptr_to)), rhs));
+      {
+        if (node->type->ty == PTR)
+          node = new_node(ND_ADD, node, new_node(ND_MUL, new_node_num(type_size(node->type->ptr_to)), rhs));
+        else
+          node = new_node(ND_SUB, node, new_node(ND_MUL, new_node_num(type_size(node->type->elem_type)), rhs));
+      }
       else
         node = new_node(ND_ADD, node, rhs);
     }
