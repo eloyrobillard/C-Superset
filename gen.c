@@ -6,9 +6,9 @@ int sum_locals(Scope *scope)
   LVar *locals = scope->locals;
   for (int i = 0; i < scope->localc; i++)
   {
-    sum += locals->type->ty == ARRAY 
-      ? type_size(locals->type) / 8
-      : 1;
+    sum += locals->type->ty == ARRAY
+               ? type_size(locals->type) / 8
+               : 1;
     locals = locals->next;
   }
   for (int i = 0; i < scope->childc; i++)
@@ -43,6 +43,20 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
+  case ND_ARRLIT:
+  {
+    for (int i = 0; i < node->arg_list->argc; i++) 
+    {
+      gen(node->arg_list->args[i]);
+      printf("\tpop rax");
+      printf("\tpush rdi");
+      printf("\tmov rdi, rbp");
+      printf("\tsub rdi, %d", node->offset);
+      printf("\tsub rdi, %d", 8 * i);
+      printf("\tmov [rdi], rax");
+      printf("\tpop rdi");
+    }
+  }
   case ND_ADDR:
   {
     gen_lval_addr(node->rhs);
