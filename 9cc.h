@@ -70,7 +70,7 @@ typedef enum NodeKind
   ND_WHILE,
 
   ND_TYPETK,
-  ND_ARRLIT,
+  ND_ARR,
   ND_LVAR,
   ND_ASSIGN,
   ND_FNCALL,

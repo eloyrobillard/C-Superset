@@ -43,19 +43,25 @@ void gen(Node *node)
 {
   switch (node->kind)
   {
-  case ND_ARRLIT:
+  case ND_ARR:
   {
-    for (int i = 0; i < node->arg_list->argc; i++) 
+    gen_lval_addr(node);
+    if (node->arg_list)
     {
-      gen(node->arg_list->args[i]);
-      printf("\tpop rax");
-      printf("\tpush rdi");
-      printf("\tmov rdi, rbp");
-      printf("\tsub rdi, %d", node->offset);
-      printf("\tsub rdi, %d", 8 * i);
-      printf("\tmov [rdi], rax");
-      printf("\tpop rdi");
+      for (int i = 0; i < node->arg_list->argc; i++)
+      {
+        gen(node->arg_list->args[i]);
+        printf("\tpop rax");
+        printf("\tpush rdi");
+        printf("\tmov rdi, rbp");
+        printf("\tsub rdi, %d", node->offset);
+        printf("\tsub rdi, %d", 8 * i);
+        printf("\tmov [rdi], rax");
+        printf("\tpop rdi");
+        printf("\tpush rax");
+      }
     }
+    return;
   }
   case ND_ADDR:
   {

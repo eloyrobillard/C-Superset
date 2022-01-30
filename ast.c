@@ -13,7 +13,7 @@ Node *primary()
   // 配列初期値
   else if (consume("{"))
   {
-    Node *node = new_node(ND_ARRLIT, NULL, NULL);
+    Node *node = new_node(0, NULL, NULL);
     node->arg_list = arg_list("}");
     return node;
   }
@@ -51,6 +51,7 @@ Node *primary()
     }
     else if (type->ty == ARRAY && consume("=")) 
     {
+      node->kind = ND_ARR;
       Node *maybe_arglist = primary();
       if (maybe_arglist)
         node->arg_list = maybe_arglist->arg_list;
