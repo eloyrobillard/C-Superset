@@ -49,6 +49,15 @@ Node *primary()
       else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
     }
+    else if (type->ty == ARRAY && consume("=")) 
+    {
+      Node *maybe_arglist = primary();
+      if (maybe_arglist)
+        node->arg_list = maybe_arglist->arg_list;
+      LVar *lvar = new_lvar(ident->str, ident->len, type);
+      node->offset = lvar->offset;
+      node->type = type;
+    }
     // 定義か宣言
     else
     {

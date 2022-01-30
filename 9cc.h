@@ -18,8 +18,7 @@
  *            | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *            | "while" "(" expr ")" stmt
  * expr       = assign
- * assign     = equality
- *            | equality "=" assign
+ * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | "<=" add | ">" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul)*
@@ -171,6 +170,7 @@ struct Node
   Node *lhs;     //! 左辺
   Node *rhs;     //? 右辺
   Scope *scope;
+  Type *type;
   union
   {
     int val;    //! kindがND_NUMの場合のみ使う
@@ -181,7 +181,6 @@ struct Node
     ArgList *arg_list;
     FnDef *def;
     Node **stmts;
-    Type *type;
   };
 };
 
