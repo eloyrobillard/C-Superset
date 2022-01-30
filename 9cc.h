@@ -115,6 +115,7 @@ struct Type
     ARRAY,
   } ty;
   Type *ptr_to;
+  Type *elem_type;
   size_t array_size;
 };
 

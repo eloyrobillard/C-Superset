@@ -103,12 +103,14 @@ Type *get_ar(Type *type)
 {
   if (consume("["))
   {
-    Type *final_ty = calloc(1, sizeof(Type));
-    final_ty->ty = ARRAY;
-    final_ty->ptr_to = type;
-    final_ty->array_size = expect_num();
+    Type *rec_ty = calloc(1, sizeof(Type));
+    rec_ty->ty = ARRAY;
+    rec_ty->ptr_to = type;
+    rec_ty->array_size = expect_num();
     expect("]");
-    return get_ar(final_ty);
+    Type *final_ty = get_ar(rec_ty);
+    final_ty->elem_type = type;
+    return final_ty;
   }
   return type;
 }
@@ -117,10 +119,10 @@ Type *get_ptr(Type *type)
 {
   if (consume("*"))
   {
-    Type *final_ty = calloc(1, sizeof(Type));
-    final_ty->ty = PTR;
-    final_ty->ptr_to = type;
-    return get_ptr(final_ty);
+    Type *rec_ty = calloc(1, sizeof(Type));
+    rec_ty->ty = PTR;
+    rec_ty->ptr_to = type;
+    return get_ptr(rec_ty);
   }
   return type;
 }
