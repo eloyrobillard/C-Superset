@@ -3,20 +3,22 @@
 
 void ialloc4(int **p, int a, int b, int c, int d)
 {
-  (*p) = malloc(sizeof(int) * 4);
-  (*p)[0] = a;
-  (*p)[1] = b;
-  (*p)[2] = c;
-  (*p)[3] = d;
+  int *ar = *p;
+  *p = malloc(sizeof(int) * 4);
+  ar[0] = a;
+  ar[1] = b;
+  ar[2] = c;
+  ar[3] = d;
 }
 
 void alloc4(long **p, long a, long b, long c, long d)
 {
-  (*p) = malloc(sizeof(long) * 4);
-  (*p)[0] = a;
-  (*p)[1] = b;
-  (*p)[2] = c;
-  (*p)[3] = d;
+  long *ar = *p;
+  *p = malloc(sizeof(long) * 4);
+  ar[0] = a;
+  ar[1] = b;
+  ar[2] = c;
+  ar[3] = d;
 }
 
 int foo(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k)

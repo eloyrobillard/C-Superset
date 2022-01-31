@@ -12,8 +12,8 @@ long fred(long a, long b, long c, long d, long e, long f, long g, long h, long i
 
 int main()
 {
-  long *p;
-  alloc4(&p, 0,1,2,3);
+  long p[] = {0, 1, 2, 3};
+  // alloc4(&p, 0,1,2,3);
   long *p2 = p + 2;
   long a = 1;
   long b[10][2] = {12, 6, 17, 18, 19};

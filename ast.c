@@ -161,7 +161,6 @@ Node *equality()
 
 Node *assign()
 {
-
   Node *node = equality();
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());

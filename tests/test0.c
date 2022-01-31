@@ -8,13 +8,15 @@ long john()
   *b = 1;
   *(b + 1) = 2;
   int *k = b;
-  bar(b[0]);
+  bar(b[1]);
+  bar(*(k+1));
   int c = *k + *(k + 1);
+  bar(c);
   /*
   a = 11;
   */
-  long *p;
-  alloc4(&p, 1, 2, 4, 8);
+  long p[] = {1, 2, 4, 8};
+  // alloc4(&p, 1, 2, 4, 8);
   long *q = p + 2;
   bar(*q);
   q = p + c;
