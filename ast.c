@@ -149,30 +149,9 @@ Node *add()
   for (;;)
   {
     if (consume("+"))
-    {
-      Node *rhs = mul();
-      if (rhs->type && (rhs->type->ty == PTR || rhs->type->ty == ARRAY))
-        error_at(token->str, "ポインタの右辺値を用いる加算は無効です");
-      if (node->type && (node->type->ty == PTR || node->type->ty == ARRAY))
-      {
-        if (node->type->ty == PTR)
-          node = new_node(ND_ADD, node, new_node(ND_MUL, new_node_num(type_size(node->type->ptr_to)), rhs));
-        else
-          node = new_node(ND_SUB, node, new_node(ND_MUL, new_node_num(type_size(node->type->elem_type)), rhs));
-      }
-      else
-        node = new_node(ND_ADD, node, rhs);
-    }
+      node = handle_add(node);
     else if (consume("-"))
-    {
-      Node *rhs = mul();
-      if (node->type && (node->type->ty == PTR || node->type->ty == ARRAY) && rhs->type && (rhs->type->ty == PTR || rhs->type->ty == ARRAY))
-        node = new_node(ND_DIV, new_node(ND_SUB, node, rhs), new_node_num(type_size(node->type->ptr_to)));
-      else if ((node->type && (node->type->ty == PTR || node->type->ty == ARRAY)) || (rhs->type && (rhs->type->ty == PTR || rhs->type->ty == ARRAY)))
-        error_at(token->str, "ポインタと整数間の減算は無効です");
-      else
-        node = new_node(ND_SUB, node, rhs);
-    }
+      node = handle_sub(node);
     else
       return node;
   }
