@@ -21,12 +21,9 @@ int sum_locals(Scope *scope)
 void get_addr(Node *node)
 {
   if (node->kind == ND_DEREF)
-  {
-    get_addr(node->rhs);
-    printf("\tpop rax\n");
-    printf("\tmov rax, [rax]\n");
-    printf("\tpush rax\n");
-  }
+    gen(node->rhs);
+  else if (node->kind == ND_SUB)
+    gen(node);
   else if (node->kind == ND_LVAR || node->kind == ND_ARR)
   {
     // アドレスの計算
@@ -35,8 +32,6 @@ void get_addr(Node *node)
     // アドレスをプッシュ
     printf("\tpush rax\n");
   }
-  else if (node->kind == ND_SUB)
-    gen(node);
   else
     error("代入の左辺値が変数ではありません");
 }

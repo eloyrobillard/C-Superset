@@ -7,11 +7,9 @@ long john()
   int b[2];
   *b = 1;
   *(b + 1) = 2;
-  b[1] = 2;
-  // int *k;
-  // k = b;
-  // int c = *k + *(k + 1);
-  int c = 3;
+  int *k = b;
+  bar(b[0]);
+  int c = *k + *(k + 1);
   /*
   a = 11;
   */
