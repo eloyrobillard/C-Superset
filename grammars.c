@@ -194,11 +194,14 @@ Node *handle_while()
 Node *array_assignment(Type *type, Token *ident)
 {
   Node *node = new_node(ND_ARR, NULL, NULL);
-  Node *maybe_arglist = primary();
-  if (maybe_arglist->arg_list)
-    node->arg_list = maybe_arglist->arg_list;
-  else
-    error_at(token->str, "配列の初期値ではありません");
+  if (consume("="))
+  {
+    Node *maybe_arglist = primary();
+    if (maybe_arglist->arg_list)
+      node->arg_list = maybe_arglist->arg_list;
+    else
+      error_at(token->str, "配列の初期値ではありません");
+  }
   LVar *lvar = new_lvar(ident->str, ident->len, type);
   node->offset = lvar->offset;
   node->type = type;
@@ -271,7 +274,7 @@ Node *fn_params(Token *ident)
 
   if (node->def->body->kind != ND_BLOCK)
     error("関数に中身は必要");
-  
+
   return node;
 }
 

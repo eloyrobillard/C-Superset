@@ -35,6 +35,8 @@ void get_addr(Node *node)
     // アドレスをプッシュ
     printf("\tpush rax\n");
   }
+  else if (node->kind == ND_SUB)
+    gen(node);
   else
     error("代入の左辺値が変数ではありません");
 }

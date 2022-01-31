@@ -4,6 +4,14 @@ long john()
   {
     int a = 36;
   }
+  int b[2];
+  *b = 1;
+  *(b + 1) = 2;
+  b[1] = 2;
+  // int *k;
+  // k = b;
+  // int c = *k + *(k + 1);
+  int c = 3;
   /*
   a = 11;
   */
@@ -11,7 +19,7 @@ long john()
   alloc4(&p, 1, 2, 4, 8);
   long *q = p + 2;
   bar(*q);
-  q = p + 3;
+  q = p + c;
   return bar(*q) + a;
 }
 

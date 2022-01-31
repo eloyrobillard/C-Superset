@@ -45,7 +45,7 @@ Node *primary()
       else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
     }
-    else if (type->ty == ARRAY && consume("="))
+    else if (type->ty == ARRAY)
       return array_assignment(type, ident);
     // 定義か宣言
     else
@@ -168,8 +168,6 @@ Node *assign()
   return node;
 }
 
-
-
 Node *expr()
 {
   return assign();
@@ -197,8 +195,6 @@ Node *stmt()
     error_at(token->str, "';'ではないトークンです");
   return node;
 }
-
-
 
 Node *fn()
 {
