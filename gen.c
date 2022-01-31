@@ -27,9 +27,7 @@ void get_addr(Node *node)
   else if (node->kind == ND_LVAR || node->kind == ND_ARR)
   {
     // アドレスの計算
-    printf("\tmov rax, rbp\n");
-    printf("\tsub rax, %d\n", node->offset);
-    // アドレスをプッシュ
+    printf("\tlea rax, [rbp-%d]\n", node->offset);
     printf("\tpush rax\n");
   }
   else
@@ -46,8 +44,7 @@ void gen(Node *node)
     // ポインタを配列の最初要素を指させる
     printf("\tpop rax\n");
     printf("\tpush rbx\n");
-    printf("\tmov rbx, rax\n");
-    printf("\tsub rbx, 8\n");
+    printf("\tlea rbx, [rax-8]\n");
     printf("\tmov [rax], rbx\n");
     printf("\tpop rbx\n");
     printf("\tpush rax\n");
@@ -56,8 +53,7 @@ void gen(Node *node)
       for (int i = 0; i < node->arg_list->argc; i++)
       {
         gen(node->arg_list->args[i]);
-        printf("\tmov rax, rbp\n");
-        printf("\tsub rax, %d\n", node->offset + 8*(i+1));
+        printf("\tlea rax, [rbp-%d]\n", node->offset + 8*(i+1));
         printf("\tpop qword ptr [rax]\n");
         printf("\tpush rax\n");
       }
