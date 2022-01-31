@@ -1,6 +1,31 @@
 #include "9cc.h"
 #include "ast_utils.h"
 
+Node *array_assignment(Type *type, Token *ident)
+{
+  Node *node = new_node(ND_ARR, NULL, NULL);
+  Node *maybe_arglist = primary();
+  if (maybe_arglist->arg_list)
+    node->arg_list = maybe_arglist->arg_list;
+  else
+    error_at(token->str, "配列の初期値ではありません");
+  LVar *lvar = new_lvar(ident->str, ident->len, type);
+  node->offset = lvar->offset;
+  node->type = type;
+  if (type->array_size == 0)
+    node->type->array_size = node->arg_list->argc;
+  return node;
+}
+
+Node *fn_call(Token *ident)
+{
+  Node *node = new_node(ND_FNCALL, NULL, NULL);
+  node->arg_list = arg_list(")");
+  node->arg_list->str = ident->str;
+  node->arg_list->len = ident->len;
+  return node;
+}
+
 Node *primary()
 {
   // 次のトークンが"("なら、"(" expr ")"のはず
@@ -29,13 +54,7 @@ Node *primary()
     Node *node = new_node(0, NULL, NULL);
     // 関数呼び出し
     if (consume("("))
-    {
-      Node *node = new_node(ND_FNCALL, NULL, NULL);
-      node->arg_list = arg_list(")");
-      node->arg_list->str = ident->str;
-      node->arg_list->len = ident->len;
-      return node;
-    }
+      return fn_call(ident);
 
     node->kind = ND_LVAR;
 
@@ -52,19 +71,7 @@ Node *primary()
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
     }
     else if (type->ty == ARRAY && consume("="))
-    {
-      node->kind = ND_ARR;
-      Node *maybe_arglist = primary();
-      if (maybe_arglist->arg_list)
-        node->arg_list = maybe_arglist->arg_list;
-      else
-        error_at(token->str, "配列の初期値ではありません");
-      LVar *lvar = new_lvar(ident->str, ident->len, type);
-      node->offset = lvar->offset;
-      node->type = type;
-      if (type->array_size == 0)
-        node->type->array_size = node->arg_list->argc;
-    }
+      return array_assignment(type, ident);
     // 定義か宣言
     else
     {
@@ -84,6 +91,25 @@ Node *primary()
 
   // そうでなければ数値のはず
   return new_node_num(expect_num());
+}
+
+Node *maybe_array_index()
+{
+  Node *prim = primary();
+  // 配列要素の参照
+  if (consume("["))
+  {
+    Node *place = new_node_num(0);
+    do
+    {
+      place = new_node(
+          ND_ADD, new_node(ND_MUL, new_node_num(10), place), expr());
+      expect("]");
+    } while (consume("["));
+    // *(p + k)
+    prim = new_node(ND_DEREF, NULL, new_node(ND_SUB, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->elem_type)), place)));
+  }
+  return prim;
 }
 
 Node *unary()
@@ -110,21 +136,7 @@ Node *unary()
     return if_expr();
 
   consume("+");
-  Node *prim = primary();
-  // 配列要素の参照
-  if (consume("["))
-  {
-    Node *place = new_node_num(0);
-    do
-    {
-      place = new_node(
-          ND_ADD, new_node(ND_MUL, new_node_num(10), place), expr());
-      expect("]");
-    } while (consume("["));
-    // *(p + k)
-    prim = new_node(ND_DEREF, NULL, new_node(ND_SUB, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->elem_type)), place)));
-  }
-  return prim;
+  return maybe_array_index();
 }
 
 Node *mul()
