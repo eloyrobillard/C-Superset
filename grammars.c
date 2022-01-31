@@ -234,3 +234,58 @@ Node *maybe_array_index()
   }
   return prim;
 }
+
+Node *fn_params(Token *ident)
+{
+  expect("(");
+  Node *node = new_node(ND_FNDEF, NULL, NULL);
+  node->def = calloc(1, sizeof(FnDef));
+  node->def->name = ident->str;
+  node->def->len = ident->len;
+
+  int i = 0;
+  if (!consume(")"))
+  {
+    int max = 2;
+    node->def->params = calloc(max, sizeof(Node *));
+    do
+    {
+      Token *tok = token;
+      Type *type = consume_type();
+      if (type == NULL)
+        error_at(tok->str, "型ではありません");
+
+      Node *param = decl(type);
+
+      node->def->params[i++] = param;
+      if (i + 1 == max)
+      {
+        node->def->params = realloc(node->def->params, (max *= 2) * sizeof(Node *));
+      }
+    } while (consume(","));
+    expect(")");
+  }
+  node->def->paramc = i;
+
+  node->def->body = stmt();
+
+  if (node->def->body->kind != ND_BLOCK)
+    error("関数に中身は必要");
+  
+  return node;
+}
+
+Node *decl(Type *type)
+{
+  Token *tok = consume_ident();
+  if (tok)
+  {
+    Node *node = new_node(ND_LVAR, NULL, NULL);
+    LVar *lvar = new_lvar(tok->str, tok->len, type);
+    node->offset = lvar->offset;
+    node->type = type;
+    return node;
+  }
+  else
+    error("名前ではありません");
+}
