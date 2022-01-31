@@ -25,6 +25,7 @@ Type *consume_type();
 Token *consume_ident();
 void expect(char *op);
 int expect_num();
+void expect_keyword(TK_KIND, const char*);
 Node *block();
 Node *final_block();
 MaybeExpr *try_expr();
@@ -33,5 +34,11 @@ Node *if_stmt();
 ArgList *arg_list(char *terminator);
 Node *handle_for();
 Node *handle_while();
+Node *fn_call(Token *ident);
+Node *array_assignment(Type *type, Token *ident);
+Node *maybe_array_index();
+// arithmetic.c
+Node *handle_add(Node *node);
+Node *handle_sub(Node *node);
 
 #endif // AST_UTILS_H

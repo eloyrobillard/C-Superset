@@ -214,9 +214,6 @@ Token *get_token();
 // abi.c
 int type_size(Type *);
 int expr_size(Node *);
-// arithmetic.c
-Node *handle_add(Node *node);
-Node *handle_sub(Node *node);
 
 // グローバル変数
 Node *code[100];
