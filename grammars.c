@@ -233,7 +233,7 @@ Node *maybe_array_index()
       expect("]");
     } while (consume("["));
     // *(p + k)
-    prim = new_node(ND_DEREF, NULL, new_node(ND_SUB, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->elem_type)), place)));
+    prim = new_node(ND_DEREF, NULL, new_node(ND_ADD, prim, new_node(ND_MUL, new_node_num(type_size(prim->type->elem_type)), place)));
   }
   return prim;
 }

@@ -40,11 +40,12 @@ void gen(Node *node)
   {
   case ND_ARR:
   {
+    int arr_size = type_size(node->type);
     get_addr(node);
     // ポインタを配列の最初要素を指させる
     printf("\tpop rax\n");
     printf("\tpush rbx\n");
-    printf("\tlea rbx, [rax-8]\n");
+    printf("\tlea rbx, [rax-%d]\n", arr_size);
     printf("\tmov [rax], rbx\n");
     printf("\tpop rbx\n");
     printf("\tpush rax\n");
@@ -53,7 +54,7 @@ void gen(Node *node)
       for (int i = 0; i < node->arg_list->argc; i++)
       {
         gen(node->arg_list->args[i]);
-        printf("\tlea rax, [rbp-%d]\n", node->offset + 8*(i+1));
+        printf("\tlea rax, [rbp-%d]\n", node->offset + 8 + arr_size - 8*(i+1));
         printf("\tpop qword ptr [rax]\n");
         printf("\tpush rax\n");
       }
