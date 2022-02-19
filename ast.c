@@ -34,7 +34,6 @@ Node *primary() {
         if (var_info->kind == ND_GVAR) {
           node->ident = ident->str;
           node->len = ident->len;
-          node->kind = ND_GVARREF;
         }
       } else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len,

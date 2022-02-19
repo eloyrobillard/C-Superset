@@ -39,7 +39,7 @@ VarInfo *find_var(Token *tok, Scope *scope) {
     GVar *gvar = find_gvar(tok);
     if (gvar) {
       var_info->type = gvar->type;
-      var_info->kind = ND_GVAR;
+      var_info->kind = ND_GVARREF;
     }
   } else {
     var_info->offset = lvar->offset;
