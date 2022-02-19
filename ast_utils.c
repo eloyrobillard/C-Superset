@@ -131,6 +131,19 @@ Type *get_ptr(Type *type)
   return type;
 }
 
+FullType *get_full_type() {
+  Type *type = consume_type();
+  if (type)
+    type = get_ptr(type);
+  Token *ident = consume_ident();
+  if (type)
+    type = get_ar(type);
+  FullType *full_type = calloc(1, sizeof(FullType));
+  full_type->type = type;
+  full_type->ident = ident;
+  return full_type;
+}
+
 Type *consume_type()
 {
   Type *type = calloc(1, sizeof(Type));

@@ -10,6 +10,12 @@ struct MaybeExpr {
   Node *node;
 };
 
+typedef struct FullType FullType;
+struct FullType {
+  Type *type;
+  Token *ident;
+};
+
 bool at_eof();
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);

@@ -1,18 +1,15 @@
 #include "9cc.h"
 #include "ast_utils.h"
 
-Node *primary()
-{
+Node *primary() {
   // 次のトークンが"("なら、"(" expr ")"のはず
-  if (consume("("))
-  {
+  if (consume("(")) {
     Node *node = expr();
     expect(")");
     return node;
   }
   // 配列初期値
-  else if (consume("{"))
-  {
+  else if (consume("{")) {
     Node *node = new_node(0, NULL, NULL);
     node->arg_list = arg_list("}");
     return node;
@@ -24,8 +21,7 @@ Node *primary()
   Token *ident = consume_ident();
   if (type)
     type = get_ar(type);
-  if (ident)
-  {
+  if (ident) {
     Node *node = new_node(0, NULL, NULL);
     // 関数呼び出し
     if (consume("("))
@@ -34,31 +30,25 @@ Node *primary()
     node->kind = ND_LVAR;
 
     // 式内参照
-    if (type == NULL)
-    {
+    if (type == NULL) {
       LVar *lvar = find_lvar(ident, scope);
-      if (lvar)
-      {
+      if (lvar) {
         node->offset = lvar->offset;
         node->type = lvar->type;
-      }
-      else
-        error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len, ident->str);
-    }
-    else if (type->ty == ARRAY)
+      } else
+        error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len,
+                 ident->str);
+    } else if (type->ty == ARRAY)
       return array_assignment(type, ident);
     // 定義か宣言
-    else
-    {
+    else {
       LVar *lvar = new_lvar(ident->str, ident->len, type);
       node->offset = lvar->offset;
       node->type = type;
     }
 
     return node;
-  }
-  else if (type)
-  {
+  } else if (type) {
     Node *node = new_node(ND_TYPETK, NULL, NULL);
     node->type = type;
     return node;
@@ -68,25 +58,20 @@ Node *primary()
   return new_node_num(expect_num());
 }
 
-Node *unary()
-{
+Node *unary() {
   if (consume("-"))
     return new_node(ND_SUB, new_node_num(0), primary());
-  else if (consume("&"))
-  {
+  else if (consume("&")) {
     Node *rhs = unary();
     if (rhs->kind == ND_DEREF)
       return rhs->rhs;
     return new_node(ND_ADDR, NULL, rhs);
-  }
-  else if (consume("*"))
-  {
+  } else if (consume("*")) {
     Node *rhs = unary();
     if (rhs->kind == ND_ADDR)
       return rhs->rhs;
     return new_node(ND_DEREF, NULL, rhs);
-  }
-  else if (consume_keyword(TK_SIZEOF))
+  } else if (consume_keyword(TK_SIZEOF))
     return new_node_num(expr_size(unary()));
   else if (consume_keyword(TK_IF))
     return if_expr();
@@ -95,12 +80,10 @@ Node *unary()
   return maybe_array_index();
 }
 
-Node *mul()
-{
+Node *mul() {
   Node *node = unary();
 
-  for (;;)
-  {
+  for (;;) {
     if (consume("*"))
       node = new_node(ND_MUL, node, unary());
     else if (consume("/"))
@@ -110,12 +93,10 @@ Node *mul()
   }
 }
 
-Node *add()
-{
+Node *add() {
   Node *node = mul();
 
-  for (;;)
-  {
+  for (;;) {
     if (consume("+"))
       node = handle_add(node);
     else if (consume("-"))
@@ -125,12 +106,10 @@ Node *add()
   }
 }
 
-Node *relational()
-{
+Node *relational() {
   Node *node = add();
 
-  for (;;)
-  {
+  for (;;) {
     if (consume("<"))
       node = new_node(ND_LESS, node, add());
     else if (consume("<="))
@@ -144,12 +123,10 @@ Node *relational()
   }
 }
 
-Node *equality()
-{
+Node *equality() {
   Node *node = relational();
 
-  for (;;)
-  {
+  for (;;) {
     if (consume("=="))
       node = new_node(ND_EQ, node, relational());
     else if (consume("!="))
@@ -159,21 +136,16 @@ Node *equality()
   }
 }
 
-Node *assign()
-{
+Node *assign() {
   Node *node = equality();
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
   return node;
 }
 
-Node *expr()
-{
-  return assign();
-}
+Node *expr() { return assign(); }
 
-Node *stmt()
-{
+Node *stmt() {
   if (consume("{"))
     return block();
   else if (consume_keyword(TK_FOR))
@@ -195,8 +167,7 @@ Node *stmt()
   return node;
 }
 
-Node *fn(Type *type, Token *ident)
-{
+Node *fn(Type *type, Token *ident) {
   // 新しいスコープを準備
   enter_scope();
 
@@ -208,16 +179,24 @@ Node *fn(Type *type, Token *ident)
 }
 
 Node *global(Type *type, Token *ident) {
+  Node *node = new_node(ND_LVAR, NULL, NULL);
 
+  // 定義か宣言
+  LVar *lvar = new_lvar(ident->str, ident->len, type);
+  node->offset = lvar->offset;
+  node->type = type;
+
+  if (consume("="))
+    node = new_node(ND_ASSIGN, node, assign());
+
+  return node;
 }
 
-void program()
-{
+void program() {
   int i = 0;
   // グローバルスコープを作成
   scope = create_scope();
-  while (!at_eof())
-  {
+  while (!at_eof()) {
     Token *maybe_type = token;
     Type *type = consume_type();
     if (!type)
