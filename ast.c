@@ -31,7 +31,7 @@ Node *primary() {
         node->offset = var_info->offset;
         node->type = var_info->type;
         node->kind = var_info->kind;
-        if (var_info->kind == ND_GVAR) {
+        if (var_info->kind == ND_GVARREF) {
           node->ident = ident->str;
           node->len = ident->len;
         }
