@@ -228,7 +228,7 @@ void gen(Node *node) {
     return;
   }
   case ND_GVAR: {
-    printf("\tmov rax, %.*s\n", node->len, node->ident);
+    printf("\tmov rax, QWORD PTR %.*s[rip]\n", node->len, node->ident);
     printf("\tpush rax\n");
     return;
   }
@@ -242,13 +242,11 @@ void gen(Node *node) {
   case ND_ASSIGN: {
     if (node->lhs->kind != ND_GVAR) {
       get_addr(node->lhs);
-      gen(node->rhs); // 代入値の処理
-      if (node->rhs->kind != ND_GVAR) {
-        printf("\tpop rdi\n");        // 代入値をゲット
-        printf("\tpop rax\n");        // 変数のアドレスをゲット
-        printf("\tmov [rax], rdi\n"); // アドレスに代入する
-        printf("\tpush rdi\n");       // スタックで値を提供する
-      }
+      gen(node->rhs);               // 代入値の処理
+      printf("\tpop rdi\n");        // 代入値をゲット
+      printf("\tpop rax\n");        // 変数のアドレスをゲット
+      printf("\tmov [rax], rdi\n"); // アドレスに代入する
+      printf("\tpush rdi\n");       // スタックで値を提供する
     } else {
       printf("%.*s:\n", node->lhs->len, node->lhs->ident);
       printf("\t.long %d\n", node->rhs->val);

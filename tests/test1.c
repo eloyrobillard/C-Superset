@@ -9,6 +9,7 @@ long sum(long a, long b, long c, long d)
   long b = 4;
   long b = 6;
   long b = 2;
+  foo(a, b, c, d, global, 0, 0, 0, 0, 0, 0, 0);
   return a + b + c + d;
 }
 
