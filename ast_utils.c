@@ -39,9 +39,7 @@ LVar *find_lvar(Token *tok, Scope *scope) {
   return NULL;
 }
 
-GlobalScope *create_global_scope() {
-  return calloc(1, sizeof(GlobalScope));
-}
+GlobalScope *create_global_scope() { return calloc(1, sizeof(GlobalScope)); }
 
 Scope *create_scope() {
   Scope *inner_scope = calloc(1, sizeof(Scope));
@@ -56,17 +54,17 @@ Scope *create_scope() {
 
 Scope *enter_scope() {
   Scope *inner_scope = create_scope();
-  if (scope->childc + 1 >= scope->childm)
-    scope->children =
-        realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
-  scope->children[scope->childc++] = inner_scope;
+  if (scope) {
+    if (scope->childc + 1 >= scope->childm)
+      scope->children =
+          realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
+    scope->children[scope->childc++] = inner_scope;
+  }
   scope = inner_scope;
   return scope;
 }
 
 Scope *exit_scope() {
-  if (scope->parent == NULL)
-    error("グローバルスコープからの脱出は無効です");
   return (scope = scope->parent);
 }
 
