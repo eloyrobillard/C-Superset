@@ -18,6 +18,8 @@ void get_addr(Node *node) {
     gen(node->rhs);
   else if (node->kind == ND_SUB)
     gen(node);
+  else if (node->kind == ND_GVAR)
+    printf("%.*s:\n", node->len, node->ident);
   else if (node->kind == ND_LVAR || node->kind == ND_ARR) {
     // アドレスの計算
     printf("\tlea rax, [rbp-%d]\n", node->offset);
@@ -228,7 +230,7 @@ void gen(Node *node) {
     return;
   }
   case ND_GVAR: {
-    printf("\tmov rax, %s\n", node->ident);
+    printf("\tmov rax, %.*s\n", node->len, node->ident);
     printf("\tpush rax\n");
     return;
   }
@@ -241,12 +243,17 @@ void gen(Node *node) {
   }
   case ND_ASSIGN: {
     get_addr(node->lhs);
-    gen(node->rhs); // 代入値の処理
-
-    printf("\tpop rdi\n");        // 代入値をゲット
-    printf("\tpop rax\n");        // 変数のアドレスをゲット
-    printf("\tmov [rax], rdi\n"); // アドレスに代入する
-    printf("\tpush rdi\n");       // スタックで値を提供する
+    if (node->lhs->kind != ND_GVAR) {
+      gen(node->rhs); // 代入値の処理
+      if (node->rhs->kind != ND_GVAR) {
+        printf("\tpop rdi\n");        // 代入値をゲット
+        printf("\tpop rax\n");        // 変数のアドレスをゲット
+        printf("\tmov [rax], rdi\n"); // アドレスに代入する
+        printf("\tpush rdi\n");       // スタックで値を提供する
+      }
+    } else {
+      printf("\t.long %d\n", node->rhs->val);
+    }
     return;
   }
   default:
