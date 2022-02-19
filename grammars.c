@@ -240,7 +240,6 @@ Node *maybe_array_index()
 
 Node *fn_params(Token *ident)
 {
-  expect("(");
   Node *node = new_node(ND_FNDEF, NULL, NULL);
   node->def = calloc(1, sizeof(FnDef));
   node->def->name = ident->str;
