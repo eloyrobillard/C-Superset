@@ -8,6 +8,7 @@ typedef struct VarInfo VarInfo;
 struct VarInfo {
   int offset;
   Type *type;
+  NodeKind kind;
 };
 
 typedef struct MaybeExpr MaybeExpr;

@@ -24,14 +24,17 @@ Node *primary() {
     if (consume("("))
       return fn_call(ident);
 
-    node->kind = ND_LVAR;
-
     // 式内参照
     if (type == NULL) {
       VarInfo *var_info = find_var(ident, scope);
       if (var_info->type) {
         node->offset = var_info->offset;
         node->type = var_info->type;
+        node->kind = var_info->kind;
+        if (var_info->kind == ND_GVAR) {
+          node->ident = ident->str;
+          node->len = ident->len;
+        }
       } else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len,
                  ident->str);
@@ -42,6 +45,7 @@ Node *primary() {
       LVar *lvar = new_lvar(ident->str, ident->len, type);
       node->offset = lvar->offset;
       node->type = type;
+      node->kind = ND_LVAR;
     }
 
     return node;
