@@ -1,40 +1,49 @@
 #include "ast_utils.h"
 
-bool at_eof()
-{
-  return token->type == TK_EOF;
+bool at_eof() { return token->type == TK_EOF; }
+
+GVar *new_gvar(char *name, int len, Type *type) {
+  GVar *gvar = calloc(1, sizeof(GVar));
+  gvar->next = global_scope->globals;
+  gvar->name = name;
+  gvar->len = len;
+  gvar->type = type;
+
+  global_scope->globals = gvar;
+  global_scope->globalc++;
+  return gvar;
 }
 
-LVar *new_lvar(char *name, int len, Type *type)
-{
+LVar *new_lvar(char *name, int len, Type *type) {
   LVar *lvar = calloc(1, sizeof(LVar));
   lvar->next = scope->locals;
   lvar->name = name;
   lvar->len = len;
   lvar->type = type;
 
-  lvar->offset = (scope->locals
-                      ? (scope->locals->type->ty == ARRAY
-                             ? type_size(scope->locals->type) + 8
-                             : 8) +
-                            scope->locals->offset
-                      : 8);
+  lvar->offset = (scope->locals ? (scope->locals->type->ty == ARRAY
+                                       ? type_size(scope->locals->type) + 8
+                                       : 8) +
+                                      scope->locals->offset
+                                : 8);
 
   scope->locals = lvar;
   scope->localc++;
   return lvar;
 }
 
-LVar *find_lvar(Token *tok, Scope *scope)
-{
+LVar *find_lvar(Token *tok, Scope *scope) {
   for (LVar *var = scope->locals; var; var = var->next)
     if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
       return var;
   return NULL;
 }
 
-Scope *create_scope()
-{
+GlobalScope *create_global_scope() {
+  return calloc(1, sizeof(GlobalScope));
+}
+
+Scope *create_scope() {
   Scope *inner_scope = calloc(1, sizeof(Scope));
   inner_scope->parent = scope;
   // 内スコープは外スコープの変数を含む
@@ -45,25 +54,23 @@ Scope *create_scope()
   return inner_scope;
 }
 
-Scope *enter_scope()
-{
+Scope *enter_scope() {
   Scope *inner_scope = create_scope();
   if (scope->childc + 1 >= scope->childm)
-    scope->children = realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
+    scope->children =
+        realloc(scope->children, sizeof(Scope *) * (scope->childm *= 2));
   scope->children[scope->childc++] = inner_scope;
   scope = inner_scope;
   return scope;
 }
 
-Scope *exit_scope()
-{
+Scope *exit_scope() {
   if (scope->parent == NULL)
     error("グローバルスコープからの脱出は無効です");
   return (scope = scope->parent);
 }
 
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
-{
+Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   Node *node = calloc(1, sizeof(Node));
   node->kind = kind;
   node->lhs = lhs;
@@ -72,8 +79,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
   return node;
 }
 
-Node *new_node_num(int val)
-{
+Node *new_node_num(int val) {
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val = val;
@@ -81,18 +87,17 @@ Node *new_node_num(int val)
   return node;
 }
 
-bool consume(char *op)
-{
+bool consume(char *op) {
   Token *tok = token;
-  if (tok->type != TK_RESERVED || strlen(op) != tok->len || memcmp(tok->str, op, tok->len))
+  if (tok->type != TK_RESERVED || strlen(op) != tok->len ||
+      memcmp(tok->str, op, tok->len))
     return false;
 
   token = token->next;
   return true;
 }
 
-bool consume_keyword(TK_KIND type)
-{
+bool consume_keyword(TK_KIND type) {
   if (token->type != type)
     return false;
 
@@ -100,15 +105,12 @@ bool consume_keyword(TK_KIND type)
   return true;
 }
 
-Type *get_ar(Type *type)
-{
-  if (consume("["))
-  {
+Type *get_ar(Type *type) {
+  if (consume("[")) {
     Type *rec_ty = calloc(1, sizeof(Type));
     rec_ty->ty = ARRAY;
     rec_ty->ptr_to = type;
-    if (!consume("]"))
-    {
+    if (!consume("]")) {
       rec_ty->array_size = expect_num();
       expect("]");
     }
@@ -119,10 +121,8 @@ Type *get_ar(Type *type)
   return type;
 }
 
-Type *get_ptr(Type *type)
-{
-  if (consume("*"))
-  {
+Type *get_ptr(Type *type) {
+  if (consume("*")) {
     Type *rec_ty = calloc(1, sizeof(Type));
     rec_ty->ty = PTR;
     rec_ty->ptr_to = type;
@@ -144,18 +144,14 @@ FullType *get_full_type() {
   return full_type;
 }
 
-Type *consume_type()
-{
+Type *consume_type() {
   Type *type = calloc(1, sizeof(Type));
-  switch (token->type)
-  {
-  case TK_I32:
-  {
+  switch (token->type) {
+  case TK_I32: {
     type->ty = I32;
     break;
   }
-  case TK_I64:
-  {
+  case TK_I64: {
     type->ty = I64;
     break;
   }
@@ -167,8 +163,7 @@ Type *consume_type()
   return type;
 }
 
-Token *consume_ident()
-{
+Token *consume_ident() {
   Token *tok = token;
   if (tok->type != TK_IDENT)
     return NULL;
@@ -177,15 +172,14 @@ Token *consume_ident()
   return tok;
 }
 
-void expect(char *op)
-{
-  if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len))
+void expect(char *op) {
+  if (token->type != TK_RESERVED || strlen(op) != token->len ||
+      memcmp(token->str, op, token->len))
     error_at(token->str, "'%c'ではありません\n", op);
   token = token->next;
 }
 
-int expect_num()
-{
+int expect_num() {
   if (token->type != TK_NUM)
     error_at(token->str, "数ではありません\n");
   int val = token->val;
@@ -193,8 +187,7 @@ int expect_num()
   return val;
 }
 
-void expect_keyword(TK_KIND type, const char *fmt)
-{
+void expect_keyword(TK_KIND type, const char *fmt) {
   if (token->type != type)
     error_at(token->str, fmt);
 

@@ -1,10 +1,10 @@
 #ifndef NINE_CC_H
 #define NINE_CC_H
 
+#include <ctype.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdarg.h>
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -25,28 +25,21 @@
  * add        = mul ("+" mul | "-" mul)*
  * mul        = unary ("*" unary | "/" unary)*
  * unary      = "sizeof" unary
- *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK / expr)
- *            | ("+" | "-")? primary
- *            | primary ("[" expr "]")+  -- 配列要素の参照
- *            | "&" unary
- *            | "*" unary
- * primary    = num
- *            | "{" expr ("," expr)* "}"
- *            | TYPE
- *            | TYPE? ident
- *            | TYPE ident ("[" num? "]")+  -- 配列初期化のみ
- *            | ident ("(" (expr ("," expr)*)? ")")?
- *            | "(" expr ")"
+ *            | "if" "(" expr ")" (FINAL_BLOCK / expr) "else" (FINAL_BLOCK /
+ * expr) | ("+" | "-")? primary | primary ("[" expr "]")+  -- 配列要素の参照 |
+ * "&" unary | "*" unary primary    = num | "{" expr ("," expr)* "}" | TYPE |
+ * TYPE? ident | TYPE ident ("[" num? "]")+  -- 配列初期化のみ | ident ("("
+ * (expr ("," expr)*)? ")")? | "(" expr ")"
  *
  * BLOCK      = "{" stmt* "}"
  * FINAL_BLOCK = "{" stmt* expr "}"
  * TYPE       = "i64" / "long" / "i32" / "int"
  */
 
-typedef enum TK_Kind
-{
+typedef enum TK_Kind {
   // 型名
-  TK_I32 = 1, TK_I64,
+  TK_I32 = 1,
+  TK_I64,
 
   // 指定されたキーワード
   TK_SIZEOF,
@@ -63,8 +56,7 @@ typedef enum TK_Kind
   TK_EOF
 } TK_KIND;
 
-typedef enum NodeKind
-{
+typedef enum NodeKind {
   // 指定されたキーワード
   ND_RETURN = 1,
   ND_IF,
@@ -74,6 +66,7 @@ typedef enum NodeKind
   ND_TYPETK,
   ND_ARR,
   ND_LVAR,
+  ND_GVAR,
   ND_ASSIGN,
   ND_FNCALL,
   ND_FNDEF,
@@ -95,8 +88,7 @@ typedef enum NodeKind
 } NodeKind;
 
 typedef struct Token Token;
-struct Token
-{
+struct Token {
   TK_KIND type;
   long val;  // for int tokens
   char *str; // for all tokens
@@ -106,10 +98,8 @@ struct Token
 
 typedef struct Type Type;
 
-struct Type
-{
-  enum
-  {
+struct Type {
+  enum {
     I32,
     I64,
     PTR,
@@ -120,11 +110,20 @@ struct Type
   size_t array_size;
 };
 
+typedef struct GVar GVar;
+
+// ローカル変数の型
+struct GVar {
+  GVar *next; // 次の変数かNULL
+  char *name; // 変数の名前
+  int len;    // 名前の長さ
+  Type *type;
+};
+
 typedef struct LVar LVar;
 
 // ローカル変数の型
-struct LVar
-{
+struct LVar {
   LVar *next; // 次の変数かNULL
   char *name; // 変数の名前
   int len;    // 名前の長さ
@@ -136,8 +135,7 @@ struct LVar
 typedef struct Node Node;
 typedef struct ArgList ArgList;
 
-struct ArgList
-{
+struct ArgList {
   char *str;
   int len;
   Node **args;
@@ -145,8 +143,7 @@ struct ArgList
 };
 
 typedef struct FnDef FnDef;
-struct FnDef
-{
+struct FnDef {
   char *name;
   int len; // 関数名の長さ
   int paramc;
@@ -154,10 +151,16 @@ struct FnDef
   Node *body;
 };
 
+typedef struct GlobalScope GlobalScope;
+
+struct GlobalScope {
+  GVar *globals;
+  int globalc;
+};
+
 typedef struct Scope Scope;
 
-struct Scope
-{
+struct Scope {
   Scope *parent;
   Scope **children;
   int childc;
@@ -167,20 +170,18 @@ struct Scope
 };
 
 // 抽象構文木のノードの型
-struct Node
-{
+struct Node {
   NodeKind kind; //* ノードの型
   Node *lhs;     //! 左辺
   Node *rhs;     //? 右辺
   Scope *scope;
   Type *type;
-  union
-  {
+  union {
     int val;    //! kindがND_NUMの場合のみ使う
     int offset; //* 変数の場合
   };
-  union
-  {
+  union {
+    char *ident;
     ArgList *arg_list;
     FnDef *def;
     Node **stmts;
@@ -190,6 +191,7 @@ struct Node
 // グローバル関数
 // tokenizer.c
 Token *tokenize(char *);
+GVar *new_gvar(char *name, int len, Type *);
 LVar *new_lvar(char *name, int len, Type *);
 LVar *find_lvar(Token *tok, Scope *);
 // ast.c
@@ -198,7 +200,7 @@ Node *expr();
 Node *stmt();
 Node *mul();
 void gen(Node *);
-Node *new_node(NodeKind, Node*, Node*);
+Node *new_node(NodeKind, Node *, Node *);
 Node *new_node_num(int);
 void program();
 Type *get_ptr(Type *);
@@ -220,6 +222,7 @@ int expr_size(Node *);
 Node *code[100];
 char *usr_in;
 Scope *scope;
+GlobalScope *global_scope;
 FnDef *fns;
 Token *token;
 

@@ -176,12 +176,12 @@ Node *fn(Type *type, Token *ident) {
 }
 
 Node *global(Type *type, Token *ident) {
-  Node *node = new_node(ND_LVAR, NULL, NULL);
+  Node *node = new_node(ND_GVAR, NULL, NULL);
 
-  // 定義か宣言
-  LVar *lvar = new_lvar(ident->str, ident->len, type);
-  node->offset = lvar->offset;
+  GVar *gvar = new_gvar(ident->str, ident->len, type);
   node->type = type;
+  node->ident = "";
+  strncpy(ident->str, node->ident, ident->len);
 
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
@@ -192,8 +192,7 @@ Node *global(Type *type, Token *ident) {
 
 void program() {
   int i = 0;
-  // グローバルスコープを作成
-  scope = create_scope();
+  global_scope = create_global_scope();
   while (!at_eof()) {
     Token *maybe_type = token;
     FullType *full_type = get_full_type();

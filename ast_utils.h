@@ -20,6 +20,7 @@ bool at_eof();
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_if_node(Node *cond, Node *ifstmt, Node *els);
+GlobalScope *create_global_scope();
 Scope *create_scope();
 Scope *enter_scope();
 Scope *exit_scope();

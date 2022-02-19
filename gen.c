@@ -1,45 +1,34 @@
 #include "9cc.h"
 
-int sum_locals(Scope *scope)
-{
+int sum_locals(Scope *scope) {
   int sum = 0;
   LVar *locals = scope->locals;
-  for (int i = 0; i < scope->localc; i++)
-  {
-    sum += locals->type->ty == ARRAY
-               ? 8 + type_size(locals->type)
-               : 8;
+  for (int i = 0; i < scope->localc; i++) {
+    sum += locals->type->ty == ARRAY ? 8 + type_size(locals->type) : 8;
     locals = locals->next;
   }
-  for (int i = 0; i < scope->childc; i++)
-  {
+  for (int i = 0; i < scope->childc; i++) {
     sum += sum_locals(scope->children[i]);
   }
   return sum;
 }
 
-void get_addr(Node *node)
-{
+void get_addr(Node *node) {
   if (node->kind == ND_DEREF)
     gen(node->rhs);
   else if (node->kind == ND_SUB)
     gen(node);
-  else if (node->kind == ND_LVAR || node->kind == ND_ARR)
-  {
+  else if (node->kind == ND_LVAR || node->kind == ND_ARR) {
     // アドレスの計算
     printf("\tlea rax, [rbp-%d]\n", node->offset);
     printf("\tpush rax\n");
-  }
-  else
+  } else
     error("代入の左辺値が変数ではありません");
 }
 
-void gen(Node *node)
-{
-  switch (node->kind)
-  {
-  case ND_ARR:
-  {
+void gen(Node *node) {
+  switch (node->kind) {
+  case ND_ARR: {
     int arr_size = type_size(node->type);
     get_addr(node);
     // ポインタを配列の最初要素を指させる
@@ -49,33 +38,29 @@ void gen(Node *node)
     printf("\tmov [rax], rbx\n");
     printf("\tpop rbx\n");
     printf("\tpush rax\n");
-    if (node->arg_list)
-    {
-      for (int i = 0; i < node->arg_list->argc; i++)
-      {
+    if (node->arg_list) {
+      for (int i = 0; i < node->arg_list->argc; i++) {
         gen(node->arg_list->args[i]);
-        printf("\tlea rax, [rbp-%d]\n", node->offset + 8 + arr_size - 8*(i+1));
+        printf("\tlea rax, [rbp-%d]\n",
+               node->offset + 8 + arr_size - 8 * (i + 1));
         printf("\tpop qword ptr [rax]\n");
         printf("\tpush rax\n");
       }
     }
     return;
   }
-  case ND_ADDR:
-  {
+  case ND_ADDR: {
     get_addr(node->rhs);
     return;
   }
-  case ND_DEREF:
-  {
+  case ND_DEREF: {
     gen(node->rhs);
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
     return;
   }
-  case ND_FNDEF:
-  {
+  case ND_FNDEF: {
     printf("\n");
     printf("%.*s:\n", node->def->len, node->def->name);
 
@@ -86,16 +71,14 @@ void gen(Node *node)
     printf("\tsub rsp, %d\n", sum_locals(node->scope));
 
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
-    for (int i = 0; i < node->def->paramc; i++)
-    {
+    for (int i = 0; i < node->def->paramc; i++) {
       // 引数のアドレスの確保
       get_addr(node->def->params[i]);
       printf("\tpop rax\n");
       // 引数の値の獲得
       if (i < 6)
         printf("\tmov [rax], %s\n", args[i]); // アドレスに代入する
-      else
-      {
+      else {
         printf("\tpush rdi\n");
         printf("\tmov rdi, [rbp+%d]\n", 16 + 8 * (i - 6));
         printf("\tmov [rax], rdi\n");
@@ -105,8 +88,7 @@ void gen(Node *node)
     }
 
     int i = 0;
-    while (node->def->body->stmts[i + 1])
-    {
+    while (node->def->body->stmts[i + 1]) {
       gen(node->def->body->stmts[i++]);
 
       // 式の評価結果としてスタックに一つの値が残っている
@@ -116,8 +98,7 @@ void gen(Node *node)
 
     // NOTE: 関数にリターンがない際に備え
     gen(node->def->body->stmts[i]);
-    if (node->def->body->stmts[i]->kind != ND_RETURN)
-    {
+    if (node->def->body->stmts[i]->kind != ND_RETURN) {
       // エピローグ
       // 最後の式の結果がRAXに残っているのでそれが返り値になる
       printf("\tmov rax, 0\n");
@@ -128,8 +109,7 @@ void gen(Node *node)
 
     return;
   }
-  case ND_FNCALL:
-  {
+  case ND_FNCALL: {
     char *args[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
     // 引数渡し
     // int regc = node->arg_list->argc > 6 ? 6 : node->arg_list->argc;
@@ -141,8 +121,7 @@ void gen(Node *node)
       for (; i >= 6; i--)
         gen(node->arg_list->args[i]);
 
-    for (; i >= 0; i--)
-    {
+    for (; i >= 0; i--) {
       gen(node->arg_list->args[i]);
       printf("\tpop rax\n");
       printf("\tmov %s, rax\n", args[i]);
@@ -175,28 +154,23 @@ void gen(Node *node)
     printf("\tpush rax\n"); // callの返し値をスタックに保存
     return;
   }
-  case ND_FINBLOCK:
-  {
+  case ND_FINBLOCK: {
     int i = 0;
-    for (; node->stmts[i + 1]; i++)
-    {
+    for (; node->stmts[i + 1]; i++) {
       gen(node->stmts[i]);
       printf("\tpop rax\n");
     }
     gen(node->stmts[i]);
     return;
   }
-  case ND_BLOCK:
-  {
-    for (int i = 0; node->stmts[i]; i++)
-    {
+  case ND_BLOCK: {
+    for (int i = 0; node->stmts[i]; i++) {
       gen(node->stmts[i]);
       printf("\tpop rax\n");
     }
     return;
   }
-  case ND_RETURN:
-  {
+  case ND_RETURN: {
     gen(node->lhs);
     printf("\tpop rax\n");
     // エピローグ
@@ -206,29 +180,24 @@ void gen(Node *node)
     printf("\tret\n");
     return;
   }
-  case ND_IF:
-  {
+  case ND_IF: {
     gen(node->lhs->lhs);
     printf("\tpop rax\n");
     printf("\tcmp rax, 0\n");
-    if (node->rhs)
-    {
+    if (node->rhs) {
       printf("\tje .Lelse%ld\n", (long)node);
       gen(node->lhs->rhs);
       printf("\tjmp .Lend%ld\n", (long)node);
       printf(".Lelse%ld:\n", (long)node);
       gen(node->rhs);
-    }
-    else
-    {
+    } else {
       printf("\tje .Lend%ld\n", (long)node);
       gen(node->lhs->rhs);
     }
     printf(".Lend%ld:\n", (long)node);
     return;
   }
-  case ND_WHILE:
-  {
+  case ND_WHILE: {
     printf(".Lbegin%ld:\n", (long)node);
     gen(node->lhs);
     printf("\tpop rax\n");
@@ -239,8 +208,7 @@ void gen(Node *node)
     printf(".Lend%ld:\n", (long)node);
     return;
   }
-  case ND_FOR:
-  {
+  case ND_FOR: {
     if (node->lhs->lhs)
       gen(node->lhs->lhs);
     printf(".Lbegin%ld:\n", (long)node);
@@ -255,21 +223,23 @@ void gen(Node *node)
     printf(".Lend%ld:\n", (long)node);
     return;
   }
-  case ND_NUM:
-  {
+  case ND_NUM: {
     printf("\tpush %d\n", node->val);
     return;
   }
-  case ND_LVAR:
-  {
+  case ND_GVAR: {
+    printf("\tmov rax, %s\n", node->ident);
+    printf("\tpush rax\n");
+    return;
+  }
+  case ND_LVAR: {
     get_addr(node);
     printf("\tpop rax\n");
     printf("\tmov rax, [rax]\n");
     printf("\tpush rax\n");
     return;
   }
-  case ND_ASSIGN:
-  {
+  case ND_ASSIGN: {
     get_addr(node->lhs);
     gen(node->rhs); // 代入値の処理
 
@@ -289,8 +259,7 @@ void gen(Node *node)
   printf("\tpop rdi\n");
   printf("\tpop rax\n");
 
-  switch (node->kind)
-  {
+  switch (node->kind) {
   case ND_EQ:
     printf("\tcmp rax, rdi\n");
     printf("\tsete al\n");
