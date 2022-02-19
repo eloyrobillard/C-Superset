@@ -195,15 +195,20 @@ Node *stmt()
   return node;
 }
 
-Node *fn(Token *ident)
+Node *fn(Type *type, Token *ident)
 {
   // 新しいスコープを準備
   enter_scope();
 
   Node *node = fn_params(ident);
+  node->type = type;
 
   exit_scope();
   return node;
+}
+
+Node *global(Type *type, Token *ident) {
+
 }
 
 void program()
@@ -214,17 +219,18 @@ void program()
   while (!at_eof())
   {
     Token *maybe_type = token;
-    if (!consume_type())
-      error_at(maybe_type->str, "型ではありません");
+    Type *type = consume_type();
+    if (!type)
+      error(maybe_type->str, "型ではありません");
 
     Token *ident = consume_ident();
     if (ident == NULL)
       error("名前ではありません");
 
     if (consume("("))
-      code[i] = fn(ident);
-    // else
-      // code[i] = global(ident);
+      code[i] = fn(type, ident);
+    else
+      code[i] = global(type, ident);
 
     if (code[i++]->kind == ND_RETURN)
       break;

@@ -9,7 +9,8 @@
 #include <string.h>
 
 /*
- * program    = fn*
+ * program    = (fn / global)*
+ * global     = TYPE ident ("=" assign)?
  * fn         = TYPE ident "(" (ident ("," ident)*)* ")" BLOCK
  * stmt       = expr ";"
  *            | BLOCK
