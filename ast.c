@@ -185,7 +185,8 @@ Node *global(Type *type, Token *ident) {
 
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
-
+  if (!consume(";"))
+    error_at(token->str, "';'ではないトークンです");
   return node;
 }
 
@@ -198,11 +199,11 @@ void program() {
     FullType *full_type = get_full_type();
     Type *type = full_type->type;
     Token *ident = full_type->ident;
-    if (!type)
+    if (type == NULL)
       error(maybe_type->str, "型ではありません");
 
     if (ident == NULL)
-      error("名前ではありません");
+      error_at(maybe_type->next->str, "名前ではありません");
 
     if (consume("("))
       code[i] = fn(type, ident);
