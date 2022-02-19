@@ -27,6 +27,7 @@ bool consume(char *op);
 bool consume_keyword(TK_KIND type);
 Type *get_ar(Type *type);
 Type *get_ptr(Type *type);
+FullType *get_full_type();
 Type *consume_type();
 Token *consume_ident();
 void expect(char *op);

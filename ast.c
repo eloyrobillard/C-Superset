@@ -15,12 +15,9 @@ Node *primary() {
     return node;
   }
 
-  Type *type = consume_type();
-  if (type)
-    type = get_ptr(type);
-  Token *ident = consume_ident();
-  if (type)
-    type = get_ar(type);
+  FullType *full_type = get_full_type();
+  Type *type = full_type->type;
+  Token *ident = full_type->ident;
   if (ident) {
     Node *node = new_node(0, NULL, NULL);
     // 関数呼び出し
@@ -198,11 +195,12 @@ void program() {
   scope = create_scope();
   while (!at_eof()) {
     Token *maybe_type = token;
-    Type *type = consume_type();
+    FullType *full_type = get_full_type();
+    Type *type = full_type->type;
+    Token *ident = full_type->ident;
     if (!type)
       error(maybe_type->str, "型ではありません");
 
-    Token *ident = consume_ident();
     if (ident == NULL)
       error("名前ではありません");
 
