@@ -191,9 +191,6 @@ struct Node {
 // グローバル関数
 // tokenizer.c
 Token *tokenize(char *);
-GVar *new_gvar(char *name, int len, Type *);
-LVar *new_lvar(char *name, int len, Type *);
-LVar *find_lvar(Token *tok, Scope *);
 // ast.c
 Node *primary();
 Node *expr();

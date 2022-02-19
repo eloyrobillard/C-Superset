@@ -32,6 +32,27 @@ LVar *new_lvar(char *name, int len, Type *type) {
   return lvar;
 }
 
+VarInfo *find_var(Token *tok, Scope *scope) {
+  VarInfo *var_info = calloc(1, sizeof(VarInfo));
+  LVar *lvar = find_lvar(tok, scope);
+  if (lvar == NULL) {
+    GVar *gvar = find_gvar(tok);
+    if (gvar)
+      var_info->type = gvar->type;
+  } else {
+    var_info->offset = lvar->offset;
+    var_info->type = lvar->type;
+  }
+  return var_info;
+}
+
+GVar *find_gvar(Token *tok) {
+  for (GVar *var = global_scope->globals; var; var = var->next)
+    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
+      return var;
+  return NULL;
+}
+
 LVar *find_lvar(Token *tok, Scope *scope) {
   for (LVar *var = scope->locals; var; var = var->next)
     if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
@@ -64,9 +85,7 @@ Scope *enter_scope() {
   return scope;
 }
 
-Scope *exit_scope() {
-  return (scope = scope->parent);
-}
+Scope *exit_scope() { return (scope = scope->parent); }
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   Node *node = calloc(1, sizeof(Node));

@@ -28,7 +28,7 @@ Node *primary() {
 
     // 式内参照
     if (type == NULL) {
-      LVar *lvar = find_lvar(ident, scope);
+      LVar *lvar = find_var(ident, scope);
       if (lvar) {
         node->offset = lvar->offset;
         node->type = lvar->type;

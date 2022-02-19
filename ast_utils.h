@@ -3,6 +3,13 @@
 
 #include "9cc.h"
 
+typedef struct VarInfo VarInfo;
+
+struct VarInfo {
+  int offset;
+  Type *type;
+};
+
 typedef struct MaybeExpr MaybeExpr;
 
 struct MaybeExpr {
@@ -17,6 +24,11 @@ struct FullType {
 };
 
 bool at_eof();
+LVar *new_lvar(char *name, int len, Type *);
+GVar *new_gvar(char *name, int len, Type *);
+VarInfo *find_var(Token *tok, Scope *);
+LVar *find_lvar(Token *tok, Scope *);
+GVar *find_gvar(Token *tok);
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_if_node(Node *cond, Node *ifstmt, Node *els);
