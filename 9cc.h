@@ -67,6 +67,7 @@ typedef enum NodeKind {
   ND_ARR,
   ND_LVAR,
   ND_GVAR,
+  ND_GVARREF,
   ND_ASSIGN,
   ND_FNCALL,
   ND_FNDEF,

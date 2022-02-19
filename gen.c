@@ -228,6 +228,11 @@ void gen(Node *node) {
     return;
   }
   case ND_GVAR: {
+    printf("%.*s:\n", node->len, node->ident);
+    printf("\t.zero %d\n", type_size(node->type));
+    return;
+  }
+  case ND_GVARREF: {
     printf("\tmov rax, QWORD PTR %.*s[rip]\n", node->len, node->ident);
     printf("\tpush rax\n");
     return;
