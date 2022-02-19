@@ -179,6 +179,7 @@ struct Node {
   union {
     int val;    //! kindがND_NUMの場合のみ使う
     int offset; //* 変数の場合
+    int len; // 識別子の場合
   };
   union {
     char *ident;

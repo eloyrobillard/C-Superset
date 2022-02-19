@@ -28,10 +28,10 @@ Node *primary() {
 
     // 式内参照
     if (type == NULL) {
-      LVar *lvar = find_var(ident, scope);
-      if (lvar) {
-        node->offset = lvar->offset;
-        node->type = lvar->type;
+      VarInfo *var_info = find_var(ident, scope);
+      if (var_info->type) {
+        node->offset = var_info->offset;
+        node->type = var_info->type;
       } else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len,
                  ident->str);
@@ -180,8 +180,8 @@ Node *global(Type *type, Token *ident) {
 
   GVar *gvar = new_gvar(ident->str, ident->len, type);
   node->type = type;
-  node->ident = "";
-  strncpy(ident->str, node->ident, ident->len);
+  node->ident = ident->str;
+  node->len = ident->len;
 
   if (consume("="))
     node = new_node(ND_ASSIGN, node, assign());
