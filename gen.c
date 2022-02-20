@@ -16,6 +16,8 @@ int sum_locals(Scope *scope) {
 void get_addr(Node *node) {
   if (node->kind == ND_DEREF)
     gen(node->rhs);
+  else if (node->kind == ND_ADDR && node->rhs->type && node->rhs->type->ty == ARRAY)
+    get_addr(node->rhs);
   else if (node->kind == ND_SUB)
     gen(node);
   else if (node->kind == ND_LVAR || node->kind == ND_ARR) {
