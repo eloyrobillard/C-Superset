@@ -173,7 +173,7 @@ Node *array_assignment(Type *type, Token *ident) {
   if (type->array_size == 0)
     node->type->array_size = node->arg_list->argc;
 
-  LVar *lvar = new_lvar(ident->str, ident->len, type);
+  LVar *lvar = new_lvar(ident->str, ident->len, node->type);
   node->offset = lvar->offset;
   return node;
 }
