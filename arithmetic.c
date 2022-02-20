@@ -21,7 +21,7 @@ Node *handle_add(Node *node) {
 bool is_ptr_or_array(Node *node) {
   return (node->type && (node->type->ty == PTR || node->type->ty == ARRAY)) ||
          (node->kind == ND_ADDR && node->rhs->type &&
-             node->rhs->type->ty == ARRAY);
+          node->rhs->type->ty == ARRAY);
 }
 
 Node *handle_sub(Node *node) {
@@ -29,8 +29,7 @@ Node *handle_sub(Node *node) {
   if (is_ptr_or_array(node) && is_ptr_or_array(rhs))
     return new_node(ND_DIV, new_node(ND_SUB, node, rhs),
                     new_node_num(type_size(node->type->ptr_to)));
-  else if ((node->type && (node->type->ty == PTR || node->type->ty == ARRAY)) ||
-           (rhs->type && (rhs->type->ty == PTR || rhs->type->ty == ARRAY)))
+  else if (is_ptr_or_array(node) || is_ptr_or_array(rhs))
     error_at(token->str, "ポインタと整数間の減算は無効です");
   else
     return new_node(ND_SUB, node, rhs);
