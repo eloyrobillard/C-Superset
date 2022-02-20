@@ -16,8 +16,6 @@ int sum_locals(Scope *scope) {
 void get_addr(Node *node) {
   if (node->kind == ND_DEREF)
     gen(node->rhs);
-  else if (node->kind == ND_ADDR && node->rhs->type && node->rhs->type->ty == ARRAY)
-    get_addr(node->rhs);
   else if (node->kind == ND_SUB)
     gen(node);
   else if (node->kind == ND_LVAR || node->kind == ND_ARR) {
@@ -37,8 +35,8 @@ void gen(Node *node) {
         gen(node->arg_list->args[i]);
         printf("\tlea rax, [rbp-%d]\n", node->offset - 8 * i);
         printf("\tpop QWORD PTR [rax]\n");
-        printf("\tpush rax\n");
       }
+      printf("\tpush rax\n");
     }
     return;
   }

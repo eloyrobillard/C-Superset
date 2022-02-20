@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ialloc4(int **p, int a, int b, int c, int d)
+void ialloc4(long **p, long a, long b, long c, long d)
 {
-  int *ar = *p;
-  *p = malloc(sizeof(int) * 4);
+  long *ar = *p;
+  *p = malloc(sizeof(long) * 4);
   ar[0] = a;
   ar[1] = b;
   ar[2] = c;
@@ -21,25 +21,25 @@ void alloc4(long **p, long a, long b, long c, long d)
   ar[3] = d;
 }
 
-int foo(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k)
+long foo(long a, long b, long c, long d, long e, long f, long g, long h, long i, long j, long k)
 {
-  printf("%d %d %d %d %d %d %d %d %d %d %d\n", a, b, c, d, e, f, g, h, i, j, k);
+  printf("%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", a, b, c, d, e, f, g, h, i, j, k);
   return 0;
 }
 
-int baz(int a, int b, int c, int d, int e, int f, int g)
+long baz(long a, long b, long c, long d, long e, long f, long g)
 {
-  printf("%d %d %d %d %d %d %d\n", a, b, c, d, e, f, g);
+  printf("%ld %ld %ld %ld %ld %ld %ld\n", a, b, c, d, e, f, g);
   return c;
 }
 
-int bar(int a)
+long bar(long a)
 {
-  printf("%d\n", a);
+  printf("%ld\n", a);
   return a;
 }
 
-int hoge()
+long hoge()
 {
   return 2;
 }

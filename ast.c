@@ -34,7 +34,8 @@ Node *primary() {
         if (var_info->kind == ND_GVARREF) {
           node->ident = ident->str;
           node->len = ident->len;
-        } else if (var_info->type->ty == ARRAY) {
+        } 
+        if (var_info->type->ty == ARRAY) {
           node = new_node(ND_ADDR, NULL, node);
         }
       } else
