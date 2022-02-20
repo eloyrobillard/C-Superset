@@ -8,18 +8,14 @@ long john()
   *b = 1;
   *(b + 1) = 2;
   int *k = b;
-  bar(b[1]);
+  bar(b[0]);
   bar(*(k+1));
   int c = *k + *(k + 1);
   bar(c);
-  /*
-  a = 11;
-  */
   long p[] = {1, 2, 4, 8};
-  // alloc4(&p, 1, 2, 4, 8);
   long *q = p + 2;
   bar(*q);
-  q = p + c;
+  q = p + c; // p + 3 -> p[3] = 8
   return bar(*q) + a;
 }
 
@@ -30,6 +26,5 @@ int main()
   long *p;
   p = &var;
   // ポインタ算術、xを参照
-  /* z = &y + 8 + x; */
   return 2 + *p;
 }

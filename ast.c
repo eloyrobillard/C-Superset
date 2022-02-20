@@ -34,6 +34,8 @@ Node *primary() {
         if (var_info->kind == ND_GVARREF) {
           node->ident = ident->str;
           node->len = ident->len;
+        } else if (var_info->type->ty == ARRAY) {
+          node = new_node(ND_ADDR, NULL, node);
         }
       } else
         error_at(ident->str, "識別子 \"%.*s\" が定義されていません", ident->len,
@@ -71,6 +73,8 @@ Node *unary() {
     Node *rhs = unary();
     if (rhs->kind == ND_ADDR)
       return rhs->rhs;
+    else if (rhs->type && rhs->type->ty == ARRAY)
+      return rhs;
     return new_node(ND_DEREF, NULL, rhs);
   } else if (consume_keyword(TK_SIZEOF))
     return new_node_num(expr_size(unary()));
