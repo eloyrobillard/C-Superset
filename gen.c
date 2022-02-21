@@ -22,6 +22,8 @@ void get_addr(Node *node) {
     // アドレスの計算
     printf("\tlea rax, [rbp-%d]\n", node->offset);
     printf("\tpush rax\n");
+  } else if (node->kind == ND_GVARREF) {
+    printf("\tlea rax, QWORD PTR %.*s[rip]\n", node->len, node->ident);
   } else
     error("代入の左辺値が変数ではありません");
 }

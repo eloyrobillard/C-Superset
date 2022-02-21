@@ -190,12 +190,14 @@ Node *maybe_array_index() {
   Node *prim = primary();
   // 配列要素の参照
   if (consume("[")) {
-    Node *place = new_node_num(0);
-    do {
+    Node *place = expr();
+    expect("]");
+
+    while (consume("[")) {
       place =
           new_node(ND_ADD, new_node(ND_MUL, new_node_num(10), place), expr());
       expect("]");
-    } while (consume("["));
+    }
     // *(p + k)
     prim = new_node(
         ND_DEREF, NULL,

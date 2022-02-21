@@ -1,7 +1,6 @@
 long global = 5;
 
-long sum(long a, long b, long c, long d)
-{
+long sum(long a, long b, long c, long d) {
   long b = 3;
   long b = 9;
   long b = 5;
@@ -16,7 +15,7 @@ long sum(long a, long b, long c, long d)
 int main() // free comment city
 {
   long a[] = {1, 2, 3, sizeof 4};
-  long x1[] = { 1, 2, 4, 8 };
+  long x1[] = {1, 2, 4, 8};
   // ialloc4(&x1, 1, 2, 4, 8);
   int *x2 = x1 + 2;
   long *y = &*&*&a[2];
