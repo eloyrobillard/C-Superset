@@ -199,12 +199,13 @@ Node *maybe_array_index() {
       expect("]");
     }
     // *(p + k)
-    prim = new_node(
-        ND_DEREF, NULL,
-        new_node(ND_ADD, prim,
-                 new_node(ND_MUL,
-                          new_node_num(type_size(prim->rhs->type->elem_type)),
-                          place)));
+    // prim = new_node(
+    //     ND_DEREF, NULL,
+    //     new_node(ND_ADD, prim,
+    //              new_node(ND_MUL,
+    //                       new_node_num(type_size(prim->rhs->type->elem_type)),
+    //                       place)));
+    prim = new_node(ND_INDEXING, prim, place);
   }
   return prim;
 }

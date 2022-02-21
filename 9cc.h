@@ -63,6 +63,8 @@ typedef enum NodeKind {
   ND_FOR,
   ND_WHILE,
 
+  ND_INDEXING,
+
   ND_TYPETK,
   ND_ARR,
   ND_LVAR,

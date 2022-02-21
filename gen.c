@@ -1,5 +1,11 @@
 #include "9cc.h"
 
+/**
+ * @brief ローカル変数用の記憶量の計算
+ *
+ * @param scope 現在スコープ
+ * @return int
+ */
 int sum_locals(Scope *scope) {
   int sum = 0;
   LVar *locals = scope->locals;
@@ -18,25 +24,37 @@ void get_addr(Node *node) {
     gen(node->rhs);
   else if (node->kind == ND_SUB)
     gen(node);
+  else if (node->kind == ND_INDEXING)
+    gen(node);
   else if (node->kind == ND_LVAR || node->kind == ND_ARR) {
     // アドレスの計算
     printf("\tlea rax, [rbp-%d]\n", node->offset);
     printf("\tpush rax\n");
   } else if (node->kind == ND_GVARREF) {
-    printf("\tlea rax, QWORD PTR %.*s[rip]\n", node->len, node->ident);
+    printf("\tmovabs rax, offset %.*s\n", node->len, node->ident);
+    printf("\tpush rax\n");
   } else
     error("代入の左辺値が変数ではありません");
 }
 
 void gen(Node *node) {
   switch (node->kind) {
+  case ND_INDEXING: {
+    gen(node->rhs); // 添付を計算
+    printf("\tpop rdi\n");
+    gen(node->lhs); // 配列のアドレスを計算
+    printf("\tpop rax\n");
+    printf("\tmov rax, [8*rdi + rax]\n");
+    printf("\tpush rax\n");
+    return;
+  }
   case ND_ARR: {
     if (node->arg_list) {
-      // TODO 複数次元配列のための準備
+      // TODO: 複数次元配列
       for (int i = 0; i < node->arg_list->argc; i++) {
         gen(node->arg_list->args[i]);
         printf("\tlea rax, [rbp-%d]\n", node->offset - 8 * i);
-        printf("\tpop QWORD PTR [rax]\n");
+        printf("\tpop qword ptr [rax]\n");
       }
       printf("\tpush rax\n");
     }
@@ -49,7 +67,7 @@ void gen(Node *node) {
   case ND_DEREF: {
     gen(node->rhs);
     printf("\tpop rax\n");
-    printf("\tmov rax, [rax]\n");
+    printf("\tmov rax, qword ptr  [rax]\n");
     printf("\tpush rax\n");
     return;
   }
@@ -226,7 +244,7 @@ void gen(Node *node) {
     return;
   }
   case ND_GVARREF: {
-    printf("\tmov rax, QWORD PTR %.*s[rip]\n", node->len, node->ident);
+    printf("\tmov rax, qword ptr %.*s[rip]\n", node->len, node->ident);
     printf("\tpush rax\n");
     return;
   }
@@ -240,11 +258,11 @@ void gen(Node *node) {
   case ND_ASSIGN: {
     if (node->lhs->kind != ND_GVAR) {
       get_addr(node->lhs);
-      gen(node->rhs);               // 代入値の処理
-      printf("\tpop rdi\n");        // 代入値をゲット
-      printf("\tpop rax\n");        // 変数のアドレスをゲット
-      printf("\tmov [rax], rdi\n"); // アドレスに代入する
-      printf("\tpush rdi\n");       // スタックで値を提供する
+      gen(node->rhs);        // 代入値の処理
+      printf("\tpop rdi\n"); // 代入値をゲット
+      printf("\tpop rax\n"); // 変数のアドレスをゲット
+      printf("\tmov qword ptr [rax], rdi\n"); // アドレスに代入する
+      printf("\tpush rdi\n"); // スタックで値を提供する
     } else {
       printf("%.*s:\n", node->lhs->len, node->lhs->ident);
       printf("\t.long %d\n", node->rhs->val);
